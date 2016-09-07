@@ -1,33 +1,33 @@
 #include "uvssclientsdk.h"
 
-UVSSClient clientSDK;
+UVSSClientPtr clientSDK = new UVSSClient;
 
 int UVSSInitialize()
 {
-	return clientSDK.init();
+	return clientSDK->init();
 }
 
 void SetUVSSMessageCallback(UVSSMessageCallback callback)
 {
-	clientSDK.setConnectionInfoCallback(callback);
+	clientSDK->setConnectionInfoCallback(callback);
 }
 
 void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback callback)
 {
-	clientSDK.setCheckInfoCallback(callback);
+	clientSDK->setCheckInfoCallback(callback);
 }
 
 int UVSSConnect(const char* ServerIPAddress, int ServerPort)
 {
-	return clientSDK.connect(ServerIPAddress, ServerPort);
+	return clientSDK->connect(ServerIPAddress, ServerPort);
 }
 
 int UVSSDisconnect(int handle)
 {
-	return clientSDK.disconnect(handle);
+	return clientSDK->disconnect(handle);
 }
 
 void UVSSUninitialize()
 {
-	clientSDK.uninit();
+	clientSDK->uninit();
 }

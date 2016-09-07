@@ -1,19 +1,25 @@
 #include "serverI.h"
 
-void ServerI::addClient(const ::Ice::Identity& ident, const Ice::Current& curr)
-{
-	UVSS::ClientPrx clientProxy = UVSS::ClientPrx::uncheckedCast(curr.con->createProxy(ident));
-	this->clientProxy = clientProxy;
-}
+ServerConnectionInfoCallback ServerI::serverConnectionInfoCallback = 0;
 
-void ServerI::shutdown(const Ice::Current& c)
+void ServerI::addClient(const Ice::Identity& ident, const Ice::Current& curr)
 {
-	//std::cout << "shutting down..." << std::endl;
-	try {
-		c.adapter->getCommunicator()->shutdown();
-	} catch (const Ice::Exception& ex) {
-		std::cout << ex << std::endl;
-	}
+	IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+
+	UVSS::ClientPrx clientProxy = UVSS::ClientPrx::uncheckedCast(curr.con->createProxy(ident));
+	this->clientProxies.insert(clientProxy);
+
+	Ice::ConnectionInfoPtr info = curr.con->getInfo();
+	Ice::TCPConnectionInfoPtr tcpInfo = Ice::TCPConnectionInfoPtr::dynamicCast(info);
+
+	std::stringstream endpoint;
+	endpoint << tcpInfo->remoteAddress << ":" << tcpInfo->remotePort;
+	this->identityToEndpoint[ident] = endpoint.str().replace(0, 7, "");//去掉开头的::ffff:
+	
+	//std::cout << endpoint.str() << std::endl;
+	//std::cout << tcpInfo->remoteAddress << std::endl;
+	//std::cout << tcpInfo->remotePort << std::endl;
+	//std::cout << curr.con->getEndpoint()->toString() << std::endl;
 }
 
 void ServerI::useServerConnectionInfoCallback(Ice::Int type, const std::string& serverConnectionInfo, const Ice::Current&)
@@ -21,6 +27,14 @@ void ServerI::useServerConnectionInfoCallback(Ice::Int type, const std::string& 
 	if (this->serverConnectionInfoCallback != 0) {
 		this->serverConnectionInfoCallback(type, serverConnectionInfo.c_str());
 	}
+}
+
+void ServerI::heartBeat(const Ice::Current&)
+{
+}
+
+ServerI::ServerI(): isDestroyed(false)
+{
 }
 
 void ServerI::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
@@ -32,16 +46,6 @@ void ServerI::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
 
 	file.resize(fileSize);
 	ifs.read((char*)&file[0], fileSize);
-}
-
-std::string ServerI::receiveClientUVSSImagePath()
-{
-	return this->clientProxy->readClientUVSSImagePath();
-}
-
-std::string ServerI::receiveClientPlateImagePath()
-{
-	return this->clientProxy->readClientPlateImagePath();
 }
 
 void ServerI::sendServerUVSSImagePath(const std::string& serverUVSSImagePath, const std::string& clientUVSSImagePath)
@@ -95,73 +99,114 @@ void ServerI::sendServerExtension(const std::string& serverExtension)
 
 void ServerI::setServerConnectionInfoCallback(ServerConnectionInfoCallback serverConnectionInfoCallback)
 {
-	this->serverConnectionInfoCallback = serverConnectionInfoCallback;
+	ServerI::serverConnectionInfoCallback = serverConnectionInfoCallback;
 }
 
-const UVSS::ClientPrx& ServerI::getClientProxy() const
+void ServerI::sendUVSSImagePath(const std::string& serverUVSSImagePath)
 {
-	return this->clientProxy;
+	this->clientProxy->createClientImageDirectory("UVSS");
+	std::string UVSSImageRelativePath("UVSS/" + createFileName("UVSS_"));
+	sendServerUVSSImagePath(serverUVSSImagePath, UVSSImageRelativePath);
+	sendServerUVSSImageRelativePath(UVSSImageRelativePath);
 }
 
-//void ServerI::setServerUVSSImagePath(const std::string& serverUVSSImagePath)
-//{
-//	this->serverUVSSImagePath = serverUVSSImagePath;
-//}
-//
-//void ServerI::setServerPlateImagePath(const std::string& serverPlateImagePath)
-//{
-//	this->serverPlateImagePath = serverPlateImagePath;
-//}
-//
-//void ServerI::setServerChannel(const std::string& serverChannel)
-//{
-//	this->serverChannel = serverChannel;
-//}
-//
-//void ServerI::setServerPlateNumber(const std::string& serverPlateNumber)
-//{
-//	this->serverPlateNumber = serverPlateNumber;
-//}
-//
-//void ServerI::setServerDirection(const std::string& serverDirection)
-//{
-//	this->serverDirection = serverDirection;
-//}
-//
-//void ServerI::setServerCheckDateTime(const std::string& serverCheckDateTime)
-//{
-//	this->serverCheckDateTime = serverCheckDateTime;
-//}
-//
-//void ServerI::setServerExtension(const std::string& serverExtension)
-//{
-//	this->serverExtension = serverExtension;
-//}
+void ServerI::sendPlateImagePath(const std::string& serverPlateImagePath)
+{
+	this->clientProxy->createClientImageDirectory("UVSS");
+	std::string plateImageRelativePath("UVSS/" + createFileName("ANPR_"));
+	sendServerPlateImagePath(serverPlateImagePath, plateImageRelativePath);
+	sendServerPlateImageRelativePath(plateImageRelativePath);
+}
 
-//void ServerI::setServerCheckInfo(const std::string& serverUVSSImagePath, const std::string& serverPlateImagePath, const std::string& serverChannel, const std::string& serverPlateNumber, const std::string& serverDirection, const std::string& serverCheckDateTime, const std::string& serverExtension)
-//{
-//	setServerUVSSImagePath(serverUVSSImagePath);
-//	setServerPlateImagePath(serverPlateImagePath);
-//	setServerChannel(serverChannel);
-//	setServerPlateNumber(serverPlateNumber);
-//	setServerDirection(serverDirection);
-//	setServerCheckDateTime(serverCheckDateTime);
-//	setServerExtension(serverExtension);
-//}
+void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string& plateImagePath, const std::string& channel, const std::string& plateNumber, const std::string& direction, const std::string& checkDateTime, const std::string& extension)
+{
+	IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
 
-//void ServerI::sendServerCheckInfo(const std::string& serverUVSSImagePath, const std::string& serverPlateImagePath, const std::string& serverChannel, const std::string& serverPlateNumber, const std::string& serverDirection, const std::string& serverCheckDateTime, const std::string& serverExtension)
-//{
-//	sendServerUVSSImagePath(serverUVSSImagePath, this->clientUVSSImagePath);
-//	sendServerPlateImagePath(serverPlateImagePath, this->clientPlateImagePath);
-//	sendServerChannel(serverChannel);
-//	sendServerPlateNumber(serverPlateNumber);
-//	sendServerDirection(serverDirection);
-//	sendServerCheckDateTime(serverCheckDateTime);
-//	sendServerExtension(serverExtension);
-//	this->clientProxy->useClientCheckInfoCallback();
-//}
+	for (std::set<UVSS::ClientPrx>::const_iterator it = clientProxies.begin(); it != clientProxies.end();) {
+		try {
+			this->clientProxy = *it;
 
-//void ServerI::sendServerCheckInfo()
-//{
-//	sendServerCheckInfo(this->serverUVSSImagePath, this->serverPlateImagePath, this->serverChannel, this->serverPlateNumber, this->serverDirection, this->serverCheckDateTime, this->serverExtension);
-//}
+			sendUVSSImagePath(UVSSImagePath);
+			sendPlateImagePath(plateImagePath);
+			sendServerChannel(channel);
+			sendServerPlateNumber(plateNumber);
+			sendServerDirection(direction);
+			sendServerCheckDateTime(checkDateTime);
+			sendServerExtension(extension);
+
+			this->clientProxy->useClientCheckInfoCallback();
+
+			++it;
+		} catch (const Ice::Exception& ex) {
+			it = clientProxies.erase(it);
+			std::cerr << ex << std::endl;
+		}
+	}
+}
+
+const std::string ServerI::createFileName(const std::string& prefix, const std::string& suffix, const std::string& extension)
+{
+	SYSTEMTIME systemTime;
+	GetLocalTime(&systemTime);
+	std::stringstream fileName;
+
+	fileName << prefix << systemTime.wYear
+		<< std::setw(2) << std::setfill('0') << systemTime.wMonth
+		<< std::setw(2) << std::setfill('0') << systemTime.wDay
+		<< std::setw(2) << std::setfill('0') << systemTime.wHour
+		<< std::setw(2) << std::setfill('0') << systemTime.wMinute
+		<< std::setw(2) << std::setfill('0') << systemTime.wSecond
+		<< std::setw(3) << std::setfill('0') << systemTime.wMilliseconds
+		<< suffix << "." << extension;
+
+	return fileName.str();
+}
+
+void ServerI:: run()
+{
+	while (true) {
+		std::set<UVSS::ClientPrx> clientProxies;
+		{
+			IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+			IceUtil::Monitor<IceUtil::Mutex>::timedWait(IceUtil::Time::seconds(2));
+
+			if (this->isDestroyed) {
+				break;
+			}
+
+			clientProxies = this->clientProxies;
+		}
+
+		if (!clientProxies.empty()) {
+			for (std::set<UVSS::ClientPrx>::const_iterator it = clientProxies.begin(); it != clientProxies.end(); ++it) {
+				try {
+					(*it)->heartBeat();
+					//std::cout << (*it)->ice_getConnection()->getEndpoint()->toString() << std::endl;
+					//std::cout << (*it)->ice_getCommunicator()->identityToString((*it)->ice_getIdentity()) << std::endl;
+					//++it;
+				} catch (...) {
+					Ice::Identity ident = (*it)->ice_getIdentity();
+					std::string endpoint = this->identityToEndpoint[ident];
+					this->useServerConnectionInfoCallback(-1, std::string("客户端 " + endpoint + ": 已断开").c_str());
+					//it = clientProxies.erase(it);
+
+					IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+					this->clientProxies.erase(*it);
+					this->identityToEndpoint.erase(ident);
+				}
+			}
+		}
+	}
+}
+
+void ServerI::destroy()
+{
+	{
+		IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+		this->isDestroyed = true;
+
+		notify();
+	}
+
+	getThreadControl().join();
+}

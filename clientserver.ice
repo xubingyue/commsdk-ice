@@ -7,9 +7,6 @@ module UVSS {
 sequence<byte> ByteSeq;
 
 interface Client {
-	string readClientUVSSImagePath();
-	string readClientPlateImagePath();
-	
 	void writeClientUVSSImagePath(string clientUVSSImagePath, ByteSeq serverUVSSImage);
 	void writeClientPlateImagePath(string clientPlateImagePath, ByteSeq serverPlateImage);
 	
@@ -22,17 +19,15 @@ interface Client {
 	void writeClientCheckDateTime(string serverCheckDateTime);
 	void writeClientExtension(string serverExtension);
 	
-	void createClientImageDirectory();
-	
+	void createClientImageDirectory(string clientImageDirectory);
 	void useClientCheckInfoCallback();
+	void heartBeat();
 };
 
 interface Server {
-	//void addClient(Client* clientProxy);
 	void addClient(Ice::Identity ident);
-	void shutdown();
-	
 	void useServerConnectionInfoCallback(int type, string clientConnectionInfo);
+	void heartBeat();
 };
 };
 

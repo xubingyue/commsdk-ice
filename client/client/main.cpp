@@ -10,13 +10,18 @@ void menu();
 
 int main(int argc, char* argv[])
 {
-	//try{
 	if (argc > 1) {
 		std::cerr << "too many arguments" << std::endl;
 		return 1;
 	}
 
+	SetUVSSMessageCallback(clientConnectionInfoCallback);
+	SetUVSSCheckInfoCallback(clientCheckInfoCallback);
+
 	menu();
+
+	std::string ip = "127.0.0.1";
+	int port = 20145;
 
 	int key;
 	do {
@@ -31,34 +36,31 @@ int main(int argc, char* argv[])
 			case 1:
 				UVSSInitialize();
 				break;
+			case -1:
+				UVSSUninitialize();
+				break;
 			case 2:
-				SetUVSSMessageCallback(clientConnectionInfoCallback);
+				std::cout << "server IP:" << std::endl;
+				std::cin >> ip;
 				break;
 			case 3:
-				SetUVSSCheckInfoCallback(clientCheckInfoCallback);
+				std::cout << "server port:" << std::endl;
+				std::cin >> port;
 				break;
 			case 4:
-				UVSSConnect("127.0.0.1", 20145);
+				UVSSConnect(ip.c_str(), port);
+				//UVSSConnect("127.0.0.1", 20145);
 				break;
-			case 5:
+			case -4:
 				UVSSDisconnect(1);
 				break;
-			//case 6:
-			//	UVSSUninitialize();
-			//	break;
-			case -1:
+			case 9:
 				break;
 			}
 		} catch (const Ice::Exception& ex) {
 			std::cerr << ex << std::endl;
 		}
-	} while ((std::cin.good()) && (key != -1));
-	//} catch (const Ice::ConnectionLostException& ex)
-	//} catch (...)
-	//} catch (const Ice::Exception& ex)
-	//{
-	//	std::cerr << "XXXXX" << std::endl;
-	//}
+	} while ((std::cin.good()) && (key != 9));
 
 	return 0;
 }
@@ -68,10 +70,10 @@ void menu()
 	std::cout << "usage:\n"
 		"0: help\n"
 		"1: init\n"
-		"2: set ConnectionInfoCallback Function\n"
-		"3: set CheckInfoCallback Function\n"
+		"-1: uninit\n"
+		"2: set server IP\n"
+		"3: set server port\n"
 		"4: connect\n"
-		"5: disconnect\n"
-		//"6: uninit\n"
-		"-1: exit\n";
+		"-4: disconnect\n"
+		"9: exit\n";
 }

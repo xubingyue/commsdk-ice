@@ -1,14 +1,7 @@
 #include "clientI.h"
 
-std::string ClientI::readClientUVSSImagePath(const Ice::Current&)
-{
-	return this->clientUVSSImagePath;
-}
-
-std::string ClientI::readClientPlateImagePath(const Ice::Current&)
-{
-	return this->clientPlateImagePath;
-}
+ClientConnectionInfoCallback ClientI::clientConnectionInfoCallback = 0;
+ClientCheckInfoCallback ClientI::clientCheckInfoCallback = 0;
 
 void ClientI::writeClientUVSSImagePath(const std::string& clientUVSSImagePath, const UVSS::ByteSeq& serverUVSSImage, const Ice::Current&)
 {
@@ -57,11 +50,11 @@ void ClientI::writeClientExtension(const std::string& serverExtension, const Ice
 	this->clientExtension = serverExtension;
 }
 
-void ClientI::createClientImageDirectory(const Ice::Current&)
+void ClientI::createClientImageDirectory(const std::string& clientImageDirectory, const Ice::Current&)
 {
 	WIN32_FIND_DATA findData;
-	if (FindFirstFile("UVSS", &findData) == INVALID_HANDLE_VALUE) {
-		CreateDirectory("UVSS", NULL);
+	if (FindFirstFile(clientImageDirectory.c_str(), &findData) == INVALID_HANDLE_VALUE) {
+		CreateDirectory(clientImageDirectory.c_str(), NULL);
 	}
 }
 
@@ -73,30 +66,25 @@ void ClientI::useClientCheckInfoCallback(const Ice::Current&)
 	}
 }
 
-ClientI::ClientI(): clientConnectionInfoCallback(0), clientCheckInfoCallback(0)
+void ClientI::heartBeat(const Ice::Current&)
 {
 }
 
-void ClientI::setClientUVSSImagePath(const std::string& clientUVSSImagePath)
+ClientI::ClientI(): serverIPAddress("127.0.0.1"), serverPortNumber(20145), isDestroyed(false), isConnected(false)
 {
-	this->clientUVSSImagePath = clientUVSSImagePath;
-}
-
-void ClientI::setClientPlateImagePath(const std::string& clientPlateImagePath)
-{
-	this->clientPlateImagePath = clientPlateImagePath;
 }
 
 void ClientI::setClientConnectionInfoCallback(ClientConnectionInfoCallback clientConnectionInfoCallback)
 {
-	this->clientConnectionInfoCallback = clientConnectionInfoCallback;
+	ClientI::clientConnectionInfoCallback = clientConnectionInfoCallback;
 }
 
 void ClientI::setClientCheckInfoCallback(ClientCheckInfoCallback clientCheckInfoCallback)
 {
-	this->clientCheckInfoCallback = clientCheckInfoCallback;
+	ClientI::clientCheckInfoCallback = clientCheckInfoCallback;
 }
 
+//本地函数
 void ClientI::useClientConnectionInfoCallback(int handle, int type, const std::string& clientConnectionInfo)
 {
 	if (this->clientConnectionInfoCallback != 0) {
@@ -104,48 +92,75 @@ void ClientI::useClientConnectionInfoCallback(int handle, int type, const std::s
 	}
 }
 
-//const std::string& ClientI::getClientUVSSImagePath() const
-//{
-//	return this->clientUVSSImagePath;
-//}
-//
-//const std::string& ClientI::getClientPlateImagePath() const
-//{
-//	return this->clientPlateImagePath;
-//}
-//
-//const std::string& ClientI::getClientChannel() const
-//{
-//	return this->clientChannel;
-//}
-//
-//const std::string& ClientI::getClientPlateNumber() const
-//{
-//	return this->clientPlateNumber;
-//}
-//
-//const std::string& ClientI::getClientDirection() const
-//{
-//	return this->clientDirection;
-//}
-//
-//const std::string& ClientI::getClientCheckDateTime() const
-//{
-//	return this->clientCheckDateTime;
-//}
-//
-//const std::string& ClientI::getClientExtension() const
-//{
-//	return this->clientExtension;
-//}
-//
-//void ClientI::getClientCheckInfo(std::string& clientUVSSImagePath, std::string& clientPlateImagePath, std::string& clientChannel, std::string& clientPlateNumber, std::string& clientDirection, std::string& clientCheckDateTime, std::string& clientExtension)
-//{
-//	clientUVSSImagePath = getClientUVSSImagePath();
-//	clientPlateImagePath = getClientPlateImagePath();
-//	clientChannel = getClientChannel();
-//	clientPlateNumber = getClientPlateNumber();
-//	clientDirection = getClientDirection();
-//	clientCheckDateTime = getClientCheckDateTime();
-//	clientExtension = getClientExtension();
-//}
+void ClientI::run()
+{
+	while (true) {
+		UVSS::ServerPrx serverProxy;
+		{
+			IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+			IceUtil::Monitor<IceUtil::Mutex>::timedWait(IceUtil::Time::seconds(2));
+
+			if (this->isDestroyed) {
+				break;
+			}
+
+			serverProxy = this->serverProxy;
+		}
+
+		if (serverProxy != NULL) {
+			try {
+				this->serverProxy->heartBeat();
+			} catch (...) {
+				std::stringstream serverPort;
+				serverPort << this->serverPortNumber;
+				useClientConnectionInfoCallback(1, -3, "服务器端 " + this->serverIPAddress + ":" + serverPort.str() + ": " + "已断开 | 连接标识: 1");
+
+				IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+				this->serverProxy = NULL;
+				this->isConnected = false;
+			}
+		}
+	}
+}
+
+void ClientI::destroy()
+{
+	{
+		IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+		this->isDestroyed = true;
+
+		notify();
+	}
+
+	getThreadControl().join();
+}
+
+void ClientI::setServerIPAddress(const std::string& serverIPAddress)
+{
+	this->serverIPAddress = serverIPAddress;
+}
+
+void ClientI::setServerPortNumber(int serverPortNumber)
+{
+	this->serverPortNumber = serverPortNumber;
+}
+
+const std::string& ClientI::getServerIPAddress() const
+{
+	return this->serverIPAddress;
+}
+
+const int ClientI::getServerPortNumber() const
+{
+	return this->serverPortNumber;
+}
+
+const UVSS::ServerPrx ClientI::getServerProxy() const
+{
+	return this->serverProxy;
+}
+
+void ClientI::setServerProxy(const UVSS::ServerPrx& serverProxy)
+{
+	this->serverProxy = serverProxy;
+}

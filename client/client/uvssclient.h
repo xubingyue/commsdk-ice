@@ -6,16 +6,10 @@
 #include <Ice/Ice.h>
 #include <IceUtil/IceUtil.h>
 
-class UVSSClient {
+class UVSSClient : public IceUtil::Shared {
 public:
 	UVSSClient();
 	~UVSSClient();
-
-	//void setIPAddress(const std::string& = "127.0.0.1");
-	//void setPortNumber(int = 10001);
-
-	void setServerIPAddress(const std::string& = "127.0.0.1");
-	void setServerPortNumber(int = 20145);
 
 	int init();
 	void uninit();
@@ -29,21 +23,16 @@ public:
 private:
 	Ice::CommunicatorPtr ic;
 	ClientIPtr client;
-	UVSS::ServerPrx serverProxy;
-	UVSS::ClientPrx clientProxy;
 
 	std::string IPAddress;
 	int portNumber;
 
-	std::string serverIPAddress;
-	int serverPortNumber;
-
-	bool isConnected;
+	//bool isConnected;
 
 	Ice::ObjectAdapterPtr adapter;
 	Ice::Identity ident;
 };
 
-#endif
+typedef IceUtil::Handle<UVSSClient> UVSSClientPtr;
 
-//void stopServer();
+#endif
