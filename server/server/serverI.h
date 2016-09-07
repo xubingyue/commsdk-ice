@@ -9,7 +9,7 @@ typedef void (__stdcall *ServerConnectionInfoCallback)(int, const char*);
 
 class ServerI : virtual public UVSS::Server {
 public:
-	virtual void addClient(const UVSS::ClientPrx&, const Ice::Current& = Ice::Current());
+	virtual void addClient(const ::Ice::Identity&, const Ice::Current& = Ice::Current());
 	virtual void shutdown(const Ice::Current& = Ice::Current());
 	virtual void useServerConnectionInfoCallback(Ice::Int, const std::string&, const Ice::Current& = Ice::Current());
 

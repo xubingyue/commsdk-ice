@@ -1,7 +1,7 @@
 #include "uvssclient.h"
 
 UVSSClient::UVSSClient(): ic(0), client(new ClientI), serverProxy(0), clientProxy(0),
-	IPAddress("127.0.0.1"), portNumber(10001),
+	//IPAddress("127.0.0.1"),// portNumber(10001),
 	serverIPAddress("127.0.0.1"), serverPortNumber(20145),
 	isConnected(false)
 {
@@ -33,15 +33,15 @@ UVSSClient::~UVSSClient()
 	}
 }
 
-void UVSSClient::setIPAddress(const std::string& IPAddress)
-{
-	this->IPAddress = IPAddress;
-}
-
-void UVSSClient::setPortNumber(int portNumber)
-{
-	this->portNumber = portNumber;
-}
+//void UVSSClient::setIPAddress(const std::string& IPAddress)
+//{
+//	this->IPAddress = IPAddress;
+//}
+//
+//void UVSSClient::setPortNumber(int portNumber)
+//{
+//	this->portNumber = portNumber;
+//}
 
 void UVSSClient::setServerIPAddress(const std::string& serverIPAddress)
 {
@@ -56,11 +56,17 @@ void UVSSClient::setServerPortNumber(int serverPortNumber)
 int UVSSClient::init()
 {
 	try {
-		std::stringstream port;
-		port << this->portNumber;
-		Ice::ObjectAdapterPtr adapter = this->ic->createObjectAdapterWithEndpoints("UVSS.Client", "tcp -h " + this->IPAddress + " -p " + port.str());
-		adapter->add(client, ic->stringToIdentity("Client"));
-		adapter->activate();
+		//std::stringstream port;
+		//port << this->portNumber;
+		//Ice::ObjectAdapterPtr adapter = this->ic->createObjectAdapterWithEndpoints("UVSS.Client", "tcp -h " + this->IPAddress + " -p " + port.str());
+		//adapter->add(client, ic->stringToIdentity("Client"));
+
+		this->adapter = this->ic->createObjectAdapter("");
+
+		this->ident.name = IceUtil::generateUUID();
+		this->ident.category = "";
+		this->adapter->add(client, ident);
+		this->adapter->activate();
 
 		this->clientProxy = UVSS::ClientPrx::uncheckedCast(adapter->createProxy(ic->stringToIdentity("Client")));
 	} catch (const Ice::Exception& ex) {
@@ -99,8 +105,24 @@ int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber
 			throw "Invalid proxy";
 			//return -1;
 		}
-		serverProxy->addClient(clientProxy);
-		serverProxy->useServerConnectionInfoCallback(0, "客户端 " + this->IPAddress + ": 已连接");
+		serverProxy->ice_getConnection()->setAdapter(this->adapter);
+		serverProxy->addClient(ident);
+
+		Ice::ConnectionInfoPtr info = serverProxy->ice_getConnection()->getInfo();
+		Ice::TCPConnectionInfoPtr tcpInfo = Ice::TCPConnectionInfoPtr::dynamicCast(info);
+		this->IPAddress = tcpInfo->localAddress;
+		this->portNumber = tcpInfo->localPort;
+		//if (tcpInfo) {
+		//	std::cout << "local address = " << tcpInfo->localAddress << ":"
+		//		<< tcpInfo->localPort << std::endl;
+		//	std::cout << "remote address = " << tcpInfo->remoteAddress << ":"
+		//		<< tcpInfo->remotePort << std::endl;
+		//}
+
+		std::stringstream port;
+		port << this->portNumber;
+
+		serverProxy->useServerConnectionInfoCallback(0, "客户端 " + IPAddress + ":" + port.str() + ": 已连接");
 		client->useClientConnectionInfoCallback(1, 1, "服务器端 " + this->serverIPAddress + ":" + serverPort.str() + ": " + "已连接 | 连接标识: 1");
 	} catch (const Ice::Exception& ex) {
 		std::cerr << ex << std::endl;
@@ -125,10 +147,19 @@ int UVSSClient::disconnect(int handle)
 
 	try {
 		//有问题, 应该是服务器检测到
-		serverProxy->useServerConnectionInfoCallback(-1, "客户端 " + this->IPAddress + ": 已断开");
+		//Ice::ConnectionInfoPtr info = serverProxy->ice_getConnection()->getInfo();
+		//Ice::TCPConnectionInfoPtr tcpInfo = Ice::TCPConnectionInfoPtr::dynamicCast(info);
+
+		std::stringstream port;
+		port << this->portNumber;
+
+		serverProxy->useServerConnectionInfoCallback(-1, "客户端 " + IPAddress + ":" + port.str() + ": 已断开");
 		//serverProxy->ice_getConnection()->close(true);//不确定
 		//this->ic->shutdown();
-		serverProxy->addClient(0);
+		Ice::Identity ident;
+		//this->ident.name = "";
+		//this->ident.category = "";
+		serverProxy->addClient(ident);
 
 		std::stringstream serverPort;
 		serverPort << this->serverPortNumber;

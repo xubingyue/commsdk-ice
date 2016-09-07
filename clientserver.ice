@@ -1,6 +1,8 @@
 #ifndef CLIENTSERVER_ICE
 #define CLIENTSERVER_ICE
 
+#include <Ice/Identity.ice>
+
 module UVSS {
 sequence<byte> ByteSeq;
 
@@ -26,7 +28,8 @@ interface Client {
 };
 
 interface Server {
-	void addClient(Client* clientProxy);
+	//void addClient(Client* clientProxy);
+	void addClient(Ice::Identity ident);
 	void shutdown();
 	
 	void useServerConnectionInfoCallback(int type, string clientConnectionInfo);

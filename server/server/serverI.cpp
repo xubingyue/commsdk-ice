@@ -1,7 +1,8 @@
 #include "serverI.h"
 
-void ServerI::addClient(const UVSS::ClientPrx& clientProxy, const Ice::Current&)
+void ServerI::addClient(const ::Ice::Identity& ident, const Ice::Current& curr)
 {
+	UVSS::ClientPrx clientProxy = UVSS::ClientPrx::uncheckedCast(curr.con->createProxy(ident));
 	this->clientProxy = clientProxy;
 }
 
