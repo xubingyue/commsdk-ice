@@ -3,7 +3,8 @@
 
 #include <clientserver.h>
 #include <fstream>
-#include <IceUtil/IceUtil.h>
+#include <map>
+#include <Ice/Ice.h>
 #include <Windows.h>
 
 typedef void (__stdcall *ClientConnectionInfoCallback)(int, int, const char*);
@@ -36,16 +37,14 @@ public:
 	virtual void run();
 	void destroy();
 
-	void setServerIPAddress(const std::string& = "127.0.0.1");
-	void setServerPortNumber(int = 20145);
+	int index;
 
-	const std::string& getServerIPAddress() const;
-	const int getServerPortNumber() const;
-	const UVSS::ServerPrx getServerProxy() const;
-	void setServerProxy(const UVSS::ServerPrx&);
+	typedef struct {
+		int index;
+		std::string endpoint;
+	} ID;
 
-	UVSS::ServerPrx serverProxy;
-	bool isConnected;
+	std::map<UVSS::ServerPrx, ID> serverProxyToID;
 
 private:
 	std::string clientUVSSImagePath;
@@ -60,12 +59,9 @@ private:
 	static ClientConnectionInfoCallback clientConnectionInfoCallback;
 	static ClientCheckInfoCallback clientCheckInfoCallback;
 
-	std::string serverIPAddress;
-	int serverPortNumber;
-
 	bool isDestroyed;
 };
 
-typedef IceInternal::Handle<ClientI> ClientIPtr;
+typedef IceUtil::Handle<ClientI> ClientIPtr;
 
 #endif

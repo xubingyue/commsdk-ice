@@ -14,7 +14,7 @@ public:
 	int init();
 	void uninit();
 
-	int connect(const std::string&, int);
+	int connect(const std::string& = "127.0.0.1", int = 20145);
 	int disconnect(int);
 
 	void setConnectionInfoCallback(ClientConnectionInfoCallback);
@@ -24,13 +24,10 @@ private:
 	Ice::CommunicatorPtr ic;
 	ClientIPtr client;
 
-	std::string IPAddress;
-	int portNumber;
-
-	//bool isConnected;
-
 	Ice::ObjectAdapterPtr adapter;
 	Ice::Identity ident;
+
+	static const std::string version;
 };
 
 typedef IceUtil::Handle<UVSSClient> UVSSClientPtr;

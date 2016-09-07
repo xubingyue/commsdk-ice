@@ -1,6 +1,8 @@
 #include "uvssclient.h"
 
-UVSSClient::UVSSClient(): ic(0), client(0)
+const std::string UVSSClient::version = "20160905";
+
+UVSSClient::UVSSClient()
 {
 }
 
@@ -14,9 +16,10 @@ int UVSSClient::init()
 		client = new ClientI;
 
 		Ice::PropertiesPtr props = Ice::createProperties();
-		props->setProperty("Ice.MessageSizeMax", "51200");
-		//props->setProperty("Ice.MessageSizeMax", "2097152");
 		//props->setProperty("Ice.Warn.Connections", "1");
+		//props->setProperty("Ice.MessageSizeMax", "51200");
+		props->setProperty("Ice.MessageSizeMax", "2097152");
+
 		props->setProperty("Ice.ACM.Client", "0");
 
 		Ice::InitializationData id;
@@ -61,54 +64,58 @@ void UVSSClient::uninit()
 			std::cerr << ex << std::endl;
 		}
 	}
-
-	if (this->client->isConnected) {
-		this->client->isConnected = false;
-	}
 }
 
 int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber)
 {
-	if (client->isConnected) {
-		return -2;
-	}
-
-	client->setServerIPAddress(serverIPAddress);
-	client->setServerPortNumber(serverPortNumber);
+	IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*client);
 
 	try {
 		std::stringstream serverPort;
 		serverPort << serverPortNumber;
+		std::string endpoint = serverIPAddress + ":" + serverPort.str();
+
+		for (std::map<UVSS::ServerPrx, ClientI::ID>::const_iterator it = client->serverProxyToID.begin(); it != client->serverProxyToID.end(); ++it) {
+			if (it->second.endpoint == endpoint) {
+				return -2;
+			}
+		}
+
 		Ice::ObjectPrx base = this->ic->stringToProxy("Server:tcp -h " + serverIPAddress + " -p " + serverPort.str())->ice_twoway()->ice_timeout(-1)->ice_secure(false);
 
-		//IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
-
-		client->serverProxy = UVSS::ServerPrx::checkedCast(base);
-		if (client->serverProxy == 0) {
-			std::cerr << "invalid proxy" << std::endl;
+		UVSS::ServerPrx serverProxy = UVSS::ServerPrx::checkedCast(base);
+		if (serverProxy == 0) {
 			throw "Invalid proxy";
-			//return -1;
 		}
-		client->serverProxy->ice_getConnection()->setAdapter(this->adapter);
-		client->serverProxy->addClient(ident);
 
-		Ice::ConnectionInfoPtr info = client->serverProxy->ice_getConnection()->getInfo();
+		if (!serverProxy->checkVersion(version)) {
+			return -3;
+		}
+
+		serverProxy->ice_getConnection()->setAdapter(this->adapter);
+		serverProxy->addClient(ident);
+
+		Ice::ConnectionInfoPtr info = serverProxy->ice_getConnection()->getInfo();
 		Ice::TCPConnectionInfoPtr tcpInfo = Ice::TCPConnectionInfoPtr::dynamicCast(info);
-		this->IPAddress = tcpInfo->localAddress;
-		this->portNumber = tcpInfo->localPort;
 
 		//if (tcpInfo) {
-		//	std::cout << "local address = " << tcpInfo->localAddress << ":"
-		//		<< tcpInfo->localPort << std::endl;
-		//	std::cout << "remote address = " << tcpInfo->remoteAddress << ":"
-		//		<< tcpInfo->remotePort << std::endl;
 		//}
 
+		std::string IPAddress = tcpInfo->localAddress;
+		int portNumber = tcpInfo->localPort;
+		
 		std::stringstream port;
-		port << this->portNumber;
+		port << portNumber;
+		serverProxy->useServerConnectionInfoCallback(0, "客户端 " + IPAddress + ":" + port.str() + ": 已连接");
 
-		client->serverProxy->useServerConnectionInfoCallback(0, "客户端 " + this->IPAddress + ":" + port.str() + ": 已连接");
-		client->useClientConnectionInfoCallback(1, 1, "服务器端 " + client->getServerIPAddress() + ":" + serverPort.str() + ": " + "已连接 | 连接标识: 1");
+		++client->index;
+
+		std::stringstream idx;
+		idx << client->index;
+		client->useClientConnectionInfoCallback(client->index, 1, "服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + idx.str());
+
+		client->serverProxyToID[serverProxy].index = client->index;
+		client->serverProxyToID[serverProxy].endpoint = endpoint;
 	} catch (const Ice::Exception& ex) {
 		std::cerr << ex << std::endl;
 		client->useClientConnectionInfoCallback(-1, -2, "连接失败");
@@ -118,27 +125,30 @@ int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber
 		client->useClientConnectionInfoCallback(-1, -2, "连接失败");
 		return -1;
 	}
-	client->isConnected = true;
-	return 1;
+	return client->index;
 }
 
 int UVSSClient::disconnect(int handle)
 {
-	if (!client->isConnected) {
-		return -1;
-	}
+	IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*client);
 
 	try {
-		client->serverProxy->ice_getConnection()->close(true);
-
-		std::stringstream serverPort;
-		serverPort << client->getServerPortNumber();
-		this->client->useClientConnectionInfoCallback(1, -3, "服务器端 " + client->getServerIPAddress() + ":" + serverPort.str() + ": " + "已断开 | 连接标识: 1");
+		for (std::map<UVSS::ServerPrx, ClientI::ID>::const_iterator it = client->serverProxyToID.begin(); it != client->serverProxyToID.end();) {
+			if (it->second.index == handle) {
+				it->first->ice_getConnection()->close(false);
+				std::stringstream idx;
+				idx << handle;
+				this->client->useClientConnectionInfoCallback(handle, -3, "服务器端 " + it->second.endpoint + ": " + "已断开 | 连接标识: " + idx.str());
+				client->serverProxyToID.erase(it++);
+				return 1;
+			} else {
+				++it;
+			}
+		}
+		return -1;
 	} catch(...) {
 		return -1;//断开失败, 以前的程序没有考虑
 	}
-	client->isConnected = false;
-	return 1;
 }
 
 void UVSSClient::setConnectionInfoCallback(ClientConnectionInfoCallback clientConnectionInfoCallback)

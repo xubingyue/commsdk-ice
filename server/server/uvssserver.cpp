@@ -1,6 +1,6 @@
 #include "uvssserver.h"
 
-UVSSServer::UVSSServer(): ic(0), server(0), portNumber(20145)
+UVSSServer::UVSSServer(): portNumber(20145)
 {
 }
 
@@ -19,9 +19,9 @@ int UVSSServer::init()
 		server = new ServerI;
 
 		Ice::PropertiesPtr props = Ice::createProperties();
-		props->setProperty("Ice.MessageSizeMax", "51200");
-		//props->setProperty("Ice.MessageSizeMax", "2097152");
 		//props->setProperty("Ice.Warn.Connections", "1");
+		//props->setProperty("Ice.MessageSizeMax", "51200");
+		props->setProperty("Ice.MessageSizeMax", "2097152");
 
 		Ice::InitializationData id;
 		id.properties = props;
@@ -30,7 +30,6 @@ int UVSSServer::init()
 
 		std::stringstream port;
 		port << this->portNumber;
-		//Ice::ObjectAdapterPtr adapter = this->ic->createObjectAdapterWithEndpoints("UVSS.Server", "tcp -h " + this->IPAddress + " -p " + port.str());
 		Ice::ObjectAdapterPtr adapter = this->ic->createObjectAdapterWithEndpoints("UVSS.Server", "tcp -p " + port.str());
 		adapter->add(server, this->ic->stringToIdentity("Server"));
 		adapter->activate();

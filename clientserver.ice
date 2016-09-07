@@ -28,6 +28,8 @@ interface Server {
 	void addClient(Ice::Identity ident);
 	void useServerConnectionInfoCallback(int type, string clientConnectionInfo);
 	void heartBeat();
+
+	bool checkVersion(string ver);
 };
 };
 

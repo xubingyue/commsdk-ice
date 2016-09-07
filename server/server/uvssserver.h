@@ -10,7 +10,7 @@ public:
 	UVSSServer();
 	~UVSSServer();
 
-	void setPortNumber(int = 20145);
+	void setPortNumber(int);
 
 	int init();
 	void uninit();

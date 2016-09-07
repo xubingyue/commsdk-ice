@@ -17,6 +17,7 @@ public:
 	virtual void addClient(const ::Ice::Identity&, const Ice::Current& = Ice::Current());
 	virtual void useServerConnectionInfoCallback(Ice::Int, const std::string&, const Ice::Current& = Ice::Current());
 	virtual void heartBeat(const Ice::Current& = Ice::Current());
+	virtual bool checkVersion(const std::string&, const Ice::Current& = Ice::Current());
 
 	ServerI();
 
@@ -35,8 +36,6 @@ public:
 
 	static void setServerConnectionInfoCallback(ServerConnectionInfoCallback);
 
-	void sendUVSSImagePath(const std::string&);
-	void sendPlateImagePath(const std::string&);
 	void sendCheckInfo(const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&);
 
 	const std::string createFileName(const std::string& = "", const std::string& = "", const std::string& = "jpg");
@@ -46,13 +45,15 @@ public:
 
 private:
 	UVSS::ClientPrx clientProxy;
-	std::set<UVSS::ClientPrx> clientProxies;
+	std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
+
 	static ServerConnectionInfoCallback serverConnectionInfoCallback;
 
-	std::map<Ice::Identity, std::string> identityToEndpoint;
 	bool isDestroyed;
+
+	static const std::string version;
 };
 
-typedef IceInternal::Handle<ServerI> ServerIPtr;
+typedef IceUtil::Handle<ServerI> ServerIPtr;
 
 #endif

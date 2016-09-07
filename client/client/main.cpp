@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+
 #include "uvssclientsdk.h"
 extern "C" {
 #include "clientcheckinfocallback.h"
@@ -10,6 +14,8 @@ void menu();
 
 int main(int argc, char* argv[])
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	if (argc > 1) {
 		std::cerr << "too many arguments" << std::endl;
 		return 1;
@@ -20,8 +26,8 @@ int main(int argc, char* argv[])
 
 	menu();
 
-	std::string ip = "127.0.0.1";
-	int port = 20145;
+	//std::string ip = "127.0.0.1";
+	//int port = 20145;
 
 	int key;
 	do {
@@ -40,19 +46,28 @@ int main(int argc, char* argv[])
 				UVSSUninitialize();
 				break;
 			case 2:
-				std::cout << "server IP:" << std::endl;
-				std::cin >> ip;
+				{
+					std::cout << "server IP:" << std::endl;
+					std::string ip;
+					//std::cin >> ip;
+					//ip = "127.0.0.1";
+					ip = "192.168.1.9";
+					std::cout << ip << std::endl;
+
+					std::cout << "server port:" << std::endl;
+					int port;
+					std::cin >> port;
+
+					UVSSConnect(ip.c_str(), port);
+				}
 				break;
-			case 3:
-				std::cout << "server port:" << std::endl;
-				std::cin >> port;
-				break;
-			case 4:
-				UVSSConnect(ip.c_str(), port);
-				//UVSSConnect("127.0.0.1", 20145);
-				break;
-			case -4:
-				UVSSDisconnect(1);
+			case -2:
+				{
+					std::cout << "server index:" << std::endl;
+					int index;
+					std::cin >> index;
+					UVSSDisconnect(index);
+				}
 				break;
 			case 9:
 				break;
@@ -71,9 +86,7 @@ void menu()
 		"0: help\n"
 		"1: init\n"
 		"-1: uninit\n"
-		"2: set server IP\n"
-		"3: set server port\n"
-		"4: connect\n"
-		"-4: disconnect\n"
+		"2: connect\n"
+		"-2: disconnect\n"
 		"9: exit\n";
 }
