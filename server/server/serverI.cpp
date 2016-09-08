@@ -146,18 +146,19 @@ void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string&
 
 const std::string ServerI::createFileName(const std::string& prefix, const std::string& suffix, const std::string& extension)
 {
-	SYSTEMTIME systemTime;
-	GetLocalTime(&systemTime);
-	std::stringstream fileName;
+	auto now = std::chrono::system_clock::now();
 
-	fileName << prefix << systemTime.wYear
-		<< std::setw(2) << std::setfill('0') << systemTime.wMonth
-		<< std::setw(2) << std::setfill('0') << systemTime.wDay
-		<< std::setw(2) << std::setfill('0') << systemTime.wHour
-		<< std::setw(2) << std::setfill('0') << systemTime.wMinute
-		<< std::setw(2) << std::setfill('0') << systemTime.wSecond
-		<< std::setw(3) << std::setfill('0') << systemTime.wMilliseconds
-		<< suffix << "." << extension;
+	std::time_t timer = std::chrono::system_clock::to_time_t(now);
+	std::tm timeInfo = *std::localtime(&timer);
+
+	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+	auto s = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
+	auto msPart = ms - s;
+
+	std::stringstream fileName;
+	fileName << prefix << std::put_time(&timeInfo, "%Y%m%d%H%M%S")
+		<< std::setw(3) << std::setfill('0') << msPart.count()
+		<< suffix << '.' << extension;
 
 	return fileName.str();
 }

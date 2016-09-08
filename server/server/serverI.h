@@ -3,12 +3,13 @@
 
 #include <clientserver.h>
 #include <fstream>
+#include <sstream>
 #include <iomanip>
 #include <set>
 #include <map>
+#include <chrono>
+#include <ctime>
 #include <Ice/Ice.h>
-#include <IceUtil/IceUtil.h>
-#include <Windows.h>
 
 typedef void (__stdcall *ServerConnectionInfoCallback)(int, const char*);
 
