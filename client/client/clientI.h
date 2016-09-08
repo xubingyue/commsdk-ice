@@ -4,8 +4,8 @@
 #include <clientserver.h>
 #include <fstream>
 #include <map>
+#include <filesystem>
 #include <Ice/Ice.h>
-#include <Windows.h>
 
 typedef void (__stdcall *ClientConnectionInfoCallback)(int, int, const char*);
 typedef void (__stdcall *ClientCheckInfoCallback)(int, const char*, const char*, const char*, const char*, const char*, const char*, const char*);

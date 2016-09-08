@@ -3,7 +3,6 @@
 
 #include "clientI.h"
 #include <sstream>
-#include <Ice/Ice.h>
 #include <IceUtil/IceUtil.h>
 
 class UVSSClient : public IceUtil::Shared {

@@ -52,9 +52,11 @@ void ClientI::writeClientExtension(const std::string& serverExtension, const Ice
 
 void ClientI::createClientImageDirectory(const std::string& clientImageDirectory, const Ice::Current&)
 {
-	WIN32_FIND_DATA findData;
-	if (FindFirstFile(clientImageDirectory.c_str(), &findData) == INVALID_HANDLE_VALUE) {
-		CreateDirectory(clientImageDirectory.c_str(), NULL);
+	std::tr2::sys::path p(clientImageDirectory);
+	if (std::tr2::sys::exists(p)) {
+		return;
+	} else {
+		std::tr2::sys::create_directory(p);
 	}
 }
 
@@ -71,13 +73,10 @@ void ClientI::useClientCheckInfoCallback(const Ice::Current& curr)
 					if (it->second.endpoint == endpoint.str()) {
 						int index = it->second.index;
 
-						char temp[MAX_PATH];
-						GetModuleFileName(NULL, temp, MAX_PATH);
-						std::string configFilePath = temp;
-						configFilePath = configFilePath.substr(0, configFilePath.find_last_of('\\'));
-						configFilePath += "\\";
+						std::tr2::sys::path p = std::tr2::sys::current_path<std::tr2::sys::path>();
+						std::string filePath = p.directory_string() + "\\";
 
-						this->clientCheckInfoCallback(index, (configFilePath + this->clientUVSSImagePath).c_str(), (configFilePath + this->clientPlateImagePath).c_str(), this->clientChannel.c_str(), this->clientPlateNumber.c_str(), this->clientDirection.c_str(), this->clientCheckDateTime.c_str(), this->clientExtension.c_str());
+						this->clientCheckInfoCallback(index, (filePath + this->clientUVSSImagePath).c_str(), (filePath + this->clientPlateImagePath).c_str(), this->clientChannel.c_str(), this->clientPlateNumber.c_str(), this->clientDirection.c_str(), this->clientCheckDateTime.c_str(), this->clientExtension.c_str());
 						break;
 					}
 				}

@@ -3,7 +3,6 @@
 
 #include "serverI.h"
 #include <sstream>
-#include <IceUtil/IceUtil.h>
 
 class UVSSServer : virtual public IceUtil::Shared {
 public:
