@@ -67,16 +67,6 @@ void ServerI::sendServerPlateImagePath(const std::string& serverPlateImagePath, 
 	this->clientProxy->writeClientPlateImagePath(clientPlateImagePath, serverPlateImage);
 }
 
-void ServerI::sendServerUVSSImageRelativePath(const std::string& serverUVSSImageRelativePath)
-{
-	this->clientProxy->writeClientUVSSImageRelativePath(serverUVSSImageRelativePath);
-}
-
-void ServerI::sendServerPlateImageRelativePath(const std::string& serverPlateImageRelativePath)
-{
-	this->clientProxy->writeClientPlateImageRelativePath(serverPlateImageRelativePath);
-}
-
 void ServerI::sendServerChannel(const std::string& serverChannel)
 {
 	this->clientProxy->writeClientChannel(serverChannel);
@@ -121,10 +111,7 @@ void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string&
 			this->clientProxy->createClientImageDirectory("UVSS");
 
 			sendServerUVSSImagePath(UVSSImagePath, UVSSImageRelativePath);
-			sendServerUVSSImageRelativePath(UVSSImageRelativePath);
 			sendServerPlateImagePath(plateImagePath, plateImageRelativePath);
-			sendServerPlateImageRelativePath(plateImageRelativePath);
-
 			sendServerChannel(channel);
 			sendServerPlateNumber(plateNumber);
 			sendServerDirection(direction);

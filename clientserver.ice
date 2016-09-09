@@ -10,9 +10,6 @@ interface Client {
 	void writeClientUVSSImagePath(string clientUVSSImagePath, ByteSeq serverUVSSImage);
 	void writeClientPlateImagePath(string clientPlateImagePath, ByteSeq serverPlateImage);
 	
-	void writeClientUVSSImageRelativePath(string serverUVSSImageRelativePath);
-	void writeClientPlateImageRelativePath(string serverPlateImageRelativePath);
-	
 	void writeClientChannel(string serverChannel);
 	void writeClientPlateNumber(string serverPlateNumber);
 	void writeClientDirection(string serverDirection);

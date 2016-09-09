@@ -27,8 +27,6 @@ public:
 	void sendServerUVSSImagePath(const std::string&, const std::string&);
 	void sendServerPlateImagePath(const std::string&, const std::string&);
 
-	void sendServerUVSSImageRelativePath(const std::string&);
-	void sendServerPlateImageRelativePath(const std::string&);
 	void sendServerChannel(const std::string&);
 	void sendServerPlateNumber(const std::string&);
 	void sendServerDirection(const std::string&);

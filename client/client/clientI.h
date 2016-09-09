@@ -15,9 +15,6 @@ public:
 	virtual void writeClientUVSSImagePath(const std::string&, const UVSS::ByteSeq&, const Ice::Current& = Ice::Current());
 	virtual void writeClientPlateImagePath(const std::string&, const UVSS::ByteSeq&, const Ice::Current& = Ice::Current());
 
-	virtual void writeClientUVSSImageRelativePath(const std::string&, const Ice::Current& = Ice::Current());
-	virtual void writeClientPlateImageRelativePath(const std::string&, const Ice::Current& = Ice::Current());
-
 	virtual void writeClientChannel(const std::string&, const Ice::Current& = Ice::Current());
 	virtual void writeClientPlateNumber(const std::string&, const Ice::Current& = Ice::Current());
 	virtual void writeClientDirection(const std::string&, const Ice::Current& = Ice::Current());

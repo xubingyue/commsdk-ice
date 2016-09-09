@@ -7,22 +7,16 @@ void ClientI::writeClientUVSSImagePath(const std::string& clientUVSSImagePath, c
 {
 	std::ofstream ofs(clientUVSSImagePath, std::ios::binary);
 	ofs.write((char*)&serverUVSSImage[0], serverUVSSImage.size());
+
+	this->clientUVSSImagePath = clientUVSSImagePath;
 }
 
 void ClientI::writeClientPlateImagePath(const std::string& clientPlateImagePath, const UVSS::ByteSeq& serverPlateImage, const Ice::Current&)
 {
 	std::ofstream ofs(clientPlateImagePath, std::ios::binary);
 	ofs.write((char*)&serverPlateImage[0], serverPlateImage.size());
-}
 
-void ClientI::writeClientUVSSImageRelativePath(const std::string& serverUVSSImageRelativePath, const Ice::Current&)
-{
-	this->clientUVSSImagePath = serverUVSSImageRelativePath;
-}
-
-void ClientI::writeClientPlateImageRelativePath(const std::string& serverPlateImageRelativePath, const Ice::Current&)
-{
-	this->clientPlateImagePath = serverPlateImageRelativePath;
+	this->clientPlateImagePath = clientPlateImagePath;
 }
 
 void ClientI::writeClientChannel(const std::string& serverChannel, const Ice::Current&)
