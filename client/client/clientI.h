@@ -25,14 +25,13 @@ public:
 		const Ice::Current& = Ice::Current()
 		);
 
-	virtual void createClientImageDirectory(const std::string&, const Ice::Current& = Ice::Current());
-	virtual void useClientCheckInfoCallback(const Ice::Current& = Ice::Current());
-	virtual void heartBeat(const Ice::Current& = Ice::Current());
+	static void setClientConnectionInfoCallback(ClientConnectionInfoCallback);
+	static void setClientCheckInfoCallback(ClientCheckInfoCallback);
 
 	ClientI();
 
-	static void setClientConnectionInfoCallback(ClientConnectionInfoCallback);
-	static void setClientCheckInfoCallback(ClientCheckInfoCallback);
+	void createClientImageDirectory(const std::string&);
+	virtual void heartBeat(const Ice::Current& = Ice::Current());
 	void useClientConnectionInfoCallback(int, int, const std::string&);
 
 	virtual void run();

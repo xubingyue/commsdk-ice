@@ -13,8 +13,11 @@ void ClientI::writeCheckInfo(
 	const std::string& serverDirection,
 	const std::string& serverCheckDateTime,
 	const std::string& serverExtension,
-	const Ice::Current&
+	const Ice::Current& curr
 	) {
+
+	createClientImageDirectory("UVSS");
+
 	std::ofstream ofs1(clientUVSSImagePath, std::ios::binary);
 	ofs1.write((char*)&serverUVSSImage[0], serverUVSSImage.size());
 	
@@ -28,20 +31,7 @@ void ClientI::writeCheckInfo(
 	this->clientDirection = serverDirection;
 	this->clientCheckDateTime = serverCheckDateTime;
 	this->clientExtension = serverExtension;
-}
 
-void ClientI::createClientImageDirectory(const std::string& clientImageDirectory, const Ice::Current&)
-{
-	std::tr2::sys::path p(clientImageDirectory);
-	if (std::tr2::sys::exists(p)) {
-		return;
-	} else {
-		std::tr2::sys::create_directory(p);
-	}
-}
-
-void ClientI::useClientCheckInfoCallback(const Ice::Current& curr)
-{
 	if (this->clientCheckInfoCallback != 0) {
 		if (curr.con != 0) {
 			Ice::ConnectionInfoPtr info = curr.con->getInfo();
@@ -62,6 +52,16 @@ void ClientI::useClientCheckInfoCallback(const Ice::Current& curr)
 				}
 			}
 		}
+	}
+}
+
+void ClientI::createClientImageDirectory(const std::string& clientImageDirectory)
+{
+	std::tr2::sys::path p(clientImageDirectory);
+	if (std::tr2::sys::exists(p)) {
+		return;
+	} else {
+		std::tr2::sys::create_directory(p);
 	}
 }
 

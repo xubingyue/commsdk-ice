@@ -70,8 +70,6 @@ void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string&
 		try {
 			this->clientProxy = it->first;
 
-			this->clientProxy->createClientImageDirectory("UVSS");
-
 			UVSS::ByteSeq serverUVSSImage;
 			filePathToBinary(UVSSImagePath, serverUVSSImage);
 
@@ -89,9 +87,6 @@ void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string&
 				checkDateTime,
 				extension
 				);
-
-			this->clientProxy->useClientCheckInfoCallback();
-
 		}
 		catch (const Ice::Exception& ex) {
 			//it = clientProxyToEndpoint.erase(it);

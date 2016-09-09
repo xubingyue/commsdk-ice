@@ -17,8 +17,8 @@ interface Client {
 		string serverExtension
 		);
 
-	void createClientImageDirectory(string clientImageDirectory);
-	void useClientCheckInfoCallback();
+	//void createClientImageDirectory(string clientImageDirectory);
+	//void useClientCheckInfoCallback();
 
 	void heartBeat();
 };
