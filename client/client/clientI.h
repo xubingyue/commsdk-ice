@@ -12,14 +12,18 @@ typedef void (__stdcall *ClientCheckInfoCallback)(int, const char*, const char*,
 
 class ClientI : virtual public UVSS::Client, virtual public IceUtil::Thread, virtual public IceUtil::Monitor<IceUtil::Mutex> {
 public:
-	virtual void writeClientUVSSImagePath(const std::string&, const UVSS::ByteSeq&, const Ice::Current& = Ice::Current());
-	virtual void writeClientPlateImagePath(const std::string&, const UVSS::ByteSeq&, const Ice::Current& = Ice::Current());
-
-	virtual void writeClientChannel(const std::string&, const Ice::Current& = Ice::Current());
-	virtual void writeClientPlateNumber(const std::string&, const Ice::Current& = Ice::Current());
-	virtual void writeClientDirection(const std::string&, const Ice::Current& = Ice::Current());
-	virtual void writeClientCheckDateTime(const std::string&, const Ice::Current& = Ice::Current());
-	virtual void writeClientExtension(const std::string&, const Ice::Current& = Ice::Current());
+	virtual void writeCheckInfo(
+		const std::string&,
+		const UVSS::ByteSeq&,
+		const std::string&,
+		const UVSS::ByteSeq&,
+		const std::string&,
+		const std::string&,
+		const std::string&,
+		const std::string&,
+		const std::string&,
+		const Ice::Current& = Ice::Current()
+		);
 
 	virtual void createClientImageDirectory(const std::string&, const Ice::Current& = Ice::Current());
 	virtual void useClientCheckInfoCallback(const Ice::Current& = Ice::Current());

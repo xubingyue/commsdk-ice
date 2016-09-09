@@ -20,24 +20,14 @@ public:
 	virtual void heartBeat(const Ice::Current& = Ice::Current());
 	virtual bool checkVersion(const std::string&, const Ice::Current& = Ice::Current());
 
+	static void setServerConnectionInfoCallback(ServerConnectionInfoCallback);
+
 	ServerI();
 
 	void filePathToBinary(const std::string&, UVSS::ByteSeq&);
-
-	void sendServerUVSSImagePath(const std::string&, const std::string&);
-	void sendServerPlateImagePath(const std::string&, const std::string&);
-
-	void sendServerChannel(const std::string&);
-	void sendServerPlateNumber(const std::string&);
-	void sendServerDirection(const std::string&);
-	void sendServerCheckDateTime(const std::string&);
-	void sendServerExtension(const std::string&);
-
-	static void setServerConnectionInfoCallback(ServerConnectionInfoCallback);
-
+	const std::string createFileName(const std::string& = "", const std::string& = "", const std::string& = "jpg");
 	void sendCheckInfo(const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&);
 
-	const std::string createFileName(const std::string& = "", const std::string& = "", const std::string& = "jpg");
 
 	virtual void run();
 	void destroy();

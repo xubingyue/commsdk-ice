@@ -7,17 +7,19 @@ module UVSS {
 sequence<byte> ByteSeq;
 
 interface Client {
-	void writeClientUVSSImagePath(string clientUVSSImagePath, ByteSeq serverUVSSImage);
-	void writeClientPlateImagePath(string clientPlateImagePath, ByteSeq serverPlateImage);
-	
-	void writeClientChannel(string serverChannel);
-	void writeClientPlateNumber(string serverPlateNumber);
-	void writeClientDirection(string serverDirection);
-	void writeClientCheckDateTime(string serverCheckDateTime);
-	void writeClientExtension(string serverExtension);
-	
+	void writeCheckInfo(
+		string clientUVSSImagePath, ByteSeq serverUVSSImage,
+		string clientPlateImagePath, ByteSeq serverPlateImage,
+		string serverChannel,
+		string serverPlateNumber,
+		string serverDirection,
+		string serverCheckDateTime,
+		string serverExtension
+		);
+
 	void createClientImageDirectory(string clientImageDirectory);
 	void useClientCheckInfoCallback();
+
 	void heartBeat();
 };
 

@@ -38,7 +38,7 @@ bool ServerI::checkVersion(const std::string& version, const Ice::Current&)
 	return this->version == version;
 }
 
-ServerI::ServerI(): isDestroyed(false)
+ServerI::ServerI() : isDestroyed(false)
 {
 }
 
@@ -51,45 +51,6 @@ void ServerI::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
 
 	file.resize(fileSize);
 	ifs.read((char*)&file[0], fileSize);
-}
-
-void ServerI::sendServerUVSSImagePath(const std::string& serverUVSSImagePath, const std::string& clientUVSSImagePath)
-{
-	UVSS::ByteSeq serverUVSSImage;
-	filePathToBinary(serverUVSSImagePath, serverUVSSImage);
-	this->clientProxy->writeClientUVSSImagePath(clientUVSSImagePath, serverUVSSImage);
-}
-
-void ServerI::sendServerPlateImagePath(const std::string& serverPlateImagePath, const std::string& clientPlateImagePath)
-{
-	UVSS::ByteSeq serverPlateImage;
-	filePathToBinary(serverPlateImagePath, serverPlateImage);
-	this->clientProxy->writeClientPlateImagePath(clientPlateImagePath, serverPlateImage);
-}
-
-void ServerI::sendServerChannel(const std::string& serverChannel)
-{
-	this->clientProxy->writeClientChannel(serverChannel);
-}
-
-void ServerI::sendServerPlateNumber(const std::string& serverPlateNumber)
-{
-	this->clientProxy->writeClientPlateNumber(serverPlateNumber);
-}
-
-void ServerI::sendServerDirection(const std::string& serverDirection)
-{
-	this->clientProxy->writeClientDirection(serverDirection);
-}
-
-void ServerI::sendServerCheckDateTime(const std::string& serverCheckDateTime)
-{
-	this->clientProxy->writeClientCheckDateTime(serverCheckDateTime);
-}
-
-void ServerI::sendServerExtension(const std::string& serverExtension)
-{
-	this->clientProxy->writeClientExtension(serverExtension);
 }
 
 void ServerI::setServerConnectionInfoCallback(ServerConnectionInfoCallback serverConnectionInfoCallback)
@@ -108,25 +69,37 @@ void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string&
 	for (std::map<UVSS::ClientPrx, std::string>::const_iterator it = clientProxyToEndpoint.begin(); it != clientProxyToEndpoint.end();) {
 		try {
 			this->clientProxy = it->first;
+
 			this->clientProxy->createClientImageDirectory("UVSS");
 
-			sendServerUVSSImagePath(UVSSImagePath, UVSSImageRelativePath);
-			sendServerPlateImagePath(plateImagePath, plateImageRelativePath);
-			sendServerChannel(channel);
-			sendServerPlateNumber(plateNumber);
-			sendServerDirection(direction);
-			sendServerCheckDateTime(checkDateTime);
-			sendServerExtension(extension);
+			UVSS::ByteSeq serverUVSSImage;
+			filePathToBinary(UVSSImagePath, serverUVSSImage);
+
+			UVSS::ByteSeq serverPlateImage;
+			filePathToBinary(plateImagePath, serverPlateImage);
+
+			this->clientProxy->writeCheckInfo(
+				UVSSImageRelativePath,
+				serverUVSSImage,
+				plateImageRelativePath,
+				serverPlateImage,
+				channel,
+				plateNumber,
+				direction,
+				checkDateTime,
+				extension
+				);
 
 			this->clientProxy->useClientCheckInfoCallback();
 
-		} catch (const Ice::Exception& ex) {
+		}
+		catch (const Ice::Exception& ex) {
 			//it = clientProxyToEndpoint.erase(it);
 			std::cerr << ex << std::endl;
 			++it;
 			continue;
 		}
-		
+
 		++it;
 	}
 }
@@ -150,7 +123,7 @@ const std::string ServerI::createFileName(const std::string& prefix, const std::
 	return fileName.str();
 }
 
-void ServerI:: run()
+void ServerI::run()
 {
 	while (true) {
 		std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
@@ -171,7 +144,8 @@ void ServerI:: run()
 					it->first->heartBeat();
 					//std::cout << it->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
 					//std::cout << it->first->ice_getCommunicator()->identityToString(it->first->ice_getIdentity()) << std::endl;
-				} catch (...) {
+				}
+				catch (...) {
 					IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
 					//Ice::Identity ident = it->first->ice_getIdentity();
 
@@ -179,7 +153,8 @@ void ServerI:: run()
 						std::string endpoint = this->clientProxyToEndpoint[it->first];
 						useServerConnectionInfoCallback(-1, std::string("客户端 " + endpoint + ": 已断开").c_str());
 						this->clientProxyToEndpoint.erase(it->first);
-					} else {
+					}
+					else {
 						return;
 					}
 				}
