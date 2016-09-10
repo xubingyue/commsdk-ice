@@ -4,17 +4,14 @@ ClientConnectionInfoCallback ClientI::clientConnectionInfoCallback = 0;
 ClientCheckInfoCallback ClientI::clientCheckInfoCallback = 0;
 
 void ClientI::writeCheckInfo(
-	const std::string& clientUVSSImagePath,
-	const UVSS::ByteSeq& serverUVSSImage,
-	const std::string& clientPlateImagePath,
-	const UVSS::ByteSeq& serverPlateImage,
+	const std::string& clientUVSSImagePath, const UVSS::ByteSeq& serverUVSSImage,
+	const std::string& clientPlateImagePath, const UVSS::ByteSeq& serverPlateImage,
 	const std::string& serverChannel,
 	const std::string& serverPlateNumber,
 	const std::string& serverDirection,
 	const std::string& serverCheckDateTime,
 	const std::string& serverExtension,
-	const Ice::Current& curr
-	) {
+	const Ice::Current& curr) {
 
 	createClientImageDirectory("UVSS");
 
@@ -24,16 +21,9 @@ void ClientI::writeCheckInfo(
 	std::ofstream ofs2(clientPlateImagePath, std::ios::binary);
 	ofs2.write((char*)&serverPlateImage[0], serverPlateImage.size());
 
-	this->clientUVSSImagePath = clientUVSSImagePath;
-	this->clientPlateImagePath = clientPlateImagePath;
-	this->clientChannel = serverChannel;
-	this->clientPlateNumber = serverPlateNumber;
-	this->clientDirection = serverDirection;
-	this->clientCheckDateTime = serverCheckDateTime;
-	this->clientExtension = serverExtension;
-
 	if (this->clientCheckInfoCallback != 0) {
 		if (curr.con != 0) {
+			//std::cout << curr.con->getEndpoint()->toString();
 			Ice::ConnectionInfoPtr info = curr.con->getInfo();
 			Ice::TCPConnectionInfoPtr tcpInfo = Ice::TCPConnectionInfoPtr::dynamicCast(info);
 			if (tcpInfo != 0) {
@@ -46,7 +36,7 @@ void ClientI::writeCheckInfo(
 						std::tr2::sys::path p = std::tr2::sys::current_path<std::tr2::sys::path>();
 						std::string filePath = p.directory_string() + "\\";
 
-						this->clientCheckInfoCallback(index, (filePath + this->clientUVSSImagePath).c_str(), (filePath + this->clientPlateImagePath).c_str(), this->clientChannel.c_str(), this->clientPlateNumber.c_str(), this->clientDirection.c_str(), this->clientCheckDateTime.c_str(), this->clientExtension.c_str());
+						this->clientCheckInfoCallback(index, (filePath + clientUVSSImagePath).c_str(), (filePath + clientPlateImagePath).c_str(), serverChannel.c_str(), serverPlateNumber.c_str(), serverDirection.c_str(), serverCheckDateTime.c_str(), serverExtension.c_str());
 						break;
 					}
 				}

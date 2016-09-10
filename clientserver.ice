@@ -14,11 +14,7 @@ interface Client {
 		string serverPlateNumber,
 		string serverDirection,
 		string serverCheckDateTime,
-		string serverExtension
-		);
-
-	//void createClientImageDirectory(string clientImageDirectory);
-	//void useClientCheckInfoCallback();
+		string serverExtension);
 
 	void heartBeat();
 };

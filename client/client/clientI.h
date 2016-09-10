@@ -13,17 +13,14 @@ typedef void (__stdcall *ClientCheckInfoCallback)(int, const char*, const char*,
 class ClientI : virtual public UVSS::Client, virtual public IceUtil::Thread, virtual public IceUtil::Monitor<IceUtil::Mutex> {
 public:
 	virtual void writeCheckInfo(
-		const std::string&,
-		const UVSS::ByteSeq&,
-		const std::string&,
-		const UVSS::ByteSeq&,
+		const std::string&, const UVSS::ByteSeq&,
+		const std::string&, const UVSS::ByteSeq&,
 		const std::string&,
 		const std::string&,
 		const std::string&,
 		const std::string&,
 		const std::string&,
-		const Ice::Current& = Ice::Current()
-		);
+		const Ice::Current& = Ice::Current());
 
 	static void setClientConnectionInfoCallback(ClientConnectionInfoCallback);
 	static void setClientCheckInfoCallback(ClientCheckInfoCallback);
@@ -47,15 +44,6 @@ public:
 	std::map<UVSS::ServerPrx, ID> serverProxyToID;
 
 private:
-	std::string clientUVSSImagePath;
-	std::string clientPlateImagePath;
-
-	std::string clientChannel;
-	std::string clientPlateNumber;
-	std::string clientDirection;
-	std::string clientCheckDateTime;
-	std::string clientExtension;
-
 	static ClientConnectionInfoCallback clientConnectionInfoCallback;
 	static ClientCheckInfoCallback clientCheckInfoCallback;
 
