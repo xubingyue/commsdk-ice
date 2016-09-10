@@ -75,8 +75,8 @@ int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber
 		serverPort << serverPortNumber;
 		std::string endpoint = serverIPAddress + ":" + serverPort.str();
 
-		for (std::map<UVSS::ServerPrx, ClientI::ID>::const_iterator it = client->serverProxyToID.begin(); it != client->serverProxyToID.end(); ++it) {
-			if (it->second.endpoint == endpoint) {
+		for (std::map<UVSS::ServerPrx, std::string>::const_iterator it = client->serverProxyToEndpoint.begin(); it != client->serverProxyToEndpoint.end(); ++it) {
+			if (it->second == endpoint) {
 				return -2;
 			}
 		}
@@ -114,8 +114,8 @@ int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber
 		idx << client->index;
 		client->useClientConnectionInfoCallback(client->index, 1, "服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + idx.str());
 
-		client->serverProxyToID[serverProxy].index = client->index;
-		client->serverProxyToID[serverProxy].endpoint = endpoint;
+		client->endpointToIndex[endpoint] = client->index;
+		client->serverProxyToEndpoint[serverProxy] = endpoint;
 	} catch (const Ice::Exception& ex) {
 		std::cerr << ex << std::endl;
 		client->useClientConnectionInfoCallback(-1, -2, "连接失败");
@@ -128,25 +128,37 @@ int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber
 	return client->index;
 }
 
-int UVSSClient::disconnect(int handle)
+int UVSSClient::disconnect(int index)
 {
 	IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*client);
 
 	try {
-		for (std::map<UVSS::ServerPrx, ClientI::ID>::const_iterator it = client->serverProxyToID.begin(); it != client->serverProxyToID.end();) {
-			if (it->second.index == handle) {
-				it->first->ice_getConnection()->close(false);
-				std::stringstream idx;
-				idx << handle;
-				this->client->useClientConnectionInfoCallback(handle, -3, "服务器端 " + it->second.endpoint + ": " + "已断开 | 连接标识: " + idx.str());
-				client->serverProxyToID.erase(it++);
-				return 1;
-			} else {
-				++it;
+		for (std::map<std::string, int>::const_iterator it1 = client->endpointToIndex.begin(); it1 != client->endpointToIndex.end();) {
+			if (it1->second == index) {
+				std::string endpoint = it1->first;
+				for (std::map<UVSS::ServerPrx, std::string>::const_iterator it2 = client->serverProxyToEndpoint.begin(); it2 != client->serverProxyToEndpoint.end();) {
+					if (it2->second == endpoint) {
+						it2->first->ice_getConnection()->close(false);
+						std::stringstream idx;
+						idx << index;
+						this->client->useClientConnectionInfoCallback(index, -3, "服务器端 " + endpoint + ": " + "已断开 | 连接标识: " + idx.str());
+						client->serverProxyToEndpoint.erase(it2);//无须it2++
+						client->endpointToIndex.erase(it1);
+						return 1;
+					}
+					else {
+						++it2;
+					}
+				}
+				return -1;//可以省略
+			}
+			else {
+				++it1;
 			}
 		}
 		return -1;
-	} catch(...) {
+	}
+	catch (...) {
 		return -1;//断开失败, 以前的程序没有考虑
 	}
 }

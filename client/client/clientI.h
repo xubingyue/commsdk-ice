@@ -36,12 +36,8 @@ public:
 
 	int index;
 
-	typedef struct {
-		int index;
-		std::string endpoint;
-	} ID;
-
-	std::map<UVSS::ServerPrx, ID> serverProxyToID;
+	std::map<UVSS::ServerPrx, std::string> serverProxyToEndpoint;
+	std::map<std::string, int> endpointToIndex;
 
 private:
 	static ClientConnectionInfoCallback clientConnectionInfoCallback;

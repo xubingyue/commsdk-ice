@@ -17,7 +17,7 @@ void ClientI::writeCheckInfo(
 
 	std::ofstream ofs1(clientUVSSImagePath, std::ios::binary);
 	ofs1.write((char*)&serverUVSSImage[0], serverUVSSImage.size());
-	
+
 	std::ofstream ofs2(clientPlateImagePath, std::ios::binary);
 	ofs2.write((char*)&serverPlateImage[0], serverPlateImage.size());
 
@@ -29,17 +29,12 @@ void ClientI::writeCheckInfo(
 			if (tcpInfo != 0) {
 				std::stringstream endpoint;
 				endpoint << tcpInfo->remoteAddress << ":" << tcpInfo->remotePort;
-				for (std::map<UVSS::ServerPrx, ID>::const_iterator it = serverProxyToID.begin(); it != serverProxyToID.end(); ++it) {
-					if (it->second.endpoint == endpoint.str()) {
-						int index = it->second.index;
+				int index = endpointToIndex[endpoint.str()];
 
-						std::tr2::sys::path p = std::tr2::sys::current_path<std::tr2::sys::path>();
-						std::string filePath = p.directory_string() + "\\";
+				std::tr2::sys::path p = std::tr2::sys::current_path<std::tr2::sys::path>();
+				std::string exePath = p.directory_string() + "\\";
 
-						this->clientCheckInfoCallback(index, (filePath + clientUVSSImagePath).c_str(), (filePath + clientPlateImagePath).c_str(), serverChannel.c_str(), serverPlateNumber.c_str(), serverDirection.c_str(), serverCheckDateTime.c_str(), serverExtension.c_str());
-						break;
-					}
-				}
+				this->clientCheckInfoCallback(index, (exePath + clientUVSSImagePath).c_str(), (exePath + clientPlateImagePath).c_str(), serverChannel.c_str(), serverPlateNumber.c_str(), serverDirection.c_str(), serverCheckDateTime.c_str(), serverExtension.c_str());
 			}
 		}
 	}
@@ -50,7 +45,8 @@ void ClientI::createClientImageDirectory(const std::string& clientImageDirectory
 	std::tr2::sys::path p(clientImageDirectory);
 	if (std::tr2::sys::exists(p)) {
 		return;
-	} else {
+	}
+	else {
 		std::tr2::sys::create_directory(p);
 	}
 }
@@ -59,7 +55,7 @@ void ClientI::heartBeat(const Ice::Current&)
 {
 }
 
-ClientI::ClientI(): isDestroyed(false), index(0)
+ClientI::ClientI() : isDestroyed(false), index(0)
 {
 }
 
@@ -84,7 +80,7 @@ void ClientI::useClientConnectionInfoCallback(int handle, int type, const std::s
 void ClientI::run()
 {
 	while (true) {
-		std::map<UVSS::ServerPrx, ID> serverProxyToID;
+		std::map<UVSS::ServerPrx, std::string> serverProxyToEndpoint;
 		{
 			IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
 			IceUtil::Monitor<IceUtil::Mutex>::timedWait(IceUtil::Time::seconds(2));
@@ -93,24 +89,29 @@ void ClientI::run()
 				return;
 			}
 
-			serverProxyToID = this->serverProxyToID;
+			serverProxyToEndpoint = this->serverProxyToEndpoint;
 		}
 
-		if (!serverProxyToID.empty()) {
-			for (std::map<UVSS::ServerPrx, ID>::const_iterator it = serverProxyToID.begin(); it != serverProxyToID.end(); ++it) {
+		if (!serverProxyToEndpoint.empty()) {
+			for (std::map<UVSS::ServerPrx, std::string>::const_iterator it = serverProxyToEndpoint.begin(); it != serverProxyToEndpoint.end(); ++it) {
 				try {
 					it->first->heartBeat();
 					//std::cout << it->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
-				} catch (...) {
-
+				}
+				catch (...) {
 					IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
 
 					if (!this->isDestroyed) {
+						UVSS::ServerPrx serverProxy = it->first;
+						std::string endpoint = it->second;
+						int index = endpointToIndex[endpoint];
 						std::stringstream idx;
-						idx << it->second.index;
-						useClientConnectionInfoCallback(it->second.index, -3, "服务器端 " + it->second.endpoint + ": " + "已断开 | 连接标识: " + idx.str());
-						this->serverProxyToID.erase(it->first);
-					} else {
+						idx << index;
+						useClientConnectionInfoCallback(index, -3, "服务器端 " + endpoint + ": " + "已断开 | 连接标识: " + idx.str());
+						this->serverProxyToEndpoint.erase(serverProxy);
+						this->endpointToIndex.erase(endpoint);
+					}
+					else {
 						return;
 					}
 				}
