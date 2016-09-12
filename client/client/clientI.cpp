@@ -15,11 +15,17 @@ void ClientI::writeCheckInfo(
 
 	createClientImageDirectory("UVSS");
 
-	std::ofstream ofs1(clientUVSSImagePath, std::ios::binary);
-	ofs1.write((char*)&serverUVSSImage[0], serverUVSSImage.size());
+	std::string p1(clientUVSSImagePath);
+	if (p1 != "") {
+		std::ofstream ofs1(clientUVSSImagePath, std::ios::binary);
+		ofs1.write((char*)&serverUVSSImage[0], serverUVSSImage.size());
+	}
 
-	std::ofstream ofs2(clientPlateImagePath, std::ios::binary);
-	ofs2.write((char*)&serverPlateImage[0], serverPlateImage.size());
+	std::string p2(clientPlateImagePath);
+	if (p2 != "") {
+		std::ofstream ofs2(clientPlateImagePath, std::ios::binary);
+		ofs2.write((char*)&serverPlateImage[0], serverPlateImage.size());
+	}
 
 	if (this->clientCheckInfoCallback != 0) {
 		if (curr.con != 0) {
@@ -34,7 +40,15 @@ void ClientI::writeCheckInfo(
 				std::tr2::sys::path p = std::tr2::sys::current_path<std::tr2::sys::path>();
 				std::string exePath = p.directory_string() + "\\";
 
-				this->clientCheckInfoCallback(index, (exePath + clientUVSSImagePath).c_str(), (exePath + clientPlateImagePath).c_str(), serverChannel.c_str(), serverPlateNumber.c_str(), serverDirection.c_str(), serverCheckDateTime.c_str(), serverExtension.c_str());
+				if (p1 != "") {
+					p1 = exePath + p1;
+				}
+
+				if (p2 != "") {
+					p2 = exePath + p2;
+				}
+
+				this->clientCheckInfoCallback(index, p1.c_str(), p2.c_str(), serverChannel.c_str(), serverPlateNumber.c_str(), serverDirection.c_str(), serverCheckDateTime.c_str(), serverExtension.c_str());
 			}
 		}
 	}

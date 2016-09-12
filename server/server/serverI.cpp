@@ -1,7 +1,7 @@
 #include "serverI.h"
 
 ServerConnectionInfoCallback ServerI::serverConnectionInfoCallback = 0;
-const std::string ServerI::version = "20160905";
+const std::string ServerI::version = "20160912";
 
 void ServerI::addClient(const Ice::Identity& ident, const Ice::Current& curr)
 {
@@ -70,11 +70,23 @@ void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string&
 		try {
 			this->clientProxy = it->first;
 
+			std::tr2::sys::path p1(UVSSImagePath);
 			UVSS::ByteSeq serverUVSSImage;
-			filePathToBinary(UVSSImagePath, serverUVSSImage);
+			if (std::tr2::sys::exists(p1)) {
+				filePathToBinary(UVSSImagePath, serverUVSSImage);
+			}
+			else {
+				UVSSImageRelativePath = "";
+			}
 
+			std::tr2::sys::path p2(plateImagePath);
 			UVSS::ByteSeq serverPlateImage;
-			filePathToBinary(plateImagePath, serverPlateImage);
+			if (std::tr2::sys::exists(p2)) {
+				filePathToBinary(plateImagePath, serverPlateImage);
+			}
+			else {
+				plateImageRelativePath = "";
+			}
 
 			this->clientProxy->writeCheckInfo(
 				UVSSImageRelativePath,

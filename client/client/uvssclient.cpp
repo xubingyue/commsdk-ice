@@ -1,6 +1,6 @@
 #include "uvssclient.h"
 
-const std::string UVSSClient::version = "20160905";
+const std::string UVSSClient::version = "20160912";
 
 UVSSClient::UVSSClient()
 {

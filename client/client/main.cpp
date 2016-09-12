@@ -50,8 +50,8 @@ int main(int argc, char* argv[])
 					std::cout << "server IP:" << std::endl;
 					std::string ip;
 					//std::cin >> ip;
-					//ip = "127.0.0.1";
-					ip = "192.168.1.9";
+					ip = "127.0.0.1";
+					//ip = "192.168.1.9";
 					std::cout << ip << std::endl;
 
 					std::cout << "server port:" << std::endl;

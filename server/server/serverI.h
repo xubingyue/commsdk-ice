@@ -9,6 +9,7 @@
 #include <map>
 #include <chrono>
 #include <ctime>
+#include <filesystem>
 #include <Ice/Ice.h>
 
 typedef void (__stdcall *ServerConnectionInfoCallback)(int, const char*);
