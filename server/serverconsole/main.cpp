@@ -1,4 +1,4 @@
-#include "uvssserversdk.h"
+#include "../uvssserversdk.h"
 extern "C" {
 #include "serverconnectioninfocallback.h"
 }

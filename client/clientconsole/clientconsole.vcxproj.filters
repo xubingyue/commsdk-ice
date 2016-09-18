@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Slice Files">
-      <UniqueIdentifier>{a35d4d21-47f7-4640-85a9-d7215e4e4cfa}</UniqueIdentifier>
+      <UniqueIdentifier>{2b74a2bd-7743-46aa-8ffc-8c305649caf5}</UniqueIdentifier>
       <Extensions>ice</Extensions>
     </Filter>
   </ItemGroup>
@@ -27,19 +27,22 @@
     <ClCompile Include="generated\clientserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\clientI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uvssclient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uvssclientsdk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="clientcheckinfocallback.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="clientconnectioninfocallback.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="serverconnectioninfocallback.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="serverI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="uvssserver.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="uvssserversdk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,25 +50,20 @@
     <ClInclude Include="generated\clientserver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="serverconnectioninfocallback.h">
+    <ClInclude Include="..\clientI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="serverI.h">
+    <ClInclude Include="..\uvssclient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="uvssserver.h">
+    <ClInclude Include="..\uvssclientsdk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="uvssserversdk.h">
+    <ClInclude Include="clientcheckinfocallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="1.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="2.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClInclude Include="clientconnectioninfocallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

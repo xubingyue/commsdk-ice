@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <crtdbg.h>
 
-#include "uvssclientsdk.h"
+#include "../uvssclientsdk.h"
 extern "C" {
 #include "clientcheckinfocallback.h"
 #include "clientconnectioninfocallback.h"

@@ -1,7 +1,21 @@
+# Custom.gitignore
+
+UVSS/
+[Bb]uild/
+
 # IceBuilder.gitignore
 
 generated/
-UVSS/
+
+# CMake.gitignore
+
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
 
 # C++.gitignore
 
