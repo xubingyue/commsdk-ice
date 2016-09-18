@@ -25,8 +25,6 @@ private:
 
 	Ice::ObjectAdapterPtr adapter;
 	Ice::Identity ident;
-
-	static const std::string version;
 };
 
 typedef IceUtil::Handle<UVSSClient> UVSSClientPtr;

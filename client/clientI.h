@@ -1,6 +1,7 @@
 #ifndef CLIENTI_H
 #define CLIENTI_H
 
+#include <version.h>
 #include <clientserver.h>
 #include <fstream>
 #include <map>

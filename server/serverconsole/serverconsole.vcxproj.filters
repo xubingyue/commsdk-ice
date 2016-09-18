@@ -59,6 +59,9 @@
     <ClInclude Include="serverconnectioninfocallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="1.jpg">

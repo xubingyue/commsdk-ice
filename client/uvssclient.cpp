@@ -1,7 +1,5 @@
 #include "uvssclient.h"
 
-const std::string UVSSClient::version = "20160912";
-
 UVSSClient::UVSSClient()
 {
 }
@@ -88,7 +86,7 @@ int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber
 			throw "Invalid proxy";
 		}
 
-		if (!serverProxy->checkVersion(version)) {
+		if (!serverProxy->checkVersion(COMMUNICATION_SDK_VERSION)) {
 			return -3;
 		}
 

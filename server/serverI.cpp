@@ -1,7 +1,6 @@
 #include "serverI.h"
 
 ServerConnectionInfoCallback ServerI::serverConnectionInfoCallback = 0;
-const std::string ServerI::version = "20160912";
 
 void ServerI::addClient(const Ice::Identity& ident, const Ice::Current& curr)
 {
@@ -35,7 +34,7 @@ void ServerI::heartBeat(const Ice::Current&)
 
 bool ServerI::checkVersion(const std::string& version, const Ice::Current&)
 {
-	return this->version == version;
+	return COMMUNICATION_SDK_VERSION == version;
 }
 
 ServerI::ServerI() : isDestroyed(false)

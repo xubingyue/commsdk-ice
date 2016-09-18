@@ -1,6 +1,7 @@
 #ifndef SERVERI_H
 #define SERVERI_H
 
+#include <version.h>
 #include <clientserver.h>
 #include <fstream>
 #include <sstream>
@@ -40,8 +41,6 @@ private:
 	static ServerConnectionInfoCallback serverConnectionInfoCallback;
 
 	bool isDestroyed;
-
-	static const std::string version;
 };
 
 typedef IceUtil::Handle<ServerI> ServerIPtr;

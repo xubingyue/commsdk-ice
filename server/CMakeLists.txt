@@ -9,6 +9,13 @@ project(server)
 
 string(REGEX MATCH "Win64" WIN64_GENERATOR ${CMAKE_GENERATOR})
 
+set(COMMUNICATION_SDK_VERSION "20160918")
+
+configure_file(
+	"${PROJECT_SOURCE_DIR}/version.h.in"
+	"${PROJECT_BINARY_DIR}/version.h"
+	)
+
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}" "C:/ZeroC/Ice-3.6.2/include")
 
 if(WIN64_GENERATOR STREQUAL "Win64")

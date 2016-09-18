@@ -44,6 +44,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(IceInclude);$(IncludePath);$(MSBuildProjectDirectory);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -95,6 +96,7 @@
     <ClInclude Include="..\uvssserversdk.h" />
     <ClInclude Include="generated\clientserver.h" />
     <ClInclude Include="serverconnectioninfocallback.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="1.jpg" />
