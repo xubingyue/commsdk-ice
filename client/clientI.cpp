@@ -4,8 +4,8 @@ ClientConnectionInfoCallback ClientI::clientConnectionInfoCallback = 0;
 ClientCheckInfoCallback ClientI::clientCheckInfoCallback = 0;
 
 void ClientI::writeCheckInfo(
-	const std::string& clientUVSSImagePath, const UVSS::ByteSeq& serverUVSSImage,
-	const std::string& clientPlateImagePath, const UVSS::ByteSeq& serverPlateImage,
+	const std::string& clientUVSSImageName, const UVSS::ByteSeq& serverUVSSImage,
+	const std::string& clientPlateImageName, const UVSS::ByteSeq& serverPlateImage,
 	const std::string& serverChannel,
 	const std::string& serverPlateNumber,
 	const std::string& serverDirection,
@@ -15,14 +15,19 @@ void ClientI::writeCheckInfo(
 
 	createClientImageDirectory("UVSS");
 
-	std::string p1(clientUVSSImagePath);
-	if (p1 != "") {
+	std::tr2::sys::path p = std::tr2::sys::current_path<std::tr2::sys::path>();
+	std::string exePath = p.directory_string() + "\\";
+
+	std::string clientUVSSImagePath;
+	if (!clientUVSSImageName.empty()) {
+		clientUVSSImagePath = exePath + "UVSS\\" + clientUVSSImageName;
 		std::ofstream ofs1(clientUVSSImagePath, std::ios::binary);
 		ofs1.write((char*)&serverUVSSImage[0], serverUVSSImage.size());
 	}
 
-	std::string p2(clientPlateImagePath);
-	if (p2 != "") {
+	std::string clientPlateImagePath;
+	if (!clientPlateImageName.empty()) {
+		clientPlateImagePath = exePath + "UVSS\\" + clientPlateImageName;
 		std::ofstream ofs2(clientPlateImagePath, std::ios::binary);
 		ofs2.write((char*)&serverPlateImage[0], serverPlateImage.size());
 	}
@@ -37,18 +42,7 @@ void ClientI::writeCheckInfo(
 				endpoint << tcpInfo->remoteAddress << ":" << tcpInfo->remotePort;
 				int index = endpointToIndex[endpoint.str()];
 
-				std::tr2::sys::path p = std::tr2::sys::current_path<std::tr2::sys::path>();
-				std::string exePath = p.directory_string() + "\\";
-
-				if (p1 != "") {
-					p1 = exePath + p1;
-				}
-
-				if (p2 != "") {
-					p2 = exePath + p2;
-				}
-
-				this->clientCheckInfoCallback(index, p1.c_str(), p2.c_str(), serverChannel.c_str(), serverPlateNumber.c_str(), serverDirection.c_str(), serverCheckDateTime.c_str(), serverExtension.c_str());
+				this->clientCheckInfoCallback(index, clientUVSSImagePath.c_str(), clientPlateImagePath.c_str(), serverChannel.c_str(), serverPlateNumber.c_str(), serverDirection.c_str(), serverCheckDateTime.c_str(), serverExtension.c_str());
 			}
 		}
 	}

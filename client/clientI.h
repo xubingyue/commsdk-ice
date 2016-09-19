@@ -22,6 +22,7 @@ public:
 		const std::string&,
 		const std::string&,
 		const Ice::Current& = Ice::Current());
+	virtual void heartBeat(const Ice::Current& = Ice::Current());
 
 	static void setClientConnectionInfoCallback(ClientConnectionInfoCallback);
 	static void setClientCheckInfoCallback(ClientCheckInfoCallback);
@@ -29,16 +30,16 @@ public:
 	ClientI();
 
 	void createClientImageDirectory(const std::string&);
-	virtual void heartBeat(const Ice::Current& = Ice::Current());
+	//¿¼ÂÇÉ¾³ý´Ëº¯Êý
 	void useClientConnectionInfoCallback(int, int, const std::string&);
-
-	virtual void run();
-	void destroy();
 
 	int index;
 
 	std::map<UVSS::ServerPrx, std::string> serverProxyToEndpoint;
 	std::map<std::string, int> endpointToIndex;
+
+	virtual void run();
+	void destroy();
 
 private:
 	static ClientConnectionInfoCallback clientConnectionInfoCallback;

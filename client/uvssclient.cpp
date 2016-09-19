@@ -93,19 +93,6 @@ int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber
 		serverProxy->ice_getConnection()->setAdapter(this->adapter);
 		serverProxy->addClient(ident);
 
-		Ice::ConnectionInfoPtr info = serverProxy->ice_getConnection()->getInfo();
-		Ice::TCPConnectionInfoPtr tcpInfo = Ice::TCPConnectionInfoPtr::dynamicCast(info);
-
-		//if (tcpInfo) {
-		//}
-
-		std::string IPAddress = tcpInfo->localAddress;
-		int portNumber = tcpInfo->localPort;
-		
-		std::stringstream port;
-		port << portNumber;
-		serverProxy->useServerConnectionInfoCallback(0, "客户端 " + IPAddress + ":" + port.str() + ": 已连接");
-
 		++client->index;
 
 		std::stringstream idx;

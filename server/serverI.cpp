@@ -11,20 +11,12 @@ void ServerI::addClient(const Ice::Identity& ident, const Ice::Current& curr)
 	Ice::ConnectionInfoPtr info = curr.con->getInfo();
 	Ice::TCPConnectionInfoPtr tcpInfo = Ice::TCPConnectionInfoPtr::dynamicCast(info);
 	std::stringstream endpoint;
-	endpoint << tcpInfo->remoteAddress << ":" << tcpInfo->remotePort;
+	endpoint << tcpInfo->remoteAddress.replace(0, 7, "") << ":" << tcpInfo->remotePort;//去掉开头的::ffff:
 
-	this->clientProxyToEndpoint[clientProxy] = endpoint.str().replace(0, 7, "");//去掉开头的::ffff:
+	this->clientProxyToEndpoint[clientProxy] = endpoint.str();
 
-	//std::cout << endpoint.str() << std::endl;
-	//std::cout << tcpInfo->remoteAddress << std::endl;
-	//std::cout << tcpInfo->remotePort << std::endl;
-	//std::cout << curr.con->getEndpoint()->toString() << std::endl;
-}
-
-void ServerI::useServerConnectionInfoCallback(Ice::Int type, const std::string& serverConnectionInfo, const Ice::Current&)
-{
 	if (this->serverConnectionInfoCallback != 0) {
-		this->serverConnectionInfoCallback(type, serverConnectionInfo.c_str());
+		this->serverConnectionInfoCallback(0, std::string("客户端 " + endpoint.str() + ": 已连接").c_str());
 	}
 }
 
@@ -61,36 +53,30 @@ void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string&
 {
 	IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
 
-	std::string timeName = createFileName();
-	std::string UVSSImageRelativePath("UVSS\\UVSS_" + timeName);
-	std::string plateImageRelativePath("UVSS\\ANPR_" + timeName);
+	std::string timeName = createCurrentTime();
+
+	std::tr2::sys::path p1(UVSSImagePath);
+	std::string UVSSImageName;
+	UVSS::ByteSeq serverUVSSImage;
+	if (std::tr2::sys::exists(p1)) {
+		UVSSImageName = "UVSS_" + timeName + ".jpg";
+		filePathToBinary(UVSSImagePath, serverUVSSImage);
+	}
+
+	std::tr2::sys::path p2(plateImagePath);
+	std::string plateImageName;
+	UVSS::ByteSeq serverPlateImage;
+	if (std::tr2::sys::exists(p2)) {
+		plateImageName = "ANPR_" + timeName + ".jpg";
+		filePathToBinary(plateImagePath, serverPlateImage);
+	}
 
 	for (std::map<UVSS::ClientPrx, std::string>::const_iterator it = clientProxyToEndpoint.begin(); it != clientProxyToEndpoint.end();) {
 		try {
-			this->clientProxy = it->first;
-
-			std::tr2::sys::path p1(UVSSImagePath);
-			UVSS::ByteSeq serverUVSSImage;
-			if (std::tr2::sys::exists(p1)) {
-				filePathToBinary(UVSSImagePath, serverUVSSImage);
-			}
-			else {
-				UVSSImageRelativePath = "";
-			}
-
-			std::tr2::sys::path p2(plateImagePath);
-			UVSS::ByteSeq serverPlateImage;
-			if (std::tr2::sys::exists(p2)) {
-				filePathToBinary(plateImagePath, serverPlateImage);
-			}
-			else {
-				plateImageRelativePath = "";
-			}
-
-			this->clientProxy->writeCheckInfo(
-				UVSSImageRelativePath,
+			it->first->writeCheckInfo(
+				UVSSImageName,
 				serverUVSSImage,
-				plateImageRelativePath,
+				plateImageName,
 				serverPlateImage,
 				channel,
 				plateNumber,
@@ -110,7 +96,7 @@ void ServerI::sendCheckInfo(const std::string& UVSSImagePath, const std::string&
 	}
 }
 
-const std::string ServerI::createFileName(const std::string& prefix, const std::string& suffix, const std::string& extension)
+const std::string ServerI::createCurrentTime()
 {
 	auto now = std::chrono::system_clock::now();
 
@@ -121,12 +107,11 @@ const std::string ServerI::createFileName(const std::string& prefix, const std::
 	auto s = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
 	auto msPart = ms - s;
 
-	std::stringstream fileName;
-	fileName << prefix << std::put_time(&timeInfo, "%Y%m%d%H%M%S")
-		<< std::setw(3) << std::setfill('0') << msPart.count()
-		<< suffix << '.' << extension;
+	std::stringstream currentTime;
+	currentTime << std::put_time(&timeInfo, "%Y%m%d%H%M%S")
+		<< std::setw(3) << std::setfill('0') << msPart.count();
 
-	return fileName.str();
+	return currentTime.str();
 }
 
 void ServerI::run()
@@ -157,7 +142,9 @@ void ServerI::run()
 
 					if (!this->isDestroyed) {
 						std::string endpoint = this->clientProxyToEndpoint[it->first];
-						useServerConnectionInfoCallback(-1, std::string("客户端 " + endpoint + ": 已断开").c_str());
+						if (serverConnectionInfoCallback != 0) {
+							serverConnectionInfoCallback(-1, std::string("客户端 " + endpoint + ": 已断开").c_str());
+						}
 						this->clientProxyToEndpoint.erase(it->first);
 					}
 					else {
