@@ -33,11 +33,13 @@ int UVSSClient::init()
 		this->adapter->activate();
 
 		client->start();
-	} catch (const Ice::Exception& ex) {
+	}
+	catch (const Ice::Exception& ex) {
 		std::cerr << ex << std::endl;
 		client->useClientConnectionInfoCallback(-1, -1, "初始化失败");
 		return -1;
-	} catch (const char* msg) {
+	}
+	catch (const char* msg) {
 		std::cerr << msg << std::endl;
 		client->useClientConnectionInfoCallback(-1, -1, "初始化失败");
 		return -1;
@@ -50,7 +52,8 @@ void UVSSClient::uninit()
 	if (this->client != 0) {
 		try {
 			this->client->destroy();
-		} catch (const Ice::Exception& ex) {
+		}
+		catch (const Ice::Exception& ex) {
 			std::cerr << ex << std::endl;
 		}
 	}
@@ -58,7 +61,8 @@ void UVSSClient::uninit()
 	if (this->ic != 0) {
 		try {
 			this->ic->destroy();
-		} catch (const Ice::Exception& ex) {
+		}
+		catch (const Ice::Exception& ex) {
 			std::cerr << ex << std::endl;
 		}
 	}
@@ -101,11 +105,13 @@ int UVSSClient::connect(const std::string& serverIPAddress, int serverPortNumber
 
 		client->endpointToIndex[endpoint] = client->index;
 		client->serverProxyToEndpoint[serverProxy] = endpoint;
-	} catch (const Ice::Exception& ex) {
+	}
+	catch (const Ice::Exception& ex) {
 		std::cerr << ex << std::endl;
 		client->useClientConnectionInfoCallback(-1, -2, "连接失败");
 		return -1;
-	} catch (const char* msg) {
+	}
+	catch (const char* msg) {
 		std::cerr << msg << std::endl;
 		client->useClientConnectionInfoCallback(-1, -2, "连接失败");
 		return -1;

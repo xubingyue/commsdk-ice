@@ -1,14 +1,14 @@
 #include "clientcheckinfocallback.h"
 
-void __stdcall clientCheckInfoCallback(int handle, const char* CClientUVSSImagePath, const char* CClientPlateImagePath, const char* CClientChannel, const char* CClientPlateNumber, const char* CClientDirection, const char* CClientCheckDateTime, const char* CClientExtension)
+void __stdcall clientCheckInfoCallback(int handle, const char* clientUVSSImagePath, const char* clientPlateImagePath, const char* clientChannel, const char* clientPlateNumber, const char* clientDirection, const char* clientCheckDateTime, const char* clientExtension)
 {
 	printf("\n");
 	printf("%d\n", handle);
-	printf("%s\n", CClientUVSSImagePath);
-	printf("%s\n", CClientPlateImagePath);
-	printf("%s\n", CClientChannel);
-	printf("%s\n", CClientPlateNumber);
-	printf("%s\n", CClientDirection);
-	printf("%s\n", CClientCheckDateTime);
-	printf("%s\n", CClientExtension);
+	printf("%s\n", clientUVSSImagePath);
+	printf("%s\n", clientPlateImagePath);
+	printf("%s\n", clientChannel);
+	printf("%s\n", clientPlateNumber);
+	printf("%s\n", clientDirection);
+	printf("%s\n", clientCheckDateTime);
+	printf("%s\n", clientExtension);
 }

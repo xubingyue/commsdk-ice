@@ -47,7 +47,8 @@ int main(int argc, char* argv[])
 			case 9:
 				break;
 			}
-		} catch (const Ice::Exception& ex) {
+		}
+		catch (const Ice::Exception& ex) {
 			std::cerr << ex << std::endl;
 		}
 	} while ((std::cin.good()) && (key != 9));

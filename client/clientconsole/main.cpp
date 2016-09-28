@@ -49,11 +49,12 @@ int main(int argc, char* argv[])
 				{
 					std::cout << "server IP:" << std::endl;
 					std::string ip;
-					//std::cin >> ip;
+#ifdef LOCALHOST
 					ip = "127.0.0.1";
-					//ip = "192.168.1.9";
 					std::cout << ip << std::endl;
-
+#else
+					std::cin >> ip;
+#endif
 					std::cout << "server port:" << std::endl;
 					int port;
 					std::cin >> port;
@@ -72,7 +73,8 @@ int main(int argc, char* argv[])
 			case 9:
 				break;
 			}
-		} catch (const Ice::Exception& ex) {
+		}
+		catch (const Ice::Exception& ex) {
 			std::cerr << ex << std::endl;
 		}
 	} while ((std::cin.good()) && (key != 9));

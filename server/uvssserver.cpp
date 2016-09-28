@@ -35,10 +35,12 @@ int UVSSServer::init()
 		adapter->activate();
 
 		server->start();
-	} catch (const Ice::Exception& ex) {
+	}
+	catch (const Ice::Exception& ex) {
 		std::cerr << ex << std::endl;
 		return -1;
-	} catch (const char* msg) {
+	}
+	catch (const char* msg) {
 		std::cerr << msg << std::endl;
 		return -1;
 	}
@@ -50,7 +52,8 @@ void UVSSServer::uninit()
 	if (this->server != 0) {
 		try {
 			this->server->destroy();
-		} catch (const Ice::Exception& ex) {
+		}
+		catch (const Ice::Exception& ex) {
 			std::cerr << ex << std::endl;
 		}
 	}
@@ -58,7 +61,8 @@ void UVSSServer::uninit()
 	if (this->ic != 0) {
 		try {
 			this->ic->destroy();
-		} catch (const Ice::Exception& ex) {
+		}
+		catch (const Ice::Exception& ex) {
 			std::cerr << ex << std::endl;
 		}
 	}
