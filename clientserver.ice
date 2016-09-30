@@ -15,14 +15,10 @@ interface Client {
 		string direction,
 		string checkDateTime,
 		string extension);
-
-	void heartBeat();
 };
 
 interface Server {
 	void addClient(Ice::Identity ident);
-	void heartBeat();
-
 	bool checkVersion(string ver);
 };
 };

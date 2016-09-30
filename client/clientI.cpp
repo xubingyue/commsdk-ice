@@ -103,7 +103,7 @@ void ClientI::run()
 		if (!serverProxyToEndpoint.empty()) {
 			for (std::map<UVSS::ServerPrx, std::string>::const_iterator it = serverProxyToEndpoint.begin(); it != serverProxyToEndpoint.end(); ++it) {
 				try {
-					it->first->heartBeat();
+					it->first->ice_ping();
 					//std::cout << it->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
 				}
 				catch (...) {

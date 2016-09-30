@@ -132,7 +132,7 @@ void ServerI::run()
 		if (!clientProxyToEndpoint.empty()) {
 			for (std::map<UVSS::ClientPrx, std::string>::const_iterator it = clientProxyToEndpoint.begin(); it != clientProxyToEndpoint.end(); ++it) {
 				try {
-					it->first->heartBeat();
+					it->first->ice_ping();
 					//std::cout << it->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
 					//std::cout << it->first->ice_getCommunicator()->identityToString(it->first->ice_getIdentity()) << std::endl;
 				}
