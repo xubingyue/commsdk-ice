@@ -83,7 +83,7 @@
     <IceBuilder Include="..\..\clientserver.ice" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\clientI.cpp" />
+    <ClCompile Include="..\clienti.cpp" />
     <ClCompile Include="..\uvssclient.cpp" />
     <ClCompile Include="..\uvssclientsdk.cpp" />
     <ClCompile Include="clientcheckinfocallback.c" />
@@ -92,7 +92,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\clientI.h" />
+    <ClInclude Include="..\clienti.h" />
     <ClInclude Include="..\uvssclient.h" />
     <ClInclude Include="..\uvssclientsdk.h" />
     <ClInclude Include="clientcheckinfocallback.h" />

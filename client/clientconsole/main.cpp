@@ -1,23 +1,30 @@
-#define _CRTDBG_MAP_ALLOC
-#include <cstdlib>
-#include <crtdbg.h>
-
 #include "../uvssclientsdk.h"
 extern "C" {
 #include "clientcheckinfocallback.h"
 #include "clientconnectioninfocallback.h"
 }
 
+#ifdef _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+#endif
+
 extern "C" void __stdcall clientConnectionInfoCallback(int, int, const char*);
-extern "C" void __stdcall clientCheckInfoCallback(int, const char*, const char*, const char*, const char*, const char*, const char*, const char*);
+extern "C" void __stdcall clientCheckInfoCallback(
+		int,
+		const char*, const char*,
+		const char*, const char*, const char*, const char*, const char*);
 void menu();
 
 int main(int argc, char* argv[])
 {
+#ifdef _CRTDBG_MAP_ALLOC
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 
 	if (argc > 1) {
 		std::cerr << "too many arguments" << std::endl;
+
 		return 1;
 	}
 
@@ -25,9 +32,6 @@ int main(int argc, char* argv[])
 	SetUVSSCheckInfoCallback(clientCheckInfoCallback);
 
 	menu();
-
-	//std::string ip = "127.0.0.1";
-	//int port = 20145;
 
 	int key;
 	do {

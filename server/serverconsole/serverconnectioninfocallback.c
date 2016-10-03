@@ -1,6 +1,6 @@
 #include "serverconnectioninfocallback.h"
 
-void __stdcall serverConnectionInfoCallback(int type, const char* serverConnectionInfo)
+void __stdcall serverConnectionInfoCallback(int type, const char* connectionInfo)
 {
-	printf("%d, %s\n", type, serverConnectionInfo);
+	printf("\ncallback:\n%d, %s\n", type, connectionInfo);
 }

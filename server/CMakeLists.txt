@@ -9,12 +9,11 @@ project(server)
 
 string(REGEX MATCH "Win64" WIN64_GENERATOR ${CMAKE_GENERATOR})
 
-set(COMMUNICATION_SDK_VERSION "20160928")
+set(UVSS_COMM_SDK_VER "sdk")
 
 configure_file(
-	"${PROJECT_SOURCE_DIR}/version.h.in"
-	"${PROJECT_BINARY_DIR}/version.h"
-	)
+		"${PROJECT_SOURCE_DIR}/version.h.in"
+		"${PROJECT_BINARY_DIR}/version.h")
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}" "C:/ZeroC/Ice-3.6.2/include")
 
@@ -25,13 +24,12 @@ else()
 endif()
 
 add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp
-    COMMAND COMMAND slice2cpp -IC:/ZeroC/Ice-3.6.2/slice ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice
-	)
+		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp
+		COMMAND COMMAND slice2cpp -IC:/ZeroC/Ice-3.6.2/slice ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice
+		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice)
 
-set(HEADERS ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h serverI.h uvssserver.h uvssserversdk.h)
-set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp serverI.cpp uvssserver.cpp uvssserversdk.cpp)
+set(HEADERS ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h serveri.h uvssserver.h uvssserversdk.h)
+set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp serveri.cpp uvssserver.cpp uvssserversdk.cpp)
 
 if(NOT CMAKE_DEBUG_POSTFIX)
 	set(CMAKE_DEBUG_POSTFIX d)

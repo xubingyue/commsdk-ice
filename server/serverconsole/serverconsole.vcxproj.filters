@@ -27,9 +27,6 @@
     <ClCompile Include="generated\clientserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\serverI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\uvssserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,12 +39,12 @@
     <ClCompile Include="serverconnectioninfocallback.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\serveri.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="generated\clientserver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\serverI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\uvssserver.h">
@@ -60,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\serveri.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

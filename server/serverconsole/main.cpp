@@ -10,6 +10,7 @@ int main(int argc, char* argv[])
 {
 	if (argc > 1) {
 		std::cerr << "too many arguments" << std::endl;
+
 		return 1;
 	}
 
@@ -42,7 +43,9 @@ int main(int argc, char* argv[])
 				UninitUVSSServer();
 				break;
 			case 3:
-				SendUVSSCheckInfo("1.jpg", "2.jpg", "通道1", "鲁A12345", "进车", "2016", "扩展信息");
+				SendUVSSCheckInfo(
+						"1.jpg", "2.jpg",
+						"通道1", "鲁A12345", "进车", "2016", "扩展信息");
 				break;
 			case 9:
 				break;

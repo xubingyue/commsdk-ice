@@ -83,7 +83,7 @@
     <IceBuilder Include="..\..\clientserver.ice" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\serverI.cpp" />
+    <ClCompile Include="..\serveri.cpp" />
     <ClCompile Include="..\uvssserver.cpp" />
     <ClCompile Include="..\uvssserversdk.cpp" />
     <ClCompile Include="generated\clientserver.cpp" />
@@ -91,7 +91,7 @@
     <ClCompile Include="serverconnectioninfocallback.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\serverI.h" />
+    <ClInclude Include="..\serveri.h" />
     <ClInclude Include="..\uvssserver.h" />
     <ClInclude Include="..\uvssserversdk.h" />
     <ClInclude Include="generated\clientserver.h" />

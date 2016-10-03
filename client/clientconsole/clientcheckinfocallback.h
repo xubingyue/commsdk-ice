@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 
-void __stdcall clientCheckInfoCallback(int, const char*, const char*, const char*, const char*, const char*, const char*, const char*);
+void __stdcall clientCheckInfoCallback(
+		int,
+		const char*, const char*,
+		const char*, const char*, const char*, const char*, const char*);
 
 #endif

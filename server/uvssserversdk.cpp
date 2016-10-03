@@ -1,10 +1,16 @@
 #include "uvssserversdk.h"
+#include "uvssserver.h"
 
 UVSSServerPtr serverSDK = new UVSSServer;
 
+void SetUVSSServerCallback(UVSSServerCallback connectionInfoCallback)
+{
+	serverSDK->setConnectionInfoCallback(connectionInfoCallback);
+}
+
 void SetUVSSServerPort(int port)
 {
-	serverSDK->setPortNumber(port);
+	serverSDK->setPort(port);
 }
 
 int InitUVSSServer()
@@ -17,12 +23,16 @@ void UninitUVSSServer()
 	serverSDK->uninit();
 }
 
-void SetUVSSServerCallback(UVSSServerCallback callback)
+void SendUVSSCheckInfo(
+		const char* uVSSImagePath,
+		const char* plateImagePath,
+		const char* channel,
+		const char* plateNumber,
+		const char* direction,
+		const char* time,
+		const char* extension)
 {
-	serverSDK->setConnectionInfoCallback(callback);
-}
-
-void SendUVSSCheckInfo(const char *UVSSImagePath, const char *PlateImagePath, const char *Channel, const char *PlateNumber, const char *Direction, const char *CheckDateTime, const char *Extension)
-{
-	serverSDK->sendCheckInfo(UVSSImagePath, PlateImagePath, Channel, PlateNumber, Direction, CheckDateTime, Extension);
+	serverSDK->sendCheckInfo(
+			uVSSImagePath, plateImagePath,
+			channel, plateNumber, direction, time, extension);
 }
