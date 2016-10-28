@@ -12,27 +12,27 @@ string(REGEX MATCH "Win64" WIN64_GENERATOR ${CMAKE_GENERATOR})
 set(UVSS_COMM_SDK_VER "sdk")
 
 configure_file(
-		"${PROJECT_SOURCE_DIR}/version.h.in"
-		"${PROJECT_BINARY_DIR}/version.h")
+        "${PROJECT_SOURCE_DIR}/version.h.in"
+        "${PROJECT_BINARY_DIR}/version.h")
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}" "C:/ZeroC/Ice-3.6.3/include")
 
 if(WIN64_GENERATOR STREQUAL "Win64")
-	link_directories("C:/ZeroC/Ice-3.6.3/lib/x64")
+    link_directories("C:/ZeroC/Ice-3.6.3/lib/x64")
 else()
-	link_directories("C:/ZeroC/Ice-3.6.3/lib")
+    link_directories("C:/ZeroC/Ice-3.6.3/lib")
 endif()
 
 add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp
-		COMMAND COMMAND slice2cpp -IC:/ZeroC/Ice-3.6.3/slice ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice
-		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice)
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp
+        COMMAND COMMAND slice2cpp -IC:/ZeroC/Ice-3.6.3/slice ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice)
 
 set(HEADERS ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h serveri.h uvssserver.h uvssserversdk.h)
 set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp serveri.cpp uvssserver.cpp uvssserversdk.cpp)
 
 if(NOT CMAKE_DEBUG_POSTFIX)
-	set(CMAKE_DEBUG_POSTFIX d)
+    set(CMAKE_DEBUG_POSTFIX d)
 endif()
 
 add_library(UVSSServer SHARED ${HEADERS} ${SOURCES})
@@ -45,18 +45,18 @@ string(REGEX REPLACE "/" "\\\\" ProjectSourceDir "${PROJECT_SOURCE_DIR}")
 
 if(CMAKE_CONFIGURATION_TYPES STREQUAL "Debug")
     if(WIN64_GENERATOR STREQUAL "Win64")
-		add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Debug\\UVSSServerd.lib" "${ProjectSourceDir}\\x64")
+        add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Debug\\UVSSServerd.lib" "${ProjectSourceDir}\\x64")
         add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Debug\\UVSSServerd.dll" "${ProjectSourceDir}\\x64")
-	else()
-		add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Debug\\UVSSServerd.lib" "${ProjectSourceDir}\\x86")
-		add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Debug\\UVSSServerd.dll" "${ProjectSourceDir}\\x86")
-	endif()
+    else()
+        add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Debug\\UVSSServerd.lib" "${ProjectSourceDir}\\x86")
+        add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Debug\\UVSSServerd.dll" "${ProjectSourceDir}\\x86")
+    endif()
 else()
     if(WIN64_GENERATOR STREQUAL "Win64")
-		add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Release\\UVSSServer.lib" "${ProjectSourceDir}\\x64")
-		add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Release\\UVSSServer.dll" "${ProjectSourceDir}\\x64")
-	else()
-		add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Release\\UVSSServer.lib" "${ProjectSourceDir}\\x86")
-		add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Release\\UVSSServer.dll" "${ProjectSourceDir}\\x86")
-	endif()
+        add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Release\\UVSSServer.lib" "${ProjectSourceDir}\\x64")
+        add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Release\\UVSSServer.dll" "${ProjectSourceDir}\\x64")
+    else()
+        add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Release\\UVSSServer.lib" "${ProjectSourceDir}\\x86")
+        add_custom_command(TARGET UVSSServer POST_BUILD COMMAND copy "${CurrentBinaryDir}\\Release\\UVSSServer.dll" "${ProjectSourceDir}\\x86")
+    endif()
 endif()

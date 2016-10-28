@@ -5,30 +5,30 @@ UVSSClientPtr clientSDK = new UVSSClient;
 
 void SetUVSSMessageCallback(UVSSMessageCallback connectionInfoCallback)
 {
-	clientSDK->setConnectionInfoCallback(connectionInfoCallback);
+    clientSDK->setConnectionInfoCallback(connectionInfoCallback);
 }
 
 void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
 {
-	clientSDK->setCheckInfoCallback(checkInfoCallback);
+    clientSDK->setCheckInfoCallback(checkInfoCallback);
 }
 
 int UVSSInitialize()
 {
-	return clientSDK->init();
+    return clientSDK->init();
 }
 
 void UVSSUninitialize()
 {
-	clientSDK->uninit();
+    clientSDK->uninit();
 }
 
 int UVSSConnect(const char* iPAddress, int port)
 {
-	return clientSDK->connect(iPAddress, port);
+    return clientSDK->connect(iPAddress, port);
 }
 
 int UVSSDisconnect(int index)
 {
-	return clientSDK->disconnect(index);
+    return clientSDK->disconnect(index);
 }
