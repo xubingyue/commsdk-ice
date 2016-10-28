@@ -19,51 +19,65 @@
 
 UVSSSDKÄ¿Â¼½á¹¹£º
 
-©¸©¤communication_sdk
-    ©¦  .gitignore
-    ©¦  clientserver.ice
-    ©¦
-    ©À©¤client
-    ©¦  ©¦  clienti.cpp
-    ©¦  ©¦  clienti.h
-    ©¦  ©¦  CMakeLists.txt
-    ©¦  ©¦  uvssclient.cpp
-    ©¦  ©¦  uvssclient.h
-    ©¦  ©¦  uvssclientsdk.cpp
-    ©¦  ©¦  uvssclientsdk.h
-    ©¦  ©¦  version.h.in
-    ©¦  ©¦
-    ©¦  ©¸©¤clientconsole
-    ©¦          clientcheckinfocallback.c
-    ©¦          clientcheckinfocallback.h
-    ©¦          clientconnectioninfocallback.c
-    ©¦          clientconnectioninfocallback.h
-    ©¦          clientconsole.sln
-    ©¦          clientconsole.vcxproj
-    ©¦          clientconsole.vcxproj.filters
-    ©¦          main.cpp
-    ©¦          version.h
-    ©¦
-    ©¸©¤server
-        ©¦  CMakeLists.txt
-        ©¦  serveri.cpp
-        ©¦  serveri.h
-        ©¦  uvssserver.cpp
-        ©¦  uvssserver.h
-        ©¦  uvssserversdk.cpp
-        ©¦  uvssserversdk.h
-        ©¦  version.h.in
-        ©¦
-        ©¸©¤serverconsole
-                1.jpg
-                2.jpg
-                main.cpp
-                serverconnectioninfocallback.c
-                serverconnectioninfocallback.h
-                serverconsole.sln
-                serverconsole.vcxproj
-                serverconsole.vcxproj.filters
-                version.h
+©¤uvsscommsdk
+  ©¦  .gitignore
+  ©¦  clientserver.ice
+  ©¦  README.txt
+  ©¦
+  ©À©¤client
+  ©¦  ©¦  clienti.cpp
+  ©¦  ©¦  clienti.h
+  ©¦  ©¦  CMakeLists.txt
+  ©¦  ©¦  uvssclient.cpp
+  ©¦  ©¦  uvssclient.h
+  ©¦  ©¦  uvssclientsdk.cpp
+  ©¦  ©¦  uvssclientsdk.h
+  ©¦  ©¦  version.h.in
+  ©¦  ©¦
+  ©¦  ©À©¤build
+  ©¦  ©À©¤clientconsole
+  ©¦  ©¦      clientcheckinfocallback.c
+  ©¦  ©¦      clientcheckinfocallback.h
+  ©¦  ©¦      clientconnectioninfocallback.c
+  ©¦  ©¦      clientconnectioninfocallback.h
+  ©¦  ©¦      clientconsole.sln
+  ©¦  ©¦      clientconsole.vcxproj
+  ©¦  ©¦      clientconsole.vcxproj.filters
+  ©¦  ©¦      main.cpp
+  ©¦  ©¦      version.h
+  ©¦  ©¦
+  ©¦  ©À©¤include
+  ©¦  ©¦      UVSSSDK.h
+  ©¦  ©¦
+  ©¦  ©À©¤x64
+  ©¦  ©¸©¤x86
+  ©¸©¤server
+      ©¦  CMakeLists.txt
+      ©¦  serveri.cpp
+      ©¦  serveri.h
+      ©¦  uvssserver.cpp
+      ©¦  uvssserver.h
+      ©¦  uvssserversdk.cpp
+      ©¦  uvssserversdk.h
+      ©¦  version.h.in
+      ©¦
+      ©À©¤build
+      ©À©¤include
+      ©¦      UVSSServer.h
+      ©¦
+      ©À©¤serverconsole
+      ©¦      1.jpg
+      ©¦      2.jpg
+      ©¦      main.cpp
+      ©¦      serverconnectioninfocallback.c
+      ©¦      serverconnectioninfocallback.h
+      ©¦      serverconsole.sln
+      ©¦      serverconsole.vcxproj
+      ©¦      serverconsole.vcxproj.filters
+      ©¦      version.h
+      ©¦
+      ©À©¤x64
+      ©¸©¤x86
 
 
 
