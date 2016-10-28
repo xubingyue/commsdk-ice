@@ -1,15 +1,15 @@
 开发工具安装：
 1.VS2013
-2.Ice3.6.2
+2.Ice3.6.3
 	安装目录：C:\ZeroC
-	环境变量：C:\ZeroC\Ice-3.6.2\bin
-				C:\ZeroC\Ice-3.6.2\bin\x64
+	环境变量：C:\ZeroC\Ice-3.6.3\bin
+				C:\ZeroC\Ice-3.6.3\bin\x64
 3.IceBuilder4.3.3
 	可选。
 	为了测试方便，在测试程序clientconsole、serverconsole中用此插件。
 	SDK程序用CMake管理，用不到插件。
 
-	VS2013->TOOLS->Options->Projects and Solutions->Ice Builder->Ice home directory: C:\ZeroC\Ice-3.6.2\。
+	VS2013->TOOLS->Options->Projects and Solutions->Ice Builder->Ice home directory: C:\ZeroC\Ice-3.6.3\。
 	使用时在工程右键选择Add Ice Builder to Project。
 	在工程右键->Properties->Common Properties->Ice Builder可以进行一些设置，如由Slice文件生成的C++文件位置（默认为generated\）。
 

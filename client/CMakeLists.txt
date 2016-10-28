@@ -1,5 +1,5 @@
-#-DCMAKE_CONFIGURATION_TYPES:STRING=Debug
-#-DCMAKE_CONFIGURATION_TYPES:STRING=Release
+#-DCMAKE_CONFIGURATION_TYPES:STRING=Debug -G "Visual Studio 12 2013"
+#-DCMAKE_CONFIGURATION_TYPES:STRING=Release -G "Visual Studio 12 2013"
 #-DCMAKE_CONFIGURATION_TYPES:STRING=Debug -G "Visual Studio 12 2013 Win64"
 #-DCMAKE_CONFIGURATION_TYPES:STRING=Release -G "Visual Studio 12 2013 Win64"
 
@@ -15,17 +15,17 @@ configure_file(
 		"${PROJECT_SOURCE_DIR}/version.h.in"
 		"${PROJECT_BINARY_DIR}/version.h")
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}" "C:/ZeroC/Ice-3.6.2/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}" "C:/ZeroC/Ice-3.6.3/include")
 
 if(WIN64_GENERATOR STREQUAL "Win64")
-	link_directories("C:/ZeroC/Ice-3.6.2/lib/x64")
+	link_directories("C:/ZeroC/Ice-3.6.3/lib/x64")
 else()
-	link_directories("C:/ZeroC/Ice-3.6.2/lib")
+	link_directories("C:/ZeroC/Ice-3.6.3/lib")
 endif()
 
 add_custom_command(
 		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp
-		COMMAND COMMAND slice2cpp -IC:/ZeroC/Ice-3.6.2/slice ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice
+		COMMAND COMMAND slice2cpp -IC:/ZeroC/Ice-3.6.3/slice ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice
 		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../clientserver.ice)
 
 set(HEADERS ${CMAKE_CURRENT_BINARY_DIR}/clientserver.h clienti.h uvssclient.h uvssclientsdk.h)
