@@ -93,16 +93,16 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
 
         Ice::ObjectPrx base = this->ic->stringToProxy(
                 "Server:tcp -h " + iPAddress + " -p " +
-                serverPort.str())->ice_twoway()->ice_timeout(-1)->ice_secure(
+                serverPort.str())->ice_twoway()->ice_timeout(10000)->ice_secure(
                 false);
 
-        UVSS::ServerPrx serverProxy = UVSS::ServerPrx::checkedCast(base);
-        if (serverProxy == 0) {
-            throw "Invalid proxy";
-        }
+        UVSS::ServerPrx serverProxy = UVSS::ServerPrx::uncheckedCast(base);
+        //if (serverProxy == 0) {
+        //    throw "Invalid proxy";
+        //}
 
         if (!serverProxy->checkVersion(UVSS_COMM_SDK_VER)) {
-            return -3;
+            throw "请更新SDK版本";
         }
 
         serverProxy->ice_getConnection()->setAdapter(this->adapter);
@@ -117,17 +117,23 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         this->client->useConnectionInfoCallback(this->client->index, 1,
                 "服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + idx.str());
     }
-    catch (const Ice::Exception& ex) {
+    catch (const Ice::ConnectionRefusedException& ex) {
         std::cerr << ex << std::endl;
         this->client->useConnectionInfoCallback(-1, -2, "连接失败");
 
         return -1;
     }
+    catch (const Ice::ConnectTimeoutException& ex) {
+        std::cerr << ex << std::endl;
+        this->client->useConnectionInfoCallback(-1, -2, "请更换SDK版本");
+
+        return -3;
+    }
     catch (const char* msg) {
         std::cerr << msg << std::endl;
-        this->client->useConnectionInfoCallback(-1, -2, "连接失败");
+        this->client->useConnectionInfoCallback(-1, -2, msg);
 
-        return -1;
+        return -3;
     }
 
     return this->client->index;
