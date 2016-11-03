@@ -17,67 +17,68 @@
 
 
 
-UVSSSDK目录结构：
+目录结构：
 
-─uvsscommsdk
-  │  .gitignore
-  │  clientserver.ice
-  │  README.txt
-  │
-  ├─client
-  │  │  clienti.cpp
-  │  │  clienti.h
-  │  │  CMakeLists.txt
-  │  │  uvssclient.cpp
-  │  │  uvssclient.h
-  │  │  uvssclientsdk.cpp
-  │  │  uvssclientsdk.h
-  │  │  version.h.in
-  │  │
-  │  ├─build
-  │  ├─clientconsole
-  │  │      clientcheckinfocallback.c
-  │  │      clientcheckinfocallback.h
-  │  │      clientconnectioninfocallback.c
-  │  │      clientconnectioninfocallback.h
-  │  │      clientconsole.sln
-  │  │      clientconsole.vcxproj
-  │  │      clientconsole.vcxproj.filters
-  │  │      main.cpp
-  │  │      version.h
-  │  │
-  │  ├─include
-  │  │      UVSSSDK.h
-  │  │
-  │  ├─x64
-  │  └─x86
-  └─server
-      │  CMakeLists.txt
-      │  serveri.cpp
-      │  serveri.h
-      │  uvssserver.cpp
-      │  uvssserver.h
-      │  uvssserversdk.cpp
-      │  uvssserversdk.h
-      │  version.h.in
-      │
-      ├─build
-      ├─include
-      │      UVSSServer.h
-      │
-      ├─serverconsole
-      │      1.jpg
-      │      2.jpg
-      │      main.cpp
-      │      serverconnectioninfocallback.c
-      │      serverconnectioninfocallback.h
-      │      serverconsole.sln
-      │      serverconsole.vcxproj
-      │      serverconsole.vcxproj.filters
-      │      version.h
-      │
-      ├─x64
-      └─x86
+─source
+   │  .gitignore
+   │  clientserver.ice
+   │  README.txt
+   │  UVSS二次开发文档.doc
+   │
+   ├─client
+   │  │  clienti.cpp
+   │  │  clienti.h
+   │  │  CMakeLists.txt
+   │  │  uvssclient.cpp
+   │  │  uvssclient.h
+   │  │  uvssclientsdk.cpp
+   │  │  uvssclientsdk.h
+   │  │  version.h.in
+   │  │
+   │  ├─build(新建)
+   │  ├─clientconsole
+   │  │      clientcheckinfocallback.c
+   │  │      clientcheckinfocallback.h
+   │  │      clientconnectioninfocallback.c
+   │  │      clientconnectioninfocallback.h
+   │  │      clientconsole.sln
+   │  │      clientconsole.vcxproj
+   │  │      clientconsole.vcxproj.filters
+   │  │      main.cpp
+   │  │      version.h
+   │  │
+   │  ├─include
+   │  │      UVSSSDK.h
+   │  │
+   │  ├─x64(新建)
+   │  └─x86(新建)
+   └─server
+       │  CMakeLists.txt
+       │  serveri.cpp
+       │  serveri.h
+       │  uvssserver.cpp
+       │  uvssserver.h
+       │  uvssserversdk.cpp
+       │  uvssserversdk.h
+       │  version.h.in
+       │
+       ├─build(新建)
+       ├─include
+       │      UVSSServer.h
+       │
+       ├─serverconsole
+       │      1.jpg
+       │      2.jpg
+       │      main.cpp
+       │      serverconnectioninfocallback.c
+       │      serverconnectioninfocallback.h
+       │      serverconsole.sln
+       │      serverconsole.vcxproj
+       │      serverconsole.vcxproj.filters
+       │      version.h
+       │
+       ├─x64(新建)
+       └─x86(新建)
 
 
 
