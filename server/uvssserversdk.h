@@ -12,6 +12,7 @@ extern "C" {
     __declspec(dllexport) void UninitUVSSServer();
     __declspec(dllexport) void SendUVSSCheckInfo(const char*, const char*,
             const char*, const char*, const char*, const char*, const char*);
+    __declspec(dllexport) const char* GetUVSSServerVersion();
 }
 
 #endif

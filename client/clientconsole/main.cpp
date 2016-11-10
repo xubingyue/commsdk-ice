@@ -86,6 +86,7 @@ int main(int argc, char* argv[])
 
 void menu()
 {
+    std::cout << "ClientVersion: " << GetUVSSVersion() << std::endl;
     std::cout << "usage:\n"
         "0: help\n"
         "1: init\n"

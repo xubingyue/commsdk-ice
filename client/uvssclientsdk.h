@@ -13,6 +13,7 @@ extern "C" {
     __declspec(dllexport) void UVSSUninitialize();
     __declspec(dllexport) int UVSSConnect(const char*, int);
     __declspec(dllexport) int UVSSDisconnect(int);
+    __declspec(dllexport) const char* GetUVSSVersion();
 }
 
 #endif

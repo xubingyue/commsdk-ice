@@ -55,4 +55,8 @@ int UVSSConnect(const char *ServerIPAddress, int ServerPort);
 // 返回值: 1: 成功, -1: 无指定handle对应的连接
 int UVSSDisconnect(int handle);
 
+// GetUVSSVersion: 获取版本号
+// 返回值：版本号
+const char *GetUVSSVersion();
+
 #endif

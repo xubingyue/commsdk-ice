@@ -1,5 +1,6 @@
 #include "uvssclientsdk.h"
 #include "uvssclient.h"
+#include <version.h>
 
 UVSSClientPtr clientSDK = new UVSSClient;
 
@@ -31,4 +32,9 @@ int UVSSConnect(const char* iPAddress, int port)
 int UVSSDisconnect(int index)
 {
     return clientSDK->disconnect(index);
+}
+
+const char* GetUVSSVersion()
+{
+    return UVSS_COMM_SDK_VER;
 }

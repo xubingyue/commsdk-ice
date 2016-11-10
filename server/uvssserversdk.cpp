@@ -1,5 +1,6 @@
 #include "uvssserversdk.h"
 #include "uvssserver.h"
+#include <version.h>
 
 UVSSServerPtr serverSDK = new UVSSServer;
 
@@ -29,4 +30,9 @@ void SendUVSSCheckInfo(const char* uVSSImagePath, const char* plateImagePath,
 {
     serverSDK->sendCheckInfo(uVSSImagePath, plateImagePath,
             channel, plateNumber, direction, time, extension);
+}
+
+const char* GetUVSSServerVersion()
+{
+    return UVSS_COMM_SDK_VER;
 }

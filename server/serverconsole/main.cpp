@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
 
 void menu()
 {
+    std::cout << "ServerVersion: " << GetUVSSServerVersion() << std::endl;
     std::cout << "usage:\n"
         "0: help\n"
         "1: set port\n"

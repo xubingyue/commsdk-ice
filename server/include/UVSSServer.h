@@ -11,5 +11,5 @@ void UninitUVSSServer();
 void SendUVSSCheckInfo(const char *UVSSImagePath, const char *PlateImagePath,
         const char *Channel, const char *PlateNumber, const char *Direction,
         const char *CheckDateTime, const char *Extension);
-
+const char *GetUVSSServerVersion();
 #endif
