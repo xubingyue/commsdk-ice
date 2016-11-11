@@ -86,7 +86,7 @@
 
 
 组织结构简单说明：
-1.clientserver.ice是Slice文件，在communication_sdk根目录下。
+1.clientserver.ice是Slice文件，在source根目录下。
 2.client和server两个工程会引用由clientserver.ice生成的C++代码（clientserver.h/cpp）。
 3.clientserver.ice（接口文件）->clientserver.h/cpp（client和server的骨架类）----->
     （client端）----->clienti.h/cpp（client的实现类）->uvssclient.h/cpp（引用clienti）->uvssclientsdk.h/cpp（封装成C接口）。
@@ -109,7 +109,7 @@ cmake -DCMAKE_CONFIGURATION_TYPES:STRING=Release -G "Visual Studio 12 2013" ..
 cmake -DCMAKE_CONFIGURATION_TYPES:STRING=Debug -G "Visual Studio 12 2013 Win64" ..
 cmake -DCMAKE_CONFIGURATION_TYPES:STRING=Release -G "Visual Studio 12 2013 Win64" ..
 
-version.h.in中版本号(UVSS_COMM_SDK_VER)可以由CMakeLists.txt中指定(暂用"sdk"，发布时库文件时可用日期时间，如"20160911")，实际被引用的version.h由CMake在build目录下生成。
+version.h.in中版本号(UVSS_COMM_SDK_VER)可以由CMakeLists.txt中指定(暂用"test"，发布时库文件时可用日期时间，如"20160911")，实际被引用的version.h由CMake在build目录下生成。
 clientserver.ice在build目录下生成clientserver.h/cpp。
 
 

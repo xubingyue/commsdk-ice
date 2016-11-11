@@ -9,7 +9,7 @@ project(server)
 
 string(REGEX MATCH "Win64" WIN64_GENERATOR ${CMAKE_GENERATOR})
 
-set(UVSS_COMM_SDK_VER "sdk")
+set(UVSS_COMM_SDK_VER "test")
 
 configure_file(
         "${PROJECT_SOURCE_DIR}/version.h.in"
