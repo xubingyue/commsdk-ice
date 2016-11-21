@@ -27,6 +27,10 @@ typedef void (__stdcall *UVSSCheckInfoCallback)(int handle,
         const char *Channel, const char *PlateNumber, const char *Direction,
         const char *CheckDateTime, const char *Extension);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // SetUVSSMessageCallback: 设置调试信息回调函数
 void SetUVSSMessageCallback(UVSSMessageCallback callback);
 
@@ -58,5 +62,9 @@ int UVSSDisconnect(int handle);
 // GetUVSSVersion: 获取版本号
 // 返回值：版本号
 const char *GetUVSSVersion();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
