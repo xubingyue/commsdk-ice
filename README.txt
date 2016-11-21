@@ -3,7 +3,7 @@
 2.Ice3.6.3
     安装目录：C:\ZeroC
     环境变量：C:\ZeroC\Ice-3.6.3\bin;C:\ZeroC\Ice-3.6.3\bin\x64
-3.IceBuilder4.3.3
+3.IceBuilder4.3.6
     可选。
     SDK程序用CMake管理，用不到插件。
     为了测试方便，在测试程序clientconsole、serverconsole中用此插件。
