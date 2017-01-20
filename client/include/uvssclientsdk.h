@@ -1,7 +1,7 @@
 #ifndef UVSSCLIENTSDK_H
 #define UVSSCLIENTSDK_H
 
-#include "clienti.h"
+#include <clienti.h>
 
 typedef ClientConnectionInfoCallback UVSSMessageCallback;
 typedef ClientCheckInfoCallback UVSSCheckInfoCallback;

@@ -1,6 +1,6 @@
-#include "uvssserver.h"
+#include <uvssserver.h>
 #include <sstream>
-#include "serveri.h"
+#include <serveri.h>
 
 UVSSServer::UVSSServer() : port(20145)
 {

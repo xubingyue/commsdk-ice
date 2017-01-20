@@ -1,5 +1,5 @@
-#include "uvssclientsdk.h"
-#include "uvssclient.h"
+#include <uvssclientsdk.h>
+#include <uvssclient.h>
 #include <version.h>
 
 UVSSClientPtr clientSDK = new UVSSClient;

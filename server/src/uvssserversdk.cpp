@@ -1,5 +1,5 @@
-#include "uvssserversdk.h"
-#include "uvssserver.h"
+#include <uvssserversdk.h>
+#include <uvssserver.h>
 #include <version.h>
 
 UVSSServerPtr serverSDK = new UVSSServer;

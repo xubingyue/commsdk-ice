@@ -11,10 +11,10 @@ class ClientI;
 typedef IceUtil::Handle<ClientI> ClientIPtr;
 typedef void (*ClientConnectionInfoCallback)(int, int, const char*);
 typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
-        const char*, const char*, const char*, const char*, const char*);
+                                        const char*, const char*, const char*, const char*, const char*);
 
 class ClientI : virtual public UVSS::Client, virtual public IceUtil::Thread,
-        virtual public IceUtil::Monitor<IceUtil::Mutex> {
+    virtual public IceUtil::Monitor<IceUtil::Mutex> {
 public:
     ClientI();
 
@@ -22,11 +22,11 @@ public:
     static void setCheckInfoCallback(ClientCheckInfoCallback);
 
     virtual void writeCheckInfo(
-            const std::string&, const UVSS::ByteSeq&,
-            const std::string&, const UVSS::ByteSeq&,
-            const std::string&, const std::string&, const std::string&,
-            const std::string&, const std::string&,
-            const Ice::Current& = Ice::Current());
+        const std::string&, const UVSS::ByteSeq&,
+        const std::string&, const UVSS::ByteSeq&,
+        const std::string&, const std::string&, const std::string&,
+        const std::string&, const std::string&,
+        const Ice::Current& = Ice::Current());
     virtual void run();
 
     void useConnectionInfoCallback(int, int, const std::string&);//考虑删除此函数

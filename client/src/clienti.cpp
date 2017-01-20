@@ -1,4 +1,4 @@
-#include "clienti.h"
+#include <clienti.h>
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <sstream>
@@ -7,7 +7,7 @@
 ClientConnectionInfoCallback ClientI::connectionInfoCallback = 0;
 ClientCheckInfoCallback ClientI::checkInfoCallback = 0;
 
-ClientI::ClientI() : isDestroyed(false), index(0)
+ClientI::ClientI() : index(0), isDestroyed(false)
 {
 }
 

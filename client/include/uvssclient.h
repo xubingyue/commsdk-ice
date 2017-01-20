@@ -4,7 +4,7 @@
 #include <string>
 #include <Ice/Ice.h>
 #include <IceUtil/IceUtil.h>
-#include "clienti.h"
+#include <clienti.h>
 
 class UVSSClient;
 typedef IceUtil::Handle<UVSSClient> UVSSClientPtr;

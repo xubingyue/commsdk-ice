@@ -1,7 +1,7 @@
 #ifndef UVSSSERVERSDK_H
 #define UVSSSERVERSDK_H
 
-#include "serveri.h"
+#include <serveri.h>
 
 typedef ServerConnectionInfoCallback UVSSServerCallback;
 
