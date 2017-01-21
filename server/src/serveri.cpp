@@ -60,8 +60,9 @@ void ServerI::run()
             if (this->isDestroyed) {
                 return;
             }
-
-            clientProxyToEndpoint = this->clientProxyToEndpoint;
+            else {
+                clientProxyToEndpoint = this->clientProxyToEndpoint;
+            }
         }
 
         if (!clientProxyToEndpoint.empty()) {
@@ -77,7 +78,10 @@ void ServerI::run()
                     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
                     //Ice::Identity ident = it->first->ice_getIdentity();
 
-                    if (!this->isDestroyed) {
+                    if (this->isDestroyed) {
+                        return;
+                    }
+                    else {
                         std::string endpoint =
                                 this->clientProxyToEndpoint[it->first];
                         if (this->connectionInfoCallback != 0) {
@@ -85,9 +89,6 @@ void ServerI::run()
                                     "客户端 " + endpoint + ": 已断开").c_str());
                         }
                         this->clientProxyToEndpoint.erase(it->first);
-                    }
-                    else {
-                        return;
                     }
                 }
             }
@@ -98,11 +99,13 @@ void ServerI::run()
 void ServerI::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
 {
     std::ifstream ifs(filePath, std::ios::binary);
+    
     ifs.seekg(0, std::ios::end);
     std::streampos fileSize = ifs.tellg();
+    
     ifs.seekg(0, std::ios::beg);
-
     file.resize(fileSize);
+    
     ifs.read((char*)&file[0], fileSize);
 }
 
@@ -154,20 +157,21 @@ void ServerI::sendCheckInfo(
 
     for (std::map<UVSS::ClientPrx, std::string>::const_iterator
             it = this->clientProxyToEndpoint.begin();
-            it != this->clientProxyToEndpoint.end();) {
+            it != this->clientProxyToEndpoint.end(); ++it) {
         try {
             it->first->writeCheckInfo(
                 uVSSImageName, uVSSImage, plateImageName, plateImage,
                 channel, plateNumber, direction, time, extension);
         }
         catch (const Ice::Exception& ex) {
+            ///just skip
             //it = this->clientProxyToEndpoint.erase(it);
             std::cerr << ex << std::endl;
-            ++it;
-            continue;
+            ///++it;
+            ///continue;
         }
 
-        ++it;
+        ///++it;
     }
 }
 

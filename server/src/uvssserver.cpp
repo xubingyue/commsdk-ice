@@ -26,9 +26,9 @@ int UVSSServer::init()
         //props->setProperty("Ice.Warn.Connections", "1");
         //props->setProperty("Ice.MessageSizeMax", "51200");
         props->setProperty("Ice.MessageSizeMax", "2097152");
-        Ice::InitializationData id;
-        id.properties = props;
-        this->ic = Ice::initialize(id);
+        Ice::InitializationData initData;
+        initData.properties = props;
+        this->ic = Ice::initialize(initData);
 
         std::stringstream port;
         port << this->port;
@@ -42,6 +42,7 @@ int UVSSServer::init()
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
+        //no callback
 
         return -1;
     }

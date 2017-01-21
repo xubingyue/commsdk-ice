@@ -23,6 +23,7 @@ public:
 
 private:
     Ice::CommunicatorPtr ic;
+    //adapter?
     ServerIPtr server;
     int port;
 };

@@ -11,7 +11,7 @@ class ClientI;
 typedef IceUtil::Handle<ClientI> ClientIPtr;
 typedef void (*ClientConnectionInfoCallback)(int, int, const char*);
 typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
-                                        const char*, const char*, const char*, const char*, const char*);
+        const char*, const char*, const char*, const char*, const char*);
 
 class ClientI : virtual public UVSS::Client, virtual public IceUtil::Thread,
     virtual public IceUtil::Monitor<IceUtil::Mutex> {
@@ -33,15 +33,15 @@ public:
     void createImageDirectory(const std::string&);
     void destroy();
 
-    int index;
-    std::map<UVSS::ServerPrx, std::string> serverProxyToEndpoint;
-    std::map<std::string, int> endpointToIndex;
+    int index;//1,锁！！！！
+    std::map<UVSS::ServerPrx, std::string> serverProxyToEndpoint;//2
+    std::map<std::string, int> endpointToIndex;//3
 
 private:
     static ClientConnectionInfoCallback connectionInfoCallback;
     static ClientCheckInfoCallback checkInfoCallback;
 
-    bool isDestroyed;
+    bool isDestroyed;//public?//4
 };
 
 #endif

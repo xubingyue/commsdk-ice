@@ -1,7 +1,7 @@
 #include <uvssclient.h>
 #include <map>
 #include <sstream>
-#include "clienti.h"
+#include <clienti.h>
 #include <clientserver.h>
 #include <version.h>
 
@@ -76,6 +76,7 @@ void UVSSClient::uninit()
 
 int UVSSClient::connect(const std::string& iPAddress, int port)
 {
+    //锁的方式需要更细致！
     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this->client);
 
     try {
@@ -83,6 +84,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         serverPort << port;
         std::string endpoint = iPAddress + ":" + serverPort.str();
 
+        //lock
         for (std::map<UVSS::ServerPrx, std::string>::const_iterator
                 it = this->client->serverProxyToEndpoint.begin();
                 it != this->client->serverProxyToEndpoint.end(); ++it) {
@@ -108,6 +110,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         serverProxy->ice_getConnection()->setAdapter(this->adapter);
         serverProxy->addClient(this->id);
 
+        //lock
         ++this->client->index;
         this->client->endpointToIndex[endpoint] = this->client->index;
         this->client->serverProxyToEndpoint[serverProxy] = endpoint;
@@ -135,21 +138,23 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
 
 int UVSSClient::disconnect(int index)
 {
+    //锁的方式需要更细致！
     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*client);
 
     try {
         for (std::map<std::string, int>::const_iterator
                 it1 = this->client->endpointToIndex.begin();
-                it1 != this->client->endpointToIndex.end();) {
+                it1 != this->client->endpointToIndex.end(); ++it1) {
             if (it1->second == index) {
                 std::string endpoint = it1->first;
                 for (std::map<UVSS::ServerPrx, std::string>::const_iterator
                         it2 = this->client->serverProxyToEndpoint.begin();
-                        it2 != this->client->serverProxyToEndpoint.end();) {
+                        it2 != this->client->serverProxyToEndpoint.end(); ++it2) {
                     if (it2->second == endpoint) {
                         it2->first->ice_getConnection()->close(false);
+                        
                         this->client->serverProxyToEndpoint.erase(it2);//无须it2++
-                        this->client->endpointToIndex.erase(it1);
+                        this->client->endpointToIndex.erase(it1);//此时删除？
 
                         std::stringstream idx;
                         idx << index;
@@ -159,19 +164,13 @@ int UVSSClient::disconnect(int index)
 
                         return 1;
                     }
-                    else {
-                        ++it2;
-                    }
                 }
 
-                return -1;//可以省略
-            }
-            else {
-                ++it1;
+                return -1;//可以去掉
             }
         }
 
-        return -1;
+        return -1;//没有此连接
     }
     catch (...) {
         return -1;//断开失败, 以前的程序没有考虑

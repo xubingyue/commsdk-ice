@@ -84,8 +84,9 @@ void ClientI::run()
             if (this->isDestroyed) {
                 return;
             }
-
-            serverProxyToEndpoint = this->serverProxyToEndpoint;
+            else {
+                serverProxyToEndpoint = this->serverProxyToEndpoint;
+            }
         }
 
         if (!serverProxyToEndpoint.empty()) {
@@ -98,7 +99,10 @@ void ClientI::run()
                 catch (...) {
                     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
 
-                    if (!this->isDestroyed) {
+                    if (this->isDestroyed) {
+                        return;
+                    }
+                    else {
                         UVSS::ServerPrx serverProxy = it->first;
                         std::string endpoint = it->second;
                         int index = this->endpointToIndex[endpoint];
@@ -110,9 +114,6 @@ void ClientI::run()
                                 "已断开 | 连接标识: " + idx.str());
                         this->serverProxyToEndpoint.erase(serverProxy);
                         this->endpointToIndex.erase(endpoint);
-                    }
-                    else {
-                        return;
                     }
                 }
             }
