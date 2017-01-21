@@ -1,7 +1,7 @@
 #include <clienti.h>
-#include <boost/filesystem.hpp>
 #include <fstream>
-#include <sstream>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <clientserver.h>
 
 ClientConnectionInfoCallback ClientI::connectionInfoCallback = 0;
@@ -57,10 +57,9 @@ void ClientI::writeCheckInfo(
             Ice::TCPConnectionInfoPtr tcpInfo =
                     Ice::TCPConnectionInfoPtr::dynamicCast(info);
             if (tcpInfo != 0) {
-                std::stringstream endpoint;
-                endpoint << tcpInfo->remoteAddress << ":" <<
-                        tcpInfo->remotePort;
-                int index = this->endpointToIndex[endpoint.str()];
+                std::string endpoint = tcpInfo->remoteAddress + ":" +
+                        boost::lexical_cast<std::string>(tcpInfo->remotePort);
+                int index = this->endpointToIndex[endpoint];
 
                 this->checkInfoCallback(index,
                         uVSSImagePath.c_str(), plateImagePath.c_str(),
@@ -106,12 +105,10 @@ void ClientI::run()
                         UVSS::ServerPrx serverProxy = it->first;
                         std::string endpoint = it->second;
                         int index = this->endpointToIndex[endpoint];
-                        std::stringstream idx;
-                        idx << index;
 
                         useConnectionInfoCallback(index, -3,
                                 "服务器端 " + endpoint + ": " +
-                                "已断开 | 连接标识: " + idx.str());
+                                "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
                         this->serverProxyToEndpoint.erase(serverProxy);
                         this->endpointToIndex.erase(endpoint);
                     }

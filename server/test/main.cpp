@@ -1,7 +1,6 @@
-#include "uvssserversdk.h"
-
 #include <cstdio>
 #include <iostream>
+#include <uvssserversdk.h>
 
 void menu();
 void serverConnectionInfoCallback(int, const char*);
@@ -52,6 +51,7 @@ int main(int argc, char* argv[])
             }
         }
         catch (...) {
+            throw;
         }
     } while ((std::cin.good()) && (key != 9));
 
@@ -75,4 +75,3 @@ void serverConnectionInfoCallback(int type,
 {
     printf("\ncallback:\n%d, %s\n", type, connectionInfo);
 }
-

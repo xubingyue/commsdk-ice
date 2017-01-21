@@ -1,4 +1,6 @@
 #include <uvssclientsdk.h>
+#include <cstdio>
+#include <iostream>
 
 void menu();
 void clientConnectionInfoCallback(int, int, const char*);
@@ -63,8 +65,8 @@ int main(int argc, char* argv[])
                 break;
             }
         }
-        catch (const Ice::Exception& ex) {
-            std::cerr << ex << std::endl;
+        catch (...) {
+            throw;
         }
     } while ((std::cin.good()) && (key != 9));
 

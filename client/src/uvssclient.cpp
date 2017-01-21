@@ -1,6 +1,6 @@
 #include <uvssclient.h>
 #include <map>
-#include <sstream>
+#include <boost/lexical_cast.hpp>
 #include <clienti.h>
 #include <clientserver.h>
 #include <version.h>
@@ -80,9 +80,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this->client);
 
     try {
-        std::stringstream serverPort;
-        serverPort << port;
-        std::string endpoint = iPAddress + ":" + serverPort.str();
+        std::string endpoint = iPAddress + ":" + boost::lexical_cast<std::string>(port);
 
         //lock
         for (std::map<UVSS::ServerPrx, std::string>::const_iterator
@@ -95,7 +93,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
 
         Ice::ObjectPrx base = this->ic->stringToProxy(
                 "Server:tcp -h " + iPAddress + " -p " +
-                serverPort.str())->ice_twoway()->ice_timeout(-1)->ice_secure(
+                boost::lexical_cast<std::string>(port))->ice_twoway()->ice_timeout(-1)->ice_secure(
                 false);
 
         UVSS::ServerPrx serverProxy = UVSS::ServerPrx::checkedCast(base);
@@ -115,10 +113,8 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         this->client->endpointToIndex[endpoint] = this->client->index;
         this->client->serverProxyToEndpoint[serverProxy] = endpoint;
 
-        std::stringstream idx;
-        idx << this->client->index;
         this->client->useConnectionInfoCallback(this->client->index, 1,
-                "服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + idx.str());
+                "服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + boost::lexical_cast<std::string>(this->client->index));
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
@@ -158,11 +154,9 @@ int UVSSClient::disconnect(int index)
                         this->client->serverProxyToEndpoint.erase(it2);//无须it2++
 
                         //只能在此处通知！不能依靠心跳线程
-                        std::stringstream idx;
-                        idx << index;
                         this->client->useConnectionInfoCallback(index, -3,
                                 "服务器端 " + endpoint + ": " +
-                                "已断开 | 连接标识: " + idx.str());
+                                "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
 
                         return 1;
                     }

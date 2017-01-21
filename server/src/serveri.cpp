@@ -1,10 +1,11 @@
 #include <serveri.h>
 #include <chrono>
 #include <ctime>
-#include <boost/filesystem.hpp>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <clientserver.h>
 #include <version.h>
 
@@ -35,15 +36,15 @@ void ServerI::addClient(const Ice::Identity& id, const Ice::Current& curr)
     Ice::ConnectionInfoPtr info = curr.con->getInfo();
     Ice::TCPConnectionInfoPtr tcpInfo =
             Ice::TCPConnectionInfoPtr::dynamicCast(info);
-    std::stringstream endpoint;
-    endpoint << tcpInfo->remoteAddress.replace(0, 7, "") << ":" <<
-            tcpInfo->remotePort;//去掉开头的::ffff:
 
-    this->clientProxyToEndpoint[clientProxy] = endpoint.str();
+    std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
+            boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
+
+    this->clientProxyToEndpoint[clientProxy] = endpoint;
 
     if (this->connectionInfoCallback != 0) {
         this->connectionInfoCallback(
-                0, std::string("客户端 " + endpoint.str() + ": 已连接").c_str());
+                0, std::string("客户端 " + endpoint + ": 已连接").c_str());
     }
 }
 
@@ -167,11 +168,7 @@ void ServerI::sendCheckInfo(
             ///just skip
             //it = this->clientProxyToEndpoint.erase(it);
             std::cerr << ex << std::endl;
-            ///++it;
-            ///continue;
         }
-
-        ///++it;
     }
 }
 
