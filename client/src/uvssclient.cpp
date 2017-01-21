@@ -146,16 +146,18 @@ int UVSSClient::disconnect(int index)
                 it1 = this->client->endpointToIndex.begin();
                 it1 != this->client->endpointToIndex.end(); ++it1) {
             if (it1->second == index) {
+                this->client->endpointToIndex.erase(it1);//此时删除？
                 std::string endpoint = it1->first;
                 for (std::map<UVSS::ServerPrx, std::string>::const_iterator
                         it2 = this->client->serverProxyToEndpoint.begin();
                         it2 != this->client->serverProxyToEndpoint.end(); ++it2) {
                     if (it2->second == endpoint) {
+                        //server不能连到client
                         it2->first->ice_getConnection()->close(false);
-                        
+                        //client不能连到server
                         this->client->serverProxyToEndpoint.erase(it2);//无须it2++
-                        this->client->endpointToIndex.erase(it1);//此时删除？
 
+                        //只能在此处通知！不能依靠心跳线程
                         std::stringstream idx;
                         idx << index;
                         this->client->useConnectionInfoCallback(index, -3,
