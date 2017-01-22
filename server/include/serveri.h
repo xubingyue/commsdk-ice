@@ -7,12 +7,16 @@
 #include <IceUtil/IceUtil.h>
 #include <clientserver.h>
 
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
 class ServerI;
 typedef IceUtil::Handle<ServerI> ServerIPtr;
 typedef void (*ServerConnectionInfoCallback)(int, const char*);
 
-class ServerI : virtual public UVSS::Server, virtual public IceUtil::Thread,
-        virtual public IceUtil::Monitor<IceUtil::Mutex> {
+class ServerI : /*virtual */public UVSS::Server/*, virtual public IceUtil::Thread,
+        virtual public IceUtil::Monitor<IceUtil::Mutex>*/ {
 public:
     ServerI();
 
@@ -22,13 +26,15 @@ public:
             const Ice::Current& = Ice::Current());
     virtual void addClient(const Ice::Identity&,
             const Ice::Current& = Ice::Current());
-    virtual void run();
+//    virtual void run();
 
     void filePathToBinary(const std::string&, UVSS::ByteSeq&);
     const std::string createCurrentTime();
     void sendCheckInfo(const std::string&, const std::string&,
             const std::string&, const std::string&, const std::string&,
             const std::string&, const std::string&);
+    
+    void start();
     void destroy();
 
 private:
@@ -36,6 +42,10 @@ private:
 
     std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
     bool isDestroyed;
+    
+    std::mutex _mutex;
+    std::condition_variable _cv;
+    std::thread _senderThread;
 };
 
 #endif

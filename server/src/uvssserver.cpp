@@ -33,7 +33,8 @@ int UVSSServer::init()
         Ice::ObjectAdapterPtr adapter =
                 this->ic->createObjectAdapterWithEndpoints(
                "UVSS.Server", "tcp -p " + boost::lexical_cast<std::string>(this->port));
-        adapter->add(this->server, this->ic->stringToIdentity("Server"));
+//         adapter->add(this->server, this->ic->stringToIdentity("Server"));
+        adapter->add(this->server, Ice::stringToIdentity("Server"));
         adapter->activate();
 
         this->server->start();

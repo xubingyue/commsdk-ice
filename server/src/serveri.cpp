@@ -28,8 +28,10 @@ bool ServerI::checkVersion(const std::string& ver, const Ice::Current&)
 
 void ServerI::addClient(const Ice::Identity& id, const Ice::Current& curr)
 {
-    IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+//     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
 
+    std::unique_lock<std::mutex> lock(_mutex);
+    
     UVSS::ClientPrx clientProxy =
             UVSS::ClientPrx::uncheckedCast(curr.con->createProxy(id));
 
@@ -48,53 +50,61 @@ void ServerI::addClient(const Ice::Identity& id, const Ice::Current& curr)
     }
 }
 
-void ServerI::run()
+// void ServerI::run()
+void ServerI::start()
 {
-    while (true) {
-        std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
+    std::thread t([this]() {
+        while (true) {
+            std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
 
-        {
-            IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
-            IceUtil::Monitor<IceUtil::Mutex>::timedWait(
-                    IceUtil::Time::seconds(2));
+            {
+//                 IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+//                 IceUtil::Monitor<IceUtil::Mutex>::timedWait(
+//                     IceUtil::Time::seconds(2));
+                std::unique_lock<std::mutex> lock(this->_mutex);
+                this->_cv.wait_for(lock, std::chrono::seconds(2));
 
-            if (this->isDestroyed) {
-                return;
-            }
-            else {
-                clientProxyToEndpoint = this->clientProxyToEndpoint;
-            }
-        }
-
-        if (!clientProxyToEndpoint.empty()) {
-            for (std::map<UVSS::ClientPrx, std::string>::const_iterator
-                    it = clientProxyToEndpoint.begin();
-                    it != clientProxyToEndpoint.end(); ++it) {
-                try {
-                    it->first->ice_ping();
-                    //std::cout << it->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
-                    //std::cout << it->first->ice_getCommunicator()->identityToString(it->first->ice_getIdentity()) << std::endl;
+                if (this->isDestroyed) {
+                    return;
                 }
-                catch (...) {
-                    IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
-                    //Ice::Identity ident = it->first->ice_getIdentity();
+                else {
+                    clientProxyToEndpoint = this->clientProxyToEndpoint;
+                }
+            }
 
-                    if (this->isDestroyed) {
-                        return;
+            if (!clientProxyToEndpoint.empty()) {
+                for (std::map<UVSS::ClientPrx, std::string>::const_iterator
+                        it = clientProxyToEndpoint.begin();
+                        it != clientProxyToEndpoint.end(); ++it) {
+                    try {
+                        it->first->ice_ping();
+                        //std::cout << it->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
+                        //std::cout << it->first->ice_getCommunicator()->identityToString(it->first->ice_getIdentity()) << std::endl;
                     }
-                    else {
-                        std::string endpoint =
-                                this->clientProxyToEndpoint[it->first];
-                        if (this->connectionInfoCallback != 0) {
-                            this->connectionInfoCallback(-1, std::string(
-                                    "客户端 " + endpoint + ": 已断开").c_str());
+                    catch (...) {
+//                         IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+                        //Ice::Identity ident = it->first->ice_getIdentity();
+                        
+                        std::unique_lock<std::mutex> lock(_mutex);
+
+                        if (this->isDestroyed) {
+                            return;
                         }
-                        this->clientProxyToEndpoint.erase(it->first);
+                        else {
+                            std::string endpoint =
+                                this->clientProxyToEndpoint[it->first];
+                            if (this->connectionInfoCallback != 0) {
+                                this->connectionInfoCallback(-1, std::string(
+                                                                 "客户端 " + endpoint + ": 已断开").c_str());
+                            }
+                            this->clientProxyToEndpoint.erase(it->first);
+                        }
                     }
                 }
             }
         }
-    }
+    });
+    _senderThread = std::move(t);
 }
 
 void ServerI::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
@@ -136,7 +146,8 @@ void ServerI::sendCheckInfo(
         const std::string& direction, const std::string& time,
         const std::string& extension)
 {
-    IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+//     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+    std::unique_lock<std::mutex> lock(_mutex);
 
     std::string timeName = createCurrentTime();
 
@@ -175,11 +186,14 @@ void ServerI::sendCheckInfo(
 void ServerI::destroy()
 {
     {
-        IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+//         IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+        std::unique_lock<std::mutex> lock(_mutex);
         this->isDestroyed = true;
+        _cv.notify_one();
 
-        IceUtil::Monitor<IceUtil::Mutex>::notify();
+//         IceUtil::Monitor<IceUtil::Mutex>::notify();
     }
 
-    IceUtil::Thread::getThreadControl().join();
+//     IceUtil::Thread::getThreadControl().join();
+    _senderThread.join();
 }
