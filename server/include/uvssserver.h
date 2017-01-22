@@ -3,11 +3,11 @@
 
 #include <string>
 #include <Ice/Ice.h>
-#include <IceUtil/IceUtil.h>
+//#include <IceUtil/IceUtil.h>
 #include <serveri.h>
 
-class UVSSServer;
-typedef IceUtil::Handle<UVSSServer> UVSSServerPtr;
+// class UVSSServer;
+// typedef IceUtil::Handle<UVSSServer> UVSSServerPtr;
 
 class UVSSServer : virtual public IceUtil::Shared {
 public:

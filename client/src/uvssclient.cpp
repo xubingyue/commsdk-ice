@@ -5,6 +5,8 @@
 #include <clientserver.h>
 #include <version.h>
 
+#include <memory>
+
 UVSSClient::UVSSClient()
 {
 }
@@ -24,7 +26,8 @@ void UVSSClient::setCheckInfoCallback(
 int UVSSClient::init()
 {
     try {
-        this->client = new ClientI;
+//         this->client = new ClientI;
+        this->client = std::make_shared<ClientI>();
 
         Ice::PropertiesPtr props = Ice::createProperties();
         //props->setProperty("Ice.Warn.Connections", "1");
@@ -84,7 +87,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         std::string endpoint = iPAddress + ":" + boost::lexical_cast<std::string>(port);
 
         //lock
-        for (std::map<UVSS::ServerPrx, std::string>::const_iterator
+        for (std::map<std::shared_ptr<UVSS::ServerPrx>, std::string>::const_iterator
                 it = this->client->serverProxyToEndpoint.begin();
                 it != this->client->serverProxyToEndpoint.end(); ++it) {
             if (it->second == endpoint) {
@@ -92,12 +95,12 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
             }
         }
 
-        Ice::ObjectPrx base = this->ic->stringToProxy(
+        auto base = this->ic->stringToProxy(
                 "Server:tcp -h " + iPAddress + " -p " +
                 boost::lexical_cast<std::string>(port))->ice_twoway()->ice_timeout(-1)->ice_secure(
                 false);
 
-        UVSS::ServerPrx serverProxy = UVSS::ServerPrx::checkedCast(base);
+        auto serverProxy = Ice::checkedCast<UVSS::ServerPrx>(base);
         if (serverProxy == 0) {
             throw "Invalid proxy";
         }
@@ -146,7 +149,7 @@ int UVSSClient::disconnect(int index)
             if (it1->second == index) {
                 this->client->endpointToIndex.erase(it1);//此时删除？
                 std::string endpoint = it1->first;
-                for (std::map<UVSS::ServerPrx, std::string>::const_iterator
+                for (std::map<std::shared_ptr<UVSS::ServerPrx>, std::string>::const_iterator
                         it2 = this->client->serverProxyToEndpoint.begin();
                         it2 != this->client->serverProxyToEndpoint.end(); ++it2) {
                     if (it2->second == endpoint) {

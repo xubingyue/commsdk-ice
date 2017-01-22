@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include <Ice/Ice.h>
-#include <IceUtil/IceUtil.h>
+//#include <IceUtil/IceUtil.h>
 #include <clientserver.h>
 
 #include <thread>

@@ -2,7 +2,7 @@
 #include <uvssclient.h>
 #include <version.h>
 
-UVSSClientPtr clientSDK = new UVSSClient;
+auto clientSDK = std::make_shared<UVSSClient>();
 
 void SetUVSSMessageCallback(UVSSMessageCallback connectionInfoCallback)
 {

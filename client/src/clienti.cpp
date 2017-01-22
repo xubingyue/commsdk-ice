@@ -23,11 +23,11 @@ void ClientI::setCheckInfoCallback(ClientCheckInfoCallback checkInfoCallback)
 }
 
 void ClientI::writeCheckInfo(
-        const std::string& uVSSImageName, const UVSS::ByteSeq& uVSSImage,
-        const std::string& plateImageName, const UVSS::ByteSeq& plateImage,
-        const std::string& channel, const std::string& plateNumber,
-        const std::string& direction, const std::string& time,
-        const std::string& extension, const Ice::Current& curr)
+        std::string uVSSImageName, UVSS::ByteSeq uVSSImage,
+        std::string plateImageName, UVSS::ByteSeq plateImage,
+        std::string channel, std::string plateNumber,
+        std::string direction, std::string time,
+        std::string extension, const Ice::Current& curr)
 {
     createImageDirectory("UVSS");
 
@@ -55,7 +55,7 @@ void ClientI::writeCheckInfo(
             //std::cout << curr.con->getEndpoint()->toString();
             Ice::ConnectionInfoPtr info = curr.con->getInfo();
             Ice::TCPConnectionInfoPtr tcpInfo =
-                    Ice::TCPConnectionInfoPtr::dynamicCast(info);
+                    std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
             if (tcpInfo != 0) {
                 std::string endpoint = tcpInfo->remoteAddress + ":" +
                         boost::lexical_cast<std::string>(tcpInfo->remotePort);
@@ -75,7 +75,7 @@ void ClientI::start()
 {
     std::thread t([this]() {
     while (true) {
-        std::map<UVSS::ServerPrx, std::string> serverProxyToEndpoint;
+        std::map<std::shared_ptr<UVSS::ServerPrx>, std::string> serverProxyToEndpoint;
 
         {
 //             IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
@@ -93,7 +93,7 @@ void ClientI::start()
         }
 
         if (!serverProxyToEndpoint.empty()) {
-            for (std::map<UVSS::ServerPrx, std::string>::const_iterator
+            for (std::map<std::shared_ptr<UVSS::ServerPrx>, std::string>::const_iterator
                     it = serverProxyToEndpoint.begin();
                     it != serverProxyToEndpoint.end(); ++it) {
                 try {
@@ -107,7 +107,7 @@ void ClientI::start()
                         return;
                     }
                     else {
-                        UVSS::ServerPrx serverProxy = it->first;
+                        auto serverProxy = it->first;
                         std::string endpoint = it->second;
                         int index = this->endpointToIndex[endpoint];
 

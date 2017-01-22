@@ -2,7 +2,7 @@
 #include <uvssserver.h>
 #include <version.h>
 
-UVSSServerPtr serverSDK = new UVSSServer;
+auto serverSDK = std::make_shared<UVSSServer>();
 
 void SetUVSSServerCallback(UVSSServerCallback connectionInfoCallback)
 {

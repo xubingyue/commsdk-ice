@@ -1,5 +1,4 @@
-#ifndef CLIENTSERVER_ICE
-#define CLIENTSERVER_ICE
+#pragma once
 
 #include <Ice/Identity.ice>
 
@@ -23,4 +22,3 @@ interface Server {
 };
 };
 
-#endif
