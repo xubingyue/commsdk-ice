@@ -2,7 +2,7 @@
 #include <boost/lexical_cast.hpp>
 #include <serveri.h>
 
-UVSSServer::UVSSServer() : port(20145)
+UVSSServer::UVSSServer() : port(20145), ic(0)
 {
 }
 
@@ -20,7 +20,7 @@ void UVSSServer::setPort(int port)
 int UVSSServer::init()
 {
     try {
-        this->server = new ServerI;
+        this->server = std::make_shared<ServerI>();
 
         Ice::PropertiesPtr props = Ice::createProperties();
         //props->setProperty("Ice.Warn.Connections", "1");

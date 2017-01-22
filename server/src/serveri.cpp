@@ -9,6 +9,8 @@
 #include <clientserver.h>
 #include <version.h>
 
+#include <memory>
+
 ServerConnectionInfoCallback ServerI::connectionInfoCallback = 0;
 
 ServerI::ServerI() : isDestroyed(false)
@@ -21,23 +23,24 @@ void ServerI::setConnectionInfoCallback(
     ServerI::connectionInfoCallback = connectionInfoCallback;
 }
 
-bool ServerI::checkVersion(const std::string& ver, const Ice::Current&)
+bool ServerI::checkVersion(std::string ver, const Ice::Current&)
 {
     return ver == UVSS_COMM_SDK_VER;
 }
 
-void ServerI::addClient(const Ice::Identity& id, const Ice::Current& curr)
+void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
 {
 //     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
 
     std::unique_lock<std::mutex> lock(_mutex);
     
-    UVSS::ClientPrx clientProxy =
-            UVSS::ClientPrx::uncheckedCast(curr.con->createProxy(id));
+    auto clientProxy =
+            Ice::uncheckedCast<UVSS::ClientPrx>(curr.con->createProxy(id));
 
     Ice::ConnectionInfoPtr info = curr.con->getInfo();
-    Ice::TCPConnectionInfoPtr tcpInfo =
-            Ice::TCPConnectionInfoPtr::dynamicCast(info);
+    Ice::TCPConnectionInfoPtr tcpInfo = 
+            std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
+            
 
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
             boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
@@ -55,7 +58,8 @@ void ServerI::start()
 {
     std::thread t([this]() {
         while (true) {
-            std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
+//            std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
+            std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;
 
             {
 //                 IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
@@ -73,7 +77,7 @@ void ServerI::start()
             }
 
             if (!clientProxyToEndpoint.empty()) {
-                for (std::map<UVSS::ClientPrx, std::string>::const_iterator
+                for (std::map<std::shared_ptr<UVSS::ClientPrx>, std::string>::const_iterator
                         it = clientProxyToEndpoint.begin();
                         it != clientProxyToEndpoint.end(); ++it) {
                     try {
@@ -167,7 +171,7 @@ void ServerI::sendCheckInfo(
         filePathToBinary(plateImagePath, plateImage);
     }
 
-    for (std::map<UVSS::ClientPrx, std::string>::const_iterator
+    for (std::map<std::shared_ptr<UVSS::ClientPrx>, std::string>::const_iterator
             it = this->clientProxyToEndpoint.begin();
             it != this->clientProxyToEndpoint.end(); ++it) {
         try {

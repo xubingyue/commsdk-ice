@@ -22,9 +22,11 @@ public:
             const std::string&, const std::string&);
 
 private:
-    Ice::CommunicatorPtr ic;
+//     Ice::CommunicatorPtr ic;
+    std::shared_ptr<Ice::Communicator> ic;
+    //Ice::CommunicatorHolder ic;
     //adapter?
-    ServerIPtr server;
+    std::shared_ptr<ServerI> server;
     int port;
 };
 

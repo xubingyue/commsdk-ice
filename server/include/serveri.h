@@ -11,8 +11,8 @@
 #include <mutex>
 #include <condition_variable>
 
-class ServerI;
-typedef IceUtil::Handle<ServerI> ServerIPtr;
+// class ServerI;
+// typedef IceUtil::Handle<ServerI> ServerIPtr;
 typedef void (*ServerConnectionInfoCallback)(int, const char*);
 
 class ServerI : /*virtual */public UVSS::Server/*, virtual public IceUtil::Thread,
@@ -22,11 +22,14 @@ public:
 
     static void setConnectionInfoCallback(ServerConnectionInfoCallback);
 
-    virtual bool checkVersion(const std::string&,
-            const Ice::Current& = Ice::Current());
-    virtual void addClient(const Ice::Identity&,
-            const Ice::Current& = Ice::Current());
+//     virtual bool checkVersion(const std::string&,
+//             const Ice::Current& = Ice::Current());
+//     virtual void addClient(const Ice::Identity&,
+//             const Ice::Current& = Ice::Current());
 //    virtual void run();
+    
+    virtual void addClient(Ice::Identity, const Ice::Current& = Ice::noExplicitCurrent) override;
+    virtual bool checkVersion(std::string, const Ice::Current& = Ice::noExplicitCurrent) override;
 
     void filePathToBinary(const std::string&, UVSS::ByteSeq&);
     const std::string createCurrentTime();
@@ -40,7 +43,8 @@ public:
 private:
     static ServerConnectionInfoCallback connectionInfoCallback;
 
-    std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
+//    std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
+    std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;
     bool isDestroyed;
     
     std::mutex _mutex;

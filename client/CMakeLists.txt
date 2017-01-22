@@ -5,7 +5,7 @@ project(server)
 set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_CXX_COMPILER g++)
-add_compile_options(-DICE_CPP11_MAPING)
+add_compile_options(-DICE_CPP11_MAPPING)
 
 set(UVSS_COMM_SDK_VER "test")
 configure_file(
@@ -24,8 +24,8 @@ set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp ${PROJECT_SOURCE_DIR}/s
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSSDK SHARED ${SOURCES})
-target_link_libraries(UVSSSDK Ice IceUtil pthread boost_system boost_filesystem)
+target_link_libraries(UVSSSDK Ice++11 IceUtil++11 pthread boost_system boost_filesystem)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 add_executable(client ${PROJECT_SOURCE_DIR}/test/main.cpp)
-target_link_libraries(client UVSSSDK Ice IceUtil pthread boost_system boost_filesystem)
+target_link_libraries(client UVSSSDK Ice++11 IceUtil++11 pthread boost_system boost_filesystem)
