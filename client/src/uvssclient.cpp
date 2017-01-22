@@ -77,7 +77,8 @@ void UVSSClient::uninit()
 int UVSSClient::connect(const std::string& iPAddress, int port)
 {
     //锁的方式需要更细致！
-    IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this->client);
+//     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this->client);
+    std::unique_lock<std::mutex> lock(this->client->_mutex);
 
     try {
         std::string endpoint = iPAddress + ":" + boost::lexical_cast<std::string>(port);
@@ -135,7 +136,8 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
 int UVSSClient::disconnect(int index)
 {
     //锁的方式需要更细致！
-    IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*client);
+//     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*client);
+    std::unique_lock<std::mutex> lock(this->client->_mutex);
 
     try {
         for (std::map<std::string, int>::const_iterator

@@ -70,15 +70,19 @@ void ClientI::writeCheckInfo(
     }
 }
 
-void ClientI::run()
+// void ClientI::run()
+void ClientI::start()
 {
+    std::thread t([this]() {
     while (true) {
         std::map<UVSS::ServerPrx, std::string> serverProxyToEndpoint;
 
         {
-            IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
-            IceUtil::Monitor<IceUtil::Mutex>::timedWait(
-                    IceUtil::Time::seconds(2));
+//             IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+//             IceUtil::Monitor<IceUtil::Mutex>::timedWait(
+//                     IceUtil::Time::seconds(2));
+            std::unique_lock<std::mutex> lock(this->_mutex);
+            this->_cv.wait_for(lock, std::chrono::seconds(2));
 
             if (this->isDestroyed) {
                 return;
@@ -96,7 +100,8 @@ void ClientI::run()
                     it->first->ice_ping();
                 }
                 catch (...) {
-                    IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+//                     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+                    std::unique_lock<std::mutex> lock(_mutex);
 
                     if (this->isDestroyed) {
                         return;
@@ -116,6 +121,8 @@ void ClientI::run()
             }
         }
     }
+    });
+    _senderThread = std::move(t);
 }
 
 void ClientI::useConnectionInfoCallback(int index, int type,
@@ -141,11 +148,14 @@ void ClientI::createImageDirectory(const std::string& imageDirectory)
 void ClientI::destroy()
 {
     {
-        IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+//         IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
+        std::unique_lock<std::mutex> lock(_mutex);
         this->isDestroyed = true;
+        _cv.notify_one();
 
-        IceUtil::Monitor<IceUtil::Mutex>::notify();
+//         IceUtil::Monitor<IceUtil::Mutex>::notify();
     }
 
-    IceUtil::Thread::getThreadControl().join();
+//     IceUtil::Thread::getThreadControl().join();
+    _senderThread.join();
 }
