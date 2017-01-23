@@ -85,10 +85,8 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         std::string endpoint = iPAddress + ":" + boost::lexical_cast<std::string>(port);
 
         //lock
-        for (std::map<std::shared_ptr<UVSS::ServerPrx>, std::string>::const_iterator
-                it = this->client->serverProxyToEndpoint.begin();
-                it != this->client->serverProxyToEndpoint.end(); ++it) {
-            if (it->second == endpoint) {
+        for (auto p : this->client->serverProxyToEndpoint) {
+            if (p.second == endpoint) {
                 return -2;
             }
         }
@@ -140,25 +138,21 @@ int UVSSClient::disconnect(int index)
     std::unique_lock<std::mutex> lock(this->client->_mutex);
 
     try {
-        for (std::map<std::string, int>::const_iterator
-                it1 = this->client->endpointToIndex.begin();
-                it1 != this->client->endpointToIndex.end(); ++it1) {
-            if (it1->second == index) {
-                this->client->endpointToIndex.erase(it1);//此时删除？
-                std::string endpoint = it1->first;
-                for (std::map<std::shared_ptr<UVSS::ServerPrx>, std::string>::const_iterator
-                        it2 = this->client->serverProxyToEndpoint.begin();
-                        it2 != this->client->serverProxyToEndpoint.end(); ++it2) {
-                    if (it2->second == endpoint) {
+        for (auto x : this->client->endpointToIndex) {
+            if (x.second == index) {
+                std::string endpoint = x.first;
+                this->client->endpointToIndex.erase(endpoint);
+                for (auto y : this->client->serverProxyToEndpoint) {
+                    if (y.second == endpoint) {
                         //server不能连到client
-                        it2->first->ice_getConnection()->close(false);
+                        y.first->ice_getConnection()->close(false);
                         //client不能连到server
-                        this->client->serverProxyToEndpoint.erase(it2);//无须it2++
+                        this->client->serverProxyToEndpoint.erase(y.first);//无须it2++
 
                         //只能在此处通知！不能依靠心跳线程
                         this->client->useConnectionInfoCallback(index, -3,
-                                "服务器端 " + endpoint + ": " +
-                                "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
+                                                                "服务器端 " + endpoint + ": " +
+                                                                "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
 
                         return 1;
                     }

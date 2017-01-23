@@ -89,11 +89,9 @@ void ClientI::start()
         }
 
         if (!serverProxyToEndpoint.empty()) {
-            for (std::map<std::shared_ptr<UVSS::ServerPrx>, std::string>::const_iterator
-                    it = serverProxyToEndpoint.begin();
-                    it != serverProxyToEndpoint.end(); ++it) {
+            for (auto p : serverProxyToEndpoint) {
                 try {
-                    it->first->ice_ping();
+                    p.first->ice_ping();
                 }
                 catch (...) {
                     std::unique_lock<std::mutex> lock(_mutex);
@@ -102,8 +100,8 @@ void ClientI::start()
                         return;
                     }
                     else {
-                        auto serverProxy = it->first;
-                        std::string endpoint = it->second;
+                        auto serverProxy = p.first;
+                        std::string endpoint = p.second;
                         int index = this->endpointToIndex[endpoint];
 
                         useConnectionInfoCallback(index, -3,

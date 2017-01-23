@@ -71,12 +71,10 @@ void ServerI::start()
             }
 
             if (!clientProxyToEndpoint.empty()) {
-                for (std::map<std::shared_ptr<UVSS::ClientPrx>, std::string>::const_iterator
-                        it = clientProxyToEndpoint.begin();
-                        it != clientProxyToEndpoint.end(); ++it) {
+                for (auto p : clientProxyToEndpoint) {
                     try {
-                        it->first->ice_ping();
-                        //std::cout << it->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
+//                         std::cout << p.first->ice_getConnection()->getEndpoint()->toString() << std::endl;
+                        p.first->ice_ping();
                     }
                     catch (...) {
                         std::unique_lock<std::mutex> lock(_mutex);
@@ -86,12 +84,12 @@ void ServerI::start()
                         }
                         else {
                             std::string endpoint =
-                                this->clientProxyToEndpoint[it->first];
+                                this->clientProxyToEndpoint[p.first];
                             if (this->connectionInfoCallback != 0) {
                                 this->connectionInfoCallback(-1, std::string(
                                                                  "客户端 " + endpoint + ": 已断开").c_str());
                             }
-                            this->clientProxyToEndpoint.erase(it->first);
+                            this->clientProxyToEndpoint.erase(p.first);
                         }
                     }
                 }
@@ -160,16 +158,14 @@ void ServerI::sendCheckInfo(
         filePathToBinary(plateImagePath, plateImage);
     }
 
-    for (std::map<std::shared_ptr<UVSS::ClientPrx>, std::string>::const_iterator
-            it = this->clientProxyToEndpoint.begin();
-            it != this->clientProxyToEndpoint.end(); ++it) {
+        for (auto p : this->clientProxyToEndpoint) {
         try {
-            it->first->writeCheckInfo(
+            p.first->writeCheckInfo(
                 uVSSImageName, uVSSImage, plateImageName, plateImage,
                 channel, plateNumber, direction, time, extension);
         }
         catch (const Ice::Exception& ex) {
-            ///just skip
+            ///just skip, no erase
             //it = this->clientProxyToEndpoint.erase(it);
             std::cerr << ex << std::endl;
         }
