@@ -2,7 +2,7 @@
 #include <boost/lexical_cast.hpp>
 #include <serveri.h>
 
-UVSSServer::UVSSServer() : port(20145), ic(0)
+UVSSServer::UVSSServer() : port(20145)
 {
 }
 
@@ -33,7 +33,6 @@ int UVSSServer::init()
         Ice::ObjectAdapterPtr adapter =
                 this->ic->createObjectAdapterWithEndpoints(
                "UVSS.Server", "tcp -p " + boost::lexical_cast<std::string>(this->port));
-//         adapter->add(this->server, this->ic->stringToIdentity("Server"));
         adapter->add(this->server, Ice::stringToIdentity("Server"));
         adapter->activate();
 

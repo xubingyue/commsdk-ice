@@ -1,42 +1,29 @@
 #ifndef CLIENTI_H
 #define CLIENTI_H
 
+#include <condition_variable>
 #include <map>
+#include <mutex>
 #include <string>
+#include <thread>
+
 #include <Ice/Ice.h>
-//#include <IceUtil/IceUtil.h>
+
 #include <clientserver.h>
 
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-
-// class ClientI;
-// typedef IceUtil::Handle<ClientI> ClientIPtr;
 typedef void (*ClientConnectionInfoCallback)(int, int, const char*);
 typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
         const char*, const char*, const char*, const char*, const char*);
 
-class ClientI : /*virtual */public UVSS::Client/*, virtual public IceUtil::Thread,
-    virtual public IceUtil::Monitor<IceUtil::Mutex>*/ {
+class ClientI : public UVSS::Client {
 public:
     ClientI();
 
     static void setConnectionInfoCallback(ClientConnectionInfoCallback);
     static void setCheckInfoCallback(ClientCheckInfoCallback);
-
-//     virtual void writeCheckInfo(
-//         const std::string&, const UVSS::ByteSeq&,
-//         const std::string&, const UVSS::ByteSeq&,
-//         const std::string&, const std::string&, const std::string&,
-//         const std::string&, const std::string&,
-//         const Ice::Current& = Ice::Current());
-//     virtual void run();
     
-    virtual void writeCheckInfo(std::string,
-                                UVSS::ByteSeq,
-                                std::string,
-                                UVSS::ByteSeq,
+    virtual void writeCheckInfo(std::string, UVSS::ByteSeq,
+                                std::string, UVSS::ByteSeq,
                                 std::string,
                                 std::string,
                                 std::string,
@@ -50,14 +37,14 @@ public:
     void start();
     void destroy();
 
-    int index;//1,锁！！！！
-    bool isDestroyed;//public?//4
-    std::map<std::shared_ptr<UVSS::ServerPrx>, std::string> serverProxyToEndpoint;//2
-    std::map<std::string, int> endpointToIndex;//3
+    int index;
+    bool isDestroyed;
+    std::map<std::shared_ptr<UVSS::ServerPrx>, std::string> serverProxyToEndpoint;
+    std::map<std::string, int> endpointToIndex;
     
     std::mutex _mutex;
     std::condition_variable _cv;
-    std::thread _senderThread;
+    std::thread _receiverThread;
 
 private:
     static ClientConnectionInfoCallback connectionInfoCallback;

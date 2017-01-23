@@ -2,12 +2,10 @@
 #define UVSSSERVER_H
 
 #include <string>
-#include <Ice/Ice.h>
-//#include <IceUtil/IceUtil.h>
-#include <serveri.h>
 
-// class UVSSServer;
-// typedef IceUtil::Handle<UVSSServer> UVSSServerPtr;
+#include <Ice/Ice.h>
+
+#include <serveri.h>
 
 class UVSSServer : virtual public IceUtil::Shared {
 public:
@@ -22,12 +20,11 @@ public:
             const std::string&, const std::string&);
 
 private:
-//     Ice::CommunicatorPtr ic;
-    std::shared_ptr<Ice::Communicator> ic;
+    Ice::CommunicatorPtr ic;
     //Ice::CommunicatorHolder ic;
     //adapter?
-    std::shared_ptr<ServerI> server;
     int port;
+    std::shared_ptr<ServerI> server;
 };
 
 #endif

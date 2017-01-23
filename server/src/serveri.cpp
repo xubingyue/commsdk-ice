@@ -1,15 +1,17 @@
 #include <serveri.h>
+
 #include <chrono>
 #include <ctime>
 #include <fstream>
 #include <iomanip>
+#include <memory>
 #include <sstream>
+
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+
 #include <clientserver.h>
 #include <version.h>
-
-#include <memory>
 
 ServerConnectionInfoCallback ServerI::connectionInfoCallback = 0;
 
@@ -30,8 +32,6 @@ bool ServerI::checkVersion(std::string ver, const Ice::Current&)
 
 void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
 {
-//     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
-
     std::unique_lock<std::mutex> lock(_mutex);
     
     auto clientProxy =
@@ -40,7 +40,6 @@ void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
     Ice::ConnectionInfoPtr info = curr.con->getInfo();
     Ice::TCPConnectionInfoPtr tcpInfo = 
             std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
-            
 
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
             boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
@@ -53,18 +52,13 @@ void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
     }
 }
 
-// void ServerI::run()
 void ServerI::start()
 {
     std::thread t([this]() {
         while (true) {
-//            std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
             std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;
-
+            
             {
-//                 IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
-//                 IceUtil::Monitor<IceUtil::Mutex>::timedWait(
-//                     IceUtil::Time::seconds(2));
                 std::unique_lock<std::mutex> lock(this->_mutex);
                 this->_cv.wait_for(lock, std::chrono::seconds(2));
 
@@ -83,12 +77,8 @@ void ServerI::start()
                     try {
                         it->first->ice_ping();
                         //std::cout << it->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
-                        //std::cout << it->first->ice_getCommunicator()->identityToString(it->first->ice_getIdentity()) << std::endl;
                     }
                     catch (...) {
-//                         IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
-                        //Ice::Identity ident = it->first->ice_getIdentity();
-                        
                         std::unique_lock<std::mutex> lock(_mutex);
 
                         if (this->isDestroyed) {
@@ -150,7 +140,6 @@ void ServerI::sendCheckInfo(
         const std::string& direction, const std::string& time,
         const std::string& extension)
 {
-//     IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
     std::unique_lock<std::mutex> lock(_mutex);
 
     std::string timeName = createCurrentTime();
@@ -190,14 +179,10 @@ void ServerI::sendCheckInfo(
 void ServerI::destroy()
 {
     {
-//         IceUtil::Monitor<IceUtil::Mutex>::Lock lck(*this);
         std::unique_lock<std::mutex> lock(_mutex);
         this->isDestroyed = true;
         _cv.notify_one();
-
-//         IceUtil::Monitor<IceUtil::Mutex>::notify();
     }
 
-//     IceUtil::Thread::getThreadControl().join();
     _senderThread.join();
 }

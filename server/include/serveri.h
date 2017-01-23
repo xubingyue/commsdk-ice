@@ -1,32 +1,23 @@
 #ifndef SERVERI_H
 #define SERVERI_H
 
+#include <condition_variable>
 #include <map>
+#include <mutex>
 #include <string>
+#include <thread>
+
 #include <Ice/Ice.h>
-//#include <IceUtil/IceUtil.h>
+
 #include <clientserver.h>
 
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-
-// class ServerI;
-// typedef IceUtil::Handle<ServerI> ServerIPtr;
 typedef void (*ServerConnectionInfoCallback)(int, const char*);
 
-class ServerI : /*virtual */public UVSS::Server/*, virtual public IceUtil::Thread,
-        virtual public IceUtil::Monitor<IceUtil::Mutex>*/ {
+class ServerI : public UVSS::Server {
 public:
     ServerI();
 
     static void setConnectionInfoCallback(ServerConnectionInfoCallback);
-
-//     virtual bool checkVersion(const std::string&,
-//             const Ice::Current& = Ice::Current());
-//     virtual void addClient(const Ice::Identity&,
-//             const Ice::Current& = Ice::Current());
-//    virtual void run();
     
     virtual void addClient(Ice::Identity, const Ice::Current& = Ice::noExplicitCurrent) override;
     virtual bool checkVersion(std::string, const Ice::Current& = Ice::noExplicitCurrent) override;
@@ -43,7 +34,6 @@ public:
 private:
     static ServerConnectionInfoCallback connectionInfoCallback;
 
-//    std::map<UVSS::ClientPrx, std::string> clientProxyToEndpoint;
     std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;
     bool isDestroyed;
     

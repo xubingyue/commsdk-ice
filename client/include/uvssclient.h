@@ -3,11 +3,7 @@
 
 #include <string>
 #include <Ice/Ice.h>
-//#include <IceUtil/IceUtil.h>
 #include <clienti.h>
-
-// class UVSSClient;
-// typedef IceUtil::Handle<UVSSClient> UVSSClientPtr;
 
 class UVSSClient : public IceUtil::Shared {
 public:
@@ -21,11 +17,9 @@ public:
     int disconnect(int);
 
 private:
-//    Ice::CommunicatorPtr ic;
-    std::shared_ptr<Ice::Communicator> ic;
+    Ice::CommunicatorPtr ic;
     Ice::ObjectAdapterPtr adapter;
     Ice::Identity id;
-//     ClientIPtr client;
     std::shared_ptr<ClientI> client;
 };
 
