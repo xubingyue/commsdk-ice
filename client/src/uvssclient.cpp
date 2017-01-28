@@ -26,7 +26,7 @@ void UVSSClient::setCheckInfoCallback(
 int UVSSClient::init()
 {
     try {
-        this->client = std::make_shared<ClientI>();
+        this->client = std::make_shared<ClientI>(std::make_shared<WorkQueue>());
 
         Ice::PropertiesPtr props = Ice::createProperties();
         //props->setProperty("Ice.Warn.Connections", "1");
@@ -44,6 +44,7 @@ int UVSSClient::init()
         this->adapter->activate();
 
         this->client->start();
+        this->client->_workQueue->start();
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
