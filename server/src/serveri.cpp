@@ -160,9 +160,25 @@ void ServerI::sendCheckInfo(
 
         for (auto p : this->clientProxyToEndpoint) {
         try {
-            p.first->writeCheckInfo(
+//             p.first->writeCheckInfo(
+//                 uVSSImageName, uVSSImage, plateImageName, plateImage,
+//                 channel, plateNumber, direction, time, extension);
+
+            p.first->writeCheckInfoAsync(
                 uVSSImageName, uVSSImage, plateImageName, plateImage,
-                channel, plateNumber, direction, time, extension);
+                channel, plateNumber, direction, time, extension,
+                nullptr,
+                [](std::exception_ptr e)
+                {
+                    try
+                    {
+                        std::rethrow_exception(e);
+                    }
+                    catch(const std::exception& ex)
+                    {
+                        std::cerr << "sayHello AMI call failed:\n" << ex.what() << std::endl;
+                    }
+                });
         }
         catch (const Ice::Exception& ex) {
             ///just skip, no erase
