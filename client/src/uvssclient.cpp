@@ -61,6 +61,13 @@ int UVSSClient::init()
 
 void UVSSClient::uninit()
 {
+    {
+        std::unique_lock<std::mutex> lock(this->client->_mutex);
+
+        this->client->_workQueue->destroy();
+        this->client->_workQueue->join();
+    }
+
     if (this->client != 0) {
         try {
             this->client->destroy();
@@ -69,7 +76,7 @@ void UVSSClient::uninit()
             std::cerr << ex << std::endl;
         }
     }
-
+    
     if (this->ic != 0) {
         try {
             this->ic->destroy();

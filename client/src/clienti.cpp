@@ -112,12 +112,12 @@ void ClientI::useConnectionInfoCallback(int index, int type,
 }
 
 void ClientI::destroy()
-{
+{    
     {
         std::unique_lock<std::mutex> lock(_mutex);
         this->isDestroyed = true;
         _cv.notify_one();
     }
-
+    
     _receiverThread.join();
 }
