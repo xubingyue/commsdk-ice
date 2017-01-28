@@ -45,32 +45,15 @@ WorkQueue::run()
 
     while(!_done)
     {
-        if(_callbacks.empty())
-        {
+        if(_callbacks.empty()) {
             _condition.wait(lock);//maybe awake by 2 places, bei destroy huanxinghou kenenghaishikongde!
         }
-        else
-//         if(!_callbacks.empty())//NB
-        {
-            //
-            // Get next work item.
-            //
+        else {
             CallbackEntry entry = _callbacks.front();//1
-
-            //
-            // Wait for the amount of time indicated in delay to
-            // emulate a process that takes a significant period of
-            // time to complete.
-            //
-//             _condition.wait_for(lock, chrono::milliseconds(get<0>(entry)));//2 places awake//uvss qudiao!
-
-//             if(!_done)//uvss zheli keyi qudiao!!!
-//             {
-            //
-            // Print greeting and send response.
-            //
+            
+//             _condition.wait_for(lock, std::chrono::seconds(5));
+            
             _callbacks.pop_front();//2
-//             cout << "Belated Hello World!" << endl;//3
 
             std::string uVSSImageName = get<0>(entry);
             UVSS::ByteSeq uVSSImage = get<1>(entry);
@@ -83,12 +66,7 @@ WorkQueue::run()
             std::string extension = get<8>(entry);
             int index = get<11>(entry);
 
-//             std::cout << uVSSImageName << std::endl;
-//             std::cout << time << std::endl;
-//             std::cout << index << std::endl;
-
             createImageDirectory("UVSS");
-
 
             boost::filesystem::path currentPath =
                 boost::filesystem::current_path();
@@ -108,17 +86,14 @@ WorkQueue::run()
                 ofs.write((char*)&plateImage[0], plateImage.size());
             }
 
-
-
             this->checkInfoCallback(index,
                                     uVSSImagePath.c_str(), plateImagePath.c_str(),
                                     channel.c_str(), plateNumber.c_str(), direction.c_str(),
                                     time.c_str(), extension.c_str());
 
-
             auto& response = get<9>(entry);//4
+            
             response();//5
-//             }
         }
     }
 
