@@ -37,7 +37,7 @@ public:
                                 const Ice::Current& = Ice::noExplicitCurrent) override;
 
     void useConnectionInfoCallback(int, int, const std::string&);//考虑删除此函数
-    void createImageDirectory(const std::string&);
+//     void createImageDirectory(const std::string&);
     
     void start();
     void destroy();
@@ -56,8 +56,6 @@ public:
 private:
     static ClientConnectionInfoCallback connectionInfoCallback;
     static ClientCheckInfoCallback checkInfoCallback;
-    
-    
 };
 
 #endif

@@ -35,71 +35,28 @@ void ClientI::writeCheckInfoAsync(
         const Ice::Current& curr)
 {
     std::cout << "start" << std::endl;
-    
-    if (curr.con != 0) {
-            //std::cout << curr.con->getEndpoint()->toString();
-            Ice::ConnectionInfoPtr info = curr.con->getInfo();
-            Ice::TCPConnectionInfoPtr tcpInfo =
-                    std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
-            if (tcpInfo != 0) {
-                std::string endpoint = tcpInfo->remoteAddress + ":" +
-                        boost::lexical_cast<std::string>(tcpInfo->remotePort);
 
-    _workQueue->add(uVSSImageName, uVSSImage,
-                    plateImageName, plateImage,
-                    channel, plateNumber,
-                    direction, time,
-                    extension,
-                    move(response),
-                    move(error),
-                    endpoint);
-            }
+
+
+    if (curr.con != 0) {
+        //std::cout << curr.con->getEndpoint()->toString();
+        Ice::ConnectionInfoPtr info = curr.con->getInfo();
+        Ice::TCPConnectionInfoPtr tcpInfo =
+            std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
+        if (tcpInfo != 0) {
+            std::string endpoint = tcpInfo->remoteAddress + ":" +
+                                   boost::lexical_cast<std::string>(tcpInfo->remotePort);
+            int index = this->endpointToIndex[endpoint];
+            _workQueue->add(uVSSImageName, uVSSImage,
+                            plateImageName, plateImage,
+                            channel, plateNumber,
+                            direction, time,
+                            extension,
+                            move(response),
+                            move(error),
+                            index);
+        }
     }
-    
-//     createImageDirectory("UVSS");
-// 
-//     
-//     boost::filesystem::path currentPath =
-//             boost::filesystem::current_path();
-//     std::string imagePath = currentPath.string() + "/UVSS/";
-// 
-//     std::string uVSSImagePath;
-//     if (!uVSSImageName.empty()) {
-//         uVSSImagePath = imagePath + uVSSImageName;
-//         std::ofstream ofs(uVSSImagePath, std::ios::binary);
-//         ofs.write((char*)&uVSSImage[0], uVSSImage.size());
-//     }
-// 
-//     std::string plateImagePath;
-//     if (!plateImageName.empty()) {
-//         plateImagePath = imagePath + plateImageName;
-//         std::ofstream ofs(plateImagePath, std::ios::binary);
-//         ofs.write((char*)&plateImage[0], plateImage.size());
-//     }
-// 
-//     if (this->checkInfoCallback != 0) {
-//         /*if (curr.con != 0) {
-//             //std::cout << curr.con->getEndpoint()->toString();
-//             Ice::ConnectionInfoPtr info = curr.con->getInfo();
-//             Ice::TCPConnectionInfoPtr tcpInfo =
-//                     std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
-//             if (tcpInfo != 0) {
-//                 std::string endpoint = tcpInfo->remoteAddress + ":" +
-//                         boost::lexical_cast<std::string>(tcpInfo->remotePort);*/
-    
-    
-    
-    
-    
-//                 int index = this->endpointToIndex[endpoint];
-// 
-//                 this->checkInfoCallback(index,
-//                         uVSSImagePath.c_str(), plateImagePath.c_str(),
-//                         channel.c_str(), plateNumber.c_str(), direction.c_str(),
-//                         time.c_str(), extension.c_str());
-//             }
-//         }
-//     }
 }
 
 void ClientI::start()
@@ -155,18 +112,6 @@ void ClientI::useConnectionInfoCallback(int index, int type,
 {
     if (this->connectionInfoCallback != 0) {
         this->connectionInfoCallback(index, type, connectionInfo.c_str());
-    }
-}
-
-void ClientI::createImageDirectory(const std::string& imageDirectory)
-{
-    boost::filesystem::path dir(imageDirectory);
-
-    if (boost::filesystem::exists(dir)) {
-        return;
-    }
-    else {
-        boost::filesystem::create_directory(dir);
     }
 }
 
