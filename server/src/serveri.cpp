@@ -171,7 +171,7 @@ void ServerI::sendCheckInfo(
         }
     }
     
-    std::cout << "ok" << std::endl;
+//     std::cout << "ok" << std::endl;
 }
 
 void ServerI::destroy()

@@ -13,6 +13,8 @@
 
 using namespace std;
 
+ClientCheckInfoCallback WorkQueue::checkInfoCallback = 0;
+
 WorkQueue::WorkQueue() : _done(false)
 {
 }
@@ -64,12 +66,12 @@ WorkQueue::run()
 
 //             if(!_done)//uvss zheli keyi qudiao!!!
 //             {
-                //
-                // Print greeting and send response.
-                //
-                _callbacks.pop_front();//2
-                cout << "Belated Hello World!" << endl;//3
-                
+            //
+            // Print greeting and send response.
+            //
+            _callbacks.pop_front();//2
+//             cout << "Belated Hello World!" << endl;//3
+
             std::string uVSSImageName = get<0>(entry);
             UVSS::ByteSeq uVSSImage = get<1>(entry);
             std::string plateImageName = get<2>(entry);
@@ -80,11 +82,11 @@ WorkQueue::run()
             std::string time = get<7>(entry);
             std::string extension = get<8>(entry);
             int index = get<11>(entry);
-            
-            std::cout << uVSSImageName << std::endl;
-            std::cout << time << std::endl;
-            std::cout << index << std::endl;
-            
+
+//             std::cout << uVSSImageName << std::endl;
+//             std::cout << time << std::endl;
+//             std::cout << index << std::endl;
+
             createImageDirectory("UVSS");
 
 
@@ -105,17 +107,17 @@ WorkQueue::run()
                 std::ofstream ofs(plateImagePath, std::ios::binary);
                 ofs.write((char*)&plateImage[0], plateImage.size());
             }
-// 
-// 
-// 
-//             this->checkInfoCallback(index,
-//                                     uVSSImagePath.c_str(), plateImagePath.c_str(),
-//                                     channel.c_str(), plateNumber.c_str(), direction.c_str(),
-//                                     time.c_str(), extension.c_str());
 
-        
-                auto& response = get<9>(entry);//4
-                response();//5
+
+
+            this->checkInfoCallback(index,
+                                    uVSSImagePath.c_str(), plateImagePath.c_str(),
+                                    channel.c_str(), plateNumber.c_str(), direction.c_str(),
+                                    time.c_str(), extension.c_str());
+
+
+            auto& response = get<9>(entry);//4
+            response();//5
 //             }
         }
     }
@@ -210,3 +212,9 @@ void WorkQueue::createImageDirectory(const std::string& imageDirectory)
         boost::filesystem::create_directory(dir);
     }
 }
+
+void WorkQueue::setCheckInfoCallback(ClientCheckInfoCallback checkInfoCallback)
+{
+    WorkQueue::checkInfoCallback = checkInfoCallback;
+}
+

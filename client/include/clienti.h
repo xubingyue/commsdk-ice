@@ -15,15 +15,15 @@
 #include <memory>
 
 typedef void (*ClientConnectionInfoCallback)(int, int, const char*);
-typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
-        const char*, const char*, const char*, const char*, const char*);
+// typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
+//         const char*, const char*, const char*, const char*, const char*);
 
 class ClientI : public UVSS::Client {
 public:
     ClientI(const std::shared_ptr<WorkQueue>&);
 
     static void setConnectionInfoCallback(ClientConnectionInfoCallback);
-    static void setCheckInfoCallback(ClientCheckInfoCallback);
+//     static void setCheckInfoCallback(ClientCheckInfoCallback);
     
     virtual void writeCheckInfoAsync(std::string, UVSS::ByteSeq,
                                 std::string, UVSS::ByteSeq,
@@ -55,7 +55,7 @@ public:
     
 private:
     static ClientConnectionInfoCallback connectionInfoCallback;
-    static ClientCheckInfoCallback checkInfoCallback;
+//     static ClientCheckInfoCallback checkInfoCallback;
 };
 
 #endif

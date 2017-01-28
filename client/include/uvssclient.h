@@ -21,6 +21,8 @@ private:
     Ice::ObjectAdapterPtr adapter;
     Ice::Identity id;
     std::shared_ptr<ClientI> client;
+    
+    ClientCheckInfoCallback checkInfoCallback;
 };
 
 #endif

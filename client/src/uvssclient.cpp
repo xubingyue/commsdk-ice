@@ -20,13 +20,16 @@ void UVSSClient::setConnectionInfoCallback(
 void UVSSClient::setCheckInfoCallback(
         ClientCheckInfoCallback checkInfoCallback)
 {
-    ClientI::setCheckInfoCallback(checkInfoCallback);
+    this->checkInfoCallback = checkInfoCallback;
+//     this->client = std::make_shared<ClientI>(std::make_shared<WorkQueue>());
+//     this->client->_workQueue->setCheckInfoCallback(checkInfoCallback);
 }
 
 int UVSSClient::init()
 {
     try {
         this->client = std::make_shared<ClientI>(std::make_shared<WorkQueue>());
+        this->client->_workQueue->setCheckInfoCallback(this->checkInfoCallback);
 
         Ice::PropertiesPtr props = Ice::createProperties();
         //props->setProperty("Ice.Warn.Connections", "1");

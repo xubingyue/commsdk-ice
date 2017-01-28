@@ -14,6 +14,9 @@
 #include <mutex>
 #include <thread>
 
+typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
+        const char*, const char*, const char*, const char*, const char*);
+
 class WorkQueue
 {
 public:
@@ -35,6 +38,9 @@ public:
     
     void createImageDirectory(const std::string&);
 
+        static void setCheckInfoCallback(ClientCheckInfoCallback);
+
+        
 private:
 
     using CallbackEntry = std::tuple<
@@ -53,6 +59,8 @@ private:
     std::list<CallbackEntry> _callbacks;
     bool _done;
     std::thread _thread;
+    
+        static ClientCheckInfoCallback checkInfoCallback;
 };
 
 #endif
