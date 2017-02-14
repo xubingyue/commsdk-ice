@@ -7,7 +7,7 @@
 
 #include <serveri.h>
 
-class UVSSServer : virtual public IceUtil::Shared {
+class UVSSServer {
 public:
     UVSSServer();
 

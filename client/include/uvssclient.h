@@ -5,7 +5,7 @@
 #include <Ice/Ice.h>
 #include <clienti.h>
 
-class UVSSClient : public IceUtil::Shared {
+class UVSSClient {
 public:
     UVSSClient();
 
