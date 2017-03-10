@@ -19,8 +19,8 @@ public:
 
     static void setConnectionInfoCallback(ServerConnectionInfoCallback);
     
-    virtual void addClient(Ice::Identity, const Ice::Current& = Ice::noExplicitCurrent) override;
-    virtual bool checkVersion(std::string, const Ice::Current& = Ice::noExplicitCurrent) override;
+    virtual void addClient(Ice::Identity, const Ice::Current& = Ice::emptyCurrent) override;
+    virtual bool checkVersion(std::string, const Ice::Current& = Ice::emptyCurrent) override;
 
     void filePathToBinary(const std::string&, UVSS::ByteSeq&);
     const std::string createCurrentTime();

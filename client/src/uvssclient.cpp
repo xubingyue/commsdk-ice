@@ -156,7 +156,7 @@ int UVSSClient::disconnect(int index)
                 for (auto y : this->client->serverProxyToEndpoint) {
                     if (y.second == endpoint) {
                         //server不能连到client
-                        y.first->ice_getConnection()->close(false);
+                        y.first->ice_getConnection()->close(Ice::ConnectionClose::Forcefully);
                         //client不能连到server
                         this->client->serverProxyToEndpoint.erase(y.first);//无须it2++
 

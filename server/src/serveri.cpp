@@ -27,7 +27,7 @@ void ServerI::setConnectionInfoCallback(
 
 bool ServerI::checkVersion(std::string ver, const Ice::Current&)
 {
-    return ver == UVSS_COMM_SDK_VER;
+    return  ver == UVSS_COMM_SDK_VER;
 }
 
 void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)

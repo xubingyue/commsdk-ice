@@ -12,12 +12,12 @@ configure_file(
         "${PROJECT_SOURCE_DIR}/version.h.in"
         "${PROJECT_BINARY_DIR}/version.h")
 
-include_directories("${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}" "/opt/Ice-3.7a4/include")
-link_directories("/opt/Ice-3.7a4/lib/x86_64-linux-gnu" "${PROJECT_BINARY_DIR}")
+include_directories("${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}" "/opt/Ice-3.7b0/include")
+link_directories("/opt/Ice-3.7b0/lib/x86_64-linux-gnu" "${PROJECT_BINARY_DIR}")
 
 add_custom_command(
         OUTPUT ${PROJECT_BINARY_DIR}/clientserver.h ${PROJECT_BINARY_DIR}/clientserver.cpp
-        COMMAND COMMAND /opt/Ice-3.7a4/bin/slice2cpp -I/opt/Ice-3.7a4/slice ${PROJECT_SOURCE_DIR}/../clientserver.ice
+        COMMAND COMMAND /opt/Ice-3.7b0/bin/slice2cpp -I/opt/Ice-3.7b0/slice ${PROJECT_SOURCE_DIR}/../clientserver.ice
         DEPENDS ${PROJECT_SOURCE_DIR}/../clientserver.ice)
 
 set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp ${PROJECT_SOURCE_DIR}/src/clienti.cpp ${PROJECT_SOURCE_DIR}/src/uvssclient.cpp ${PROJECT_SOURCE_DIR}/src/uvssclientsdk.cpp ${PROJECT_SOURCE_DIR}/src/WorkQueue.cpp)
