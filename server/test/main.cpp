@@ -1,9 +1,15 @@
 #include <cstdio>
 #include <iostream>
-#include <uvssserversdk.h>
+#include "uvssserversdk.h"
+
+
+//int main()
+//{
+//    return 0;
+//}
 
 void menu();
-void serverConnectionInfoCallback(int, const char*);
+void STDCALL serverConnectionInfoCallback(int, const char*);
 
 int main(int argc, char* argv[])
 {
@@ -70,7 +76,7 @@ void menu()
         "9: exit\n";
 }
 
-void serverConnectionInfoCallback(int type,
+void STDCALL serverConnectionInfoCallback(int type,
         const char* connectionInfo)
 {
     printf("\ncallback:\n%d, %s\n", type, connectionInfo);

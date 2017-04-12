@@ -42,13 +42,13 @@ void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
             std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
 
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
-            boost::lexical_cast<std::string>(tcpInfo->remotePort);//åŽ»æŽ‰å¼€å¤´çš„::ffff:
+            boost::lexical_cast<std::string>(tcpInfo->remotePort);//È¥µô¿ªÍ·µÄ::ffff:
 
     this->clientProxyToEndpoint[clientProxy] = endpoint;
 
     if (this->connectionInfoCallback != 0) {
         this->connectionInfoCallback(
-                0, std::string("å®¢æˆ·ç«¯ " + endpoint + ": å·²è¿žæŽ¥").c_str());
+                0, std::string("¿Í»§¶Ë " + endpoint + ": ÒÑÁ¬½Ó").c_str());
     }
 }
 
@@ -87,7 +87,7 @@ void ServerI::start()
                                 this->clientProxyToEndpoint[p.first];
                             if (this->connectionInfoCallback != 0) {
                                 this->connectionInfoCallback(-1, std::string(
-                                                                 "å®¢æˆ·ç«¯ " + endpoint + ": å·²æ–­å¼€").c_str());
+                                                                 "¿Í»§¶Ë " + endpoint + ": ÒÑ¶Ï¿ª").c_str());
                             }
                             this->clientProxyToEndpoint.erase(p.first);
                         }

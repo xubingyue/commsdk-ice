@@ -2,13 +2,16 @@
 #define UVSSCLIENTSDK_H
 
 #ifdef _WIN32
-    #ifdef UVSS_COMM_EXPORTS
-        #define UVSS_COMM_API _declspec(dllexport)
-    #else
-        #define UVSS_COMM_API _declspec(dllimport)
-    #endif
+#ifdef UVSS_COMM_EXPORTS
+#define UVSS_COMM_API _declspec(dllexport)
 #else
-    #define UVSS_COMM_API
+#define UVSS_COMM_API _declspec(dllimport)
+#endif
+
+#define STCALL __stdcall
+#else
+#define UVSS_COMM_API
+#define STCALL
 #endif
 
 #include <clienti.h>

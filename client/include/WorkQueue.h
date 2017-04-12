@@ -14,8 +14,13 @@
 #include <mutex>
 #include <thread>
 
-typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
+#ifdef _WIN32
+typedef void (__stdcall *ClientCheckInfoCallback)(int, const char*, const char*,
         const char*, const char*, const char*, const char*, const char*);
+#else
+typedef void(*ClientCheckInfoCallback)(int, const char*, const char*,
+    const char*, const char*, const char*, const char*, const char*);
+#endif
 
 class WorkQueue
 {

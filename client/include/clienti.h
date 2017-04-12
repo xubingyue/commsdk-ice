@@ -14,7 +14,11 @@
 
 #include <memory>
 
+#ifdef _WIN32
+typedef void (__stdcall *ClientConnectionInfoCallback)(int, int, const char*);
+#else
 typedef void (*ClientConnectionInfoCallback)(int, int, const char*);
+#endif
 // typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
 //         const char*, const char*, const char*, const char*, const char*);
 
@@ -36,7 +40,7 @@ public:
                                 std::function<void(std::exception_ptr)>,
                                 const Ice::Current& = Ice::emptyCurrent) override;
 
-    void useConnectionInfoCallback(int, int, const std::string&);//è€ƒè™‘åˆ é™¤æ­¤å‡½æ•°
+    void useConnectionInfoCallback(int, int, const std::string&);//¿¼ÂÇÉ¾³ý´Ëº¯Êý
 //     void createImageDirectory(const std::string&);
     
     void start();

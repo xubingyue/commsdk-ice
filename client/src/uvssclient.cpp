@@ -51,7 +51,7 @@ int UVSSClient::init()
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
-        this->client->useConnectionInfoCallback(-1, -1, "åˆå§‹åŒ–å¤±è´¥");
+        this->client->useConnectionInfoCallback(-1, -1, "³õÊ¼»¯Ê§°Ü");
 
         return -1;
     }
@@ -89,7 +89,7 @@ void UVSSClient::uninit()
 
 int UVSSClient::connect(const std::string& iPAddress, int port)
 {
-    //é”çš„æ–¹å¼éœ€è¦æ›´ç»†è‡´ï¼
+    //ËøµÄ·½Ê½ĞèÒª¸üÏ¸ÖÂ£¡
     std::unique_lock<std::mutex> lock(this->client->_mutex);
 
     try {
@@ -125,17 +125,17 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         this->client->serverProxyToEndpoint[serverProxy] = endpoint;
 
         this->client->useConnectionInfoCallback(this->client->index, 1,
-                "æœåŠ¡å™¨ç«¯ " + endpoint + ": " + "å·²è¿æ¥ | è¿æ¥æ ‡è¯†: " + boost::lexical_cast<std::string>(this->client->index));
+                "·şÎñÆ÷¶Ë " + endpoint + ": " + "ÒÑÁ¬½Ó | Á¬½Ó±êÊ¶: " + boost::lexical_cast<std::string>(this->client->index));
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
-        this->client->useConnectionInfoCallback(-1, -2, "è¿æ¥å¤±è´¥");
+        this->client->useConnectionInfoCallback(-1, -2, "Á¬½ÓÊ§°Ü");
 
         return -1;
     }
     catch (const char* msg) {
         std::cerr << msg << std::endl;
-        this->client->useConnectionInfoCallback(-1, -2, "è¿æ¥å¤±è´¥");
+        this->client->useConnectionInfoCallback(-1, -2, "Á¬½ÓÊ§°Ü");
 
         return -1;
     }
@@ -145,7 +145,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
 
 int UVSSClient::disconnect(int index)
 {
-    //é”çš„æ–¹å¼éœ€è¦æ›´ç»†è‡´ï¼
+    //ËøµÄ·½Ê½ĞèÒª¸üÏ¸ÖÂ£¡
     std::unique_lock<std::mutex> lock(this->client->_mutex);
 
     try {
@@ -155,27 +155,27 @@ int UVSSClient::disconnect(int index)
                 this->client->endpointToIndex.erase(endpoint);
                 for (auto y : this->client->serverProxyToEndpoint) {
                     if (y.second == endpoint) {
-                        //serverä¸èƒ½è¿åˆ°client
+                        //server²»ÄÜÁ¬µ½client
                         y.first->ice_getConnection()->close(Ice::ConnectionClose::Forcefully);
-                        //clientä¸èƒ½è¿åˆ°server
-                        this->client->serverProxyToEndpoint.erase(y.first);//æ— é¡»it2++
+                        //client²»ÄÜÁ¬µ½server
+                        this->client->serverProxyToEndpoint.erase(y.first);//ÎŞĞëit2++
 
-                        //åªèƒ½åœ¨æ­¤å¤„é€šçŸ¥ï¼ä¸èƒ½ä¾é å¿ƒè·³çº¿ç¨‹
+                        //Ö»ÄÜÔÚ´Ë´¦Í¨Öª£¡²»ÄÜÒÀ¿¿ĞÄÌøÏß³Ì
                         this->client->useConnectionInfoCallback(index, -3,
-                                                                "æœåŠ¡å™¨ç«¯ " + endpoint + ": " +
-                                                                "å·²æ–­å¼€ | è¿æ¥æ ‡è¯†: " + boost::lexical_cast<std::string>(index));
+                                                                "·şÎñÆ÷¶Ë " + endpoint + ": " +
+                                                                "ÒÑ¶Ï¿ª | Á¬½Ó±êÊ¶: " + boost::lexical_cast<std::string>(index));
 
                         return 1;
                     }
                 }
 
-                return -1;//å¯ä»¥å»æ‰
+                return -1;//¿ÉÒÔÈ¥µô
             }
         }
 
-        return -1;//æ²¡æœ‰æ­¤è¿æ¥
+        return -1;//Ã»ÓĞ´ËÁ¬½Ó
     }
     catch (...) {
-        return -1;//æ–­å¼€å¤±è´¥, ä»¥å‰çš„ç¨‹åºæ²¡æœ‰è€ƒè™‘
+        return -1;//¶Ï¿ªÊ§°Ü, ÒÔÇ°µÄ³ÌĞòÃ»ÓĞ¿¼ÂÇ
     }
 }

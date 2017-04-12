@@ -7,15 +7,21 @@
     #else
         #define UVSS_COMM_API _declspec(dllimport)
     #endif
+
+    #define STDCALL __stdcall
 #else
     #define UVSS_COMM_API
+    #define STDCALL
 #endif
 
 #include <serveri.h>
 
 typedef ServerConnectionInfoCallback UVSSServerCallback;
 
+#ifdef __cplusplus
 extern "C" {
+#endif
+
     UVSS_COMM_API void SetUVSSServerCallback(UVSSServerCallback);
     UVSS_COMM_API void SetUVSSServerPort(int);
     UVSS_COMM_API int InitUVSSServer();
@@ -23,6 +29,9 @@ extern "C" {
     UVSS_COMM_API void SendUVSSCheckInfo(const char*, const char*,
             const char*, const char*, const char*, const char*, const char*);
     UVSS_COMM_API const char* GetUVSSServerVersion();
+
+#ifdef __cplusplus
 }
+#endif
 
 #endif

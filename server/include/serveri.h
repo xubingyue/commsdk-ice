@@ -11,7 +11,11 @@
 
 #include <clientserver.h>
 
+#ifdef _WIN32
+typedef void (__stdcall *ServerConnectionInfoCallback)(int, const char*);
+#else
 typedef void (*ServerConnectionInfoCallback)(int, const char*);
+#endif
 
 class ServerI : public UVSS::Server {
 public:

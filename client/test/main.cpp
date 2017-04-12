@@ -1,10 +1,12 @@
-#include <uvssclientsdk.h>
 #include <cstdio>
 #include <iostream>
+#include <string>
+#include "uvssclientsdk.h"
 
 void menu();
-void clientConnectionInfoCallback(int, int, const char*);
-void clientCheckInfoCallback(int, const char*, const char*,
+
+void STDCALL clientConnectionInfoCallback(int, int, const char*);
+void STDCALL clientCheckInfoCallback(int, const char*, const char*,
         const char*, const char*, const char*, const char*, const char*);
 
 int main(int argc, char* argv[])
@@ -40,12 +42,12 @@ int main(int argc, char* argv[])
                 {
                     std::cout << "server IP:" << std::endl;
                     std::string ip;
-#ifdef LOCALHOST
-                    ip = "127.0.0.1";
-                    std::cout << ip << std::endl;
-#else
+//#ifdef LOCALHOST
+//                    ip = "127.0.0.1";
+//                    std::cout << ip << std::endl;
+//#else
                     std::cin >> ip;
-#endif
+//#endif
                     std::cout << "server port:" << std::endl;
                     int port;
                     std::cin >> port;
@@ -85,7 +87,7 @@ void menu()
         "9: exit\n";
 }
 
-void clientCheckInfoCallback(int index,
+void STDCALL clientCheckInfoCallback(int index,
         const char* uVSSImagePath, const char* plateImagePath,
         const char* channel, const char* plateNumber, const char* direction,
         const char* time, const char* extension)
@@ -95,9 +97,8 @@ void clientCheckInfoCallback(int index,
             channel, plateNumber, direction, time, extension);
 }
 
-void clientConnectionInfoCallback(int index, int type,
+void STDCALL clientConnectionInfoCallback(int index, int type,
         const char* connectionInfo)
 {
     printf("\ncallback:\n%d, %d, %s\n", index, type, connectionInfo);
 }
-
