@@ -5,8 +5,8 @@
 
 void menu();
 
-void STDCALL clientConnectionInfoCallback(int, int, const char*);
-void STDCALL clientCheckInfoCallback(int, const char*, const char*,
+void clientConnectionInfoCallback(int, int, const char*);
+void clientCheckInfoCallback(int, const char*, const char*,
         const char*, const char*, const char*, const char*, const char*);
 
 int main(int argc, char* argv[])
@@ -87,7 +87,7 @@ void menu()
         "9: exit\n";
 }
 
-void STDCALL clientCheckInfoCallback(int index,
+void clientCheckInfoCallback(int index,
         const char* uVSSImagePath, const char* plateImagePath,
         const char* channel, const char* plateNumber, const char* direction,
         const char* time, const char* extension)
@@ -97,7 +97,7 @@ void STDCALL clientCheckInfoCallback(int index,
             channel, plateNumber, direction, time, extension);
 }
 
-void STDCALL clientConnectionInfoCallback(int index, int type,
+void clientConnectionInfoCallback(int index, int type,
         const char* connectionInfo)
 {
     printf("\ncallback:\n%d, %d, %s\n", index, type, connectionInfo);

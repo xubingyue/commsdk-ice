@@ -9,7 +9,7 @@
 //}
 
 void menu();
-void STDCALL serverConnectionInfoCallback(int, const char*);
+void serverConnectionInfoCallback(int, const char*);
 
 int main(int argc, char* argv[])
 {
@@ -76,7 +76,7 @@ void menu()
         "9: exit\n";
 }
 
-void STDCALL serverConnectionInfoCallback(int type,
+void serverConnectionInfoCallback(int type,
         const char* connectionInfo)
 {
     printf("\ncallback:\n%d, %s\n", type, connectionInfo);

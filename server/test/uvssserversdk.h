@@ -7,8 +7,6 @@
 #else
 #define UVSS_COMM_API _declspec(dllimport)
 #endif
-
-#define STDCALL __stdcall
 #else
 #define UVSS_COMM_API
 #define STDCALL
@@ -18,7 +16,7 @@
 
 //typedef ServerConnectionInfoCallback UVSSServerCallback;
 
-typedef void(STDCALL *UVSSServerCallback)(int messageType,
+typedef void(*UVSSServerCallback)(int messageType,
     const char *message);
 
 #ifdef __cplusplus

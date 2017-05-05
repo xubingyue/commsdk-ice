@@ -7,8 +7,6 @@
 #else
 #define UVSS_COMM_API _declspec(dllimport)
 #endif
-
-#define STDCALL __stdcall
 #else
 #define UVSS_COMM_API
 #define STDCALL
@@ -19,9 +17,9 @@
 //typedef ClientConnectionInfoCallback UVSSMessageCallback;
 //typedef ClientCheckInfoCallback UVSSCheckInfoCallback;
 
-typedef void(STDCALL *UVSSMessageCallback)(int handle, int code,
+typedef void(*UVSSMessageCallback)(int handle, int code,
     const char *message);
-typedef void(STDCALL *UVSSCheckInfoCallback)(int handle,
+typedef void(*UVSSCheckInfoCallback)(int handle,
     const char *UVSSImagePath, const char *PlateImagePath,
     const char *Channel, const char *PlateNumber, const char *Direction,
     const char *CheckDateTime, const char *Extension);
