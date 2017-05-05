@@ -4,6 +4,10 @@ cmake_minimum_required(VERSION 2.6)
 
 project(client)
 
+MESSAGE(STATUS "operation system is ${CMAKE_SYSTEM}")
+
+IF (WIN32)
+
 set(CMAKE_CXX_STANDARD 11)
 
 #set(CMAKE_CXX_COMPILER g++)
@@ -37,3 +41,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 add_executable(client ${PROJECT_SOURCE_DIR}/test/main.cpp)
 #target_link_libraries(client UVSSSDK Ice++11 IceUtil++11 pthread boost_system boost_filesystem)
 target_link_libraries(client UVSSSDK)
+
+ELSEIF (UNIX)
+        MESSAGE(STATUS "Now is UNIX-like OS's. Including aPPLE os x  and CygWin")
+ENDIF ()
