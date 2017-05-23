@@ -13,14 +13,14 @@
 #include <clientserver.h>
 #include <version.h>
 
-ServerConnectionInfoCallback ServerI::connectionInfoCallback = 0;
+UVSSServerCallback ServerI::connectionInfoCallback = 0;
 
 ServerI::ServerI() : isDestroyed(false)
 {
 }
 
 void ServerI::setConnectionInfoCallback(
-        ServerConnectionInfoCallback connectionInfoCallback)
+        UVSSServerCallback connectionInfoCallback)
 {
     ServerI::connectionInfoCallback = connectionInfoCallback;
 }
@@ -42,13 +42,13 @@ void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
             std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
 
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
-            boost::lexical_cast<std::string>(tcpInfo->remotePort);//È¥µô¿ªÍ·µÄ::ffff:
+            boost::lexical_cast<std::string>(tcpInfo->remotePort);//È¥ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½::ffff:
 
     this->clientProxyToEndpoint[clientProxy] = endpoint;
 
     if (this->connectionInfoCallback != 0) {
         this->connectionInfoCallback(
-                0, std::string("¿Í»§¶Ë " + endpoint + ": ÒÑÁ¬½Ó").c_str());
+                0, std::string("ï¿½Í»ï¿½ï¿½ï¿½ " + endpoint + ": ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½").c_str());
     }
 }
 
@@ -87,7 +87,7 @@ void ServerI::start()
                                 this->clientProxyToEndpoint[p.first];
                             if (this->connectionInfoCallback != 0) {
                                 this->connectionInfoCallback(-1, std::string(
-                                                                 "¿Í»§¶Ë " + endpoint + ": ÒÑ¶Ï¿ª").c_str());
+                                                                 "ï¿½Í»ï¿½ï¿½ï¿½ " + endpoint + ": ï¿½Ñ¶Ï¿ï¿½").c_str());
                             }
                             this->clientProxyToEndpoint.erase(p.first);
                         }

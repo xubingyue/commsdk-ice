@@ -14,13 +14,7 @@
 #include <mutex>
 #include <thread>
 
-#ifdef _WIN32
-typedef void (__stdcall *ClientCheckInfoCallback)(int, const char*, const char*,
-        const char*, const char*, const char*, const char*, const char*);
-#else
-typedef void(*ClientCheckInfoCallback)(int, const char*, const char*,
-    const char*, const char*, const char*, const char*, const char*);
-#endif
+#include <uvssclientsdk.h>
 
 class WorkQueue
 {
@@ -31,32 +25,32 @@ public:
     void run();
 
     void add(std::string, UVSS::ByteSeq,
-        std::string, UVSS::ByteSeq,
-        std::string, std::string,
-        std::string, std::string,
-        std::string,
-        std::function<void ()>, std::function<void (std::exception_ptr)>,
-        int);
+             std::string, UVSS::ByteSeq,
+             std::string, std::string,
+             std::string, std::string,
+             std::string,
+             std::function<void ()>, std::function<void (std::exception_ptr)>,
+             int);
     void destroy();
     void start();
     void join();
-    
+
     void createImageDirectory(const std::string&);
 
-        static void setCheckInfoCallback(ClientCheckInfoCallback);
+    static void setCheckInfoCallback(UVSSCheckInfoCallback);
 
-        
+
 private:
 
     using CallbackEntry = std::tuple<
-        std::string, UVSS::ByteSeq,
-        std::string, UVSS::ByteSeq,
-        std::string, std::string,
-        std::string, std::string,
-        std::string,
-        std::function<void ()>,
-        std::function<void (std::exception_ptr)>,
-        int>;
+                          std::string, UVSS::ByteSeq,
+                          std::string, UVSS::ByteSeq,
+                          std::string, std::string,
+                          std::string, std::string,
+                          std::string,
+                          std::function<void ()>,
+                          std::function<void (std::exception_ptr)>,
+                          int>;
 
     std::mutex _mutex;
     std::condition_variable _condition;
@@ -64,8 +58,8 @@ private:
     std::list<CallbackEntry> _callbacks;
     bool _done;
     std::thread _thread;
-    
-        static ClientCheckInfoCallback checkInfoCallback;
+
+    static UVSSCheckInfoCallback checkInfoCallback;
 };
 
 #endif

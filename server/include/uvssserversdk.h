@@ -11,9 +11,8 @@
 #   define UVSS_COMM_API
 #endif
 
-#include <serveri.h>
-
-typedef ServerConnectionInfoCallback UVSSServerCallback;
+typedef void(*UVSSServerCallback)(int messageType,
+    const char *message);
 
 #ifdef __cplusplus
 extern "C" {

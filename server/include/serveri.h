@@ -11,17 +11,15 @@
 
 #include <clientserver.h>
 
-#ifdef _WIN32
-typedef void (__stdcall *ServerConnectionInfoCallback)(int, const char*);
-#else
-typedef void (*ServerConnectionInfoCallback)(int, const char*);
-#endif
+#include <uvssserversdk.h>
+
+typedef void (*UVSSServerCallback)(int, const char*);
 
 class ServerI : public UVSS::Server {
 public:
     ServerI();
 
-    static void setConnectionInfoCallback(ServerConnectionInfoCallback);
+    static void setConnectionInfoCallback(UVSSServerCallback);
     
     virtual void addClient(Ice::Identity, const Ice::Current& = Ice::emptyCurrent) override;
     virtual bool checkVersion(std::string, const Ice::Current& = Ice::emptyCurrent) override;
@@ -36,7 +34,7 @@ public:
     void destroy();
 
 private:
-    static ServerConnectionInfoCallback connectionInfoCallback;
+    static UVSSServerCallback connectionInfoCallback;
 
     std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;
     bool isDestroyed;

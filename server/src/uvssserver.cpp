@@ -7,7 +7,7 @@ UVSSServer::UVSSServer() : port(20145)
 }
 
 void UVSSServer::setConnectionInfoCallback(
-        ServerConnectionInfoCallback connectionInfoCallback)
+        UVSSServerCallback connectionInfoCallback)
 {
     ServerI::setConnectionInfoCallback(connectionInfoCallback);
 }

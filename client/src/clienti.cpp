@@ -6,23 +6,17 @@
 
 #include <exception>
 
-ClientConnectionInfoCallback ClientI::connectionInfoCallback = 0;
-// ClientCheckInfoCallback ClientI::checkInfoCallback = 0;
+UVSSMessageCallback ClientI::connectionInfoCallback = 0;
 
 ClientI::ClientI(const std::shared_ptr<WorkQueue>& workQueue) : index(0), isDestroyed(false), _workQueue(workQueue)
 {
 }
 
 void ClientI::setConnectionInfoCallback(
-        ClientConnectionInfoCallback connectionInfoCallback)
+        UVSSMessageCallback connectionInfoCallback)
 {
     ClientI::connectionInfoCallback = connectionInfoCallback;
 }
-
-// void ClientI::setCheckInfoCallback(ClientCheckInfoCallback checkInfoCallback)
-// {
-//     _workQueue->setCheckInfoCallback(checkInfoCallback);
-// }
 
 void ClientI::writeCheckInfoAsync(
         std::string uVSSImageName, UVSS::ByteSeq uVSSImage,

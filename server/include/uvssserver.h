@@ -11,7 +11,7 @@ class UVSSServer {
 public:
     UVSSServer();
 
-    void setConnectionInfoCallback(ServerConnectionInfoCallback);
+    void setConnectionInfoCallback(UVSSServerCallback);
     void setPort(int);
     int init();
     void uninit();

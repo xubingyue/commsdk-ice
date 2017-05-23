@@ -14,20 +14,13 @@
 
 #include <memory>
 
-#ifdef _WIN32
-typedef void (__stdcall *ClientConnectionInfoCallback)(int, int, const char*);
-#else
-typedef void (*ClientConnectionInfoCallback)(int, int, const char*);
-#endif
-// typedef void (*ClientCheckInfoCallback)(int, const char*, const char*,
-//         const char*, const char*, const char*, const char*, const char*);
+#include <uvssclientsdk.h>
 
 class ClientI : public UVSS::Client {
 public:
     ClientI(const std::shared_ptr<WorkQueue>&);
 
-    static void setConnectionInfoCallback(ClientConnectionInfoCallback);
-//     static void setCheckInfoCallback(ClientCheckInfoCallback);
+    static void setConnectionInfoCallback(UVSSMessageCallback);
     
     virtual void writeCheckInfoAsync(std::string, UVSS::ByteSeq,
                                 std::string, UVSS::ByteSeq,
@@ -41,7 +34,6 @@ public:
                                 const Ice::Current& = Ice::emptyCurrent) override;
 
     void useConnectionInfoCallback(int, int, const std::string&);//¿¼ÂÇÉ¾³ý´Ëº¯Êý
-//     void createImageDirectory(const std::string&);
     
     void start();
     void destroy();
@@ -58,8 +50,7 @@ public:
     std::shared_ptr<WorkQueue> _workQueue;
     
 private:
-    static ClientConnectionInfoCallback connectionInfoCallback;
-//     static ClientCheckInfoCallback checkInfoCallback;
+    static UVSSMessageCallback connectionInfoCallback;
 };
 
 #endif

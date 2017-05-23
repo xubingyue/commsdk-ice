@@ -1,12 +1,6 @@
 #include <cstdio>
 #include <iostream>
-#include "uvssserversdk.h"
-
-
-//int main()
-//{
-//    return 0;
-//}
+#include <uvssserversdk.h>
 
 void menu();
 void serverConnectionInfoCallback(int, const char*);

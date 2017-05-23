@@ -13,7 +13,7 @@
 
 using namespace std;
 
-ClientCheckInfoCallback WorkQueue::checkInfoCallback = 0;
+UVSSCheckInfoCallback WorkQueue::checkInfoCallback = 0;
 
 WorkQueue::WorkQueue() : _done(false)
 {
@@ -188,7 +188,7 @@ void WorkQueue::createImageDirectory(const std::string& imageDirectory)
     }
 }
 
-void WorkQueue::setCheckInfoCallback(ClientCheckInfoCallback checkInfoCallback)
+void WorkQueue::setCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
 {
     WorkQueue::checkInfoCallback = checkInfoCallback;
 }
