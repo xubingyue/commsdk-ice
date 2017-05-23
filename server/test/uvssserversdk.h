@@ -2,14 +2,13 @@
 #define UVSSSERVERSDK_H
 
 #ifdef _WIN32
-#ifdef UVSS_COMM_EXPORTS
-#define UVSS_COMM_API _declspec(dllexport)
+#   ifdef UVSS_COMM_EXPORTS
+#       define UVSS_COMM_API _declspec(dllexport)
+#   else
+#       define UVSS_COMM_API _declspec(dllimport)
+#   endif
 #else
-#define UVSS_COMM_API _declspec(dllimport)
-#endif
-#else
-#define UVSS_COMM_API
-#define STDCALL
+#   define UVSS_COMM_API
 #endif
 
 //#include <serveri.h>
