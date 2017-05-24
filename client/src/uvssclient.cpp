@@ -33,7 +33,7 @@ int UVSSClient::init()
         //props->setProperty("Ice.Warn.Connections", "1");
         //props->setProperty("Ice.MessageSizeMax", "51200");
         props->setProperty("Ice.MessageSizeMax", "2097152");
-        props->setProperty("Ice.ACM.Client", "0");
+//         props->setProperty("Ice.ACM.Client", "0");
         Ice::InitializationData initData;
         initData.properties = props;
         this->ic = Ice::initialize(initData);
