@@ -27,7 +27,7 @@ void ServerI::setConnectionInfoCallback(
 
 bool ServerI::checkVersion(std::string ver, const Ice::Current&)
 {
-    return  ver == UVSS_COMM_SDK_VER;
+    return ver == UVSS_COMM_SDK_VER;
 }
 
 void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
@@ -42,13 +42,13 @@ void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
             std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
 
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
-            boost::lexical_cast<std::string>(tcpInfo->remotePort);//ȥ����ͷ��::ffff:
+            boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
 
     this->clientProxyToEndpoint[clientProxy] = endpoint;
 
     if (this->connectionInfoCallback != 0) {
         this->connectionInfoCallback(
-                0, std::string("�ͻ��� " + endpoint + ": ������").c_str());
+                0, std::string("客户端 " + endpoint + ": 已连接").c_str());
     }
 }
 
@@ -87,7 +87,7 @@ void ServerI::start()
                                 this->clientProxyToEndpoint[p.first];
                             if (this->connectionInfoCallback != 0) {
                                 this->connectionInfoCallback(-1, std::string(
-                                                                 "�ͻ��� " + endpoint + ": �ѶϿ�").c_str());
+                                                                 "客户端 " + endpoint + ": 已断开").c_str());
                             }
                             this->clientProxyToEndpoint.erase(p.first);
                         }

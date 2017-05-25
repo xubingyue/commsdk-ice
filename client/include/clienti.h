@@ -33,7 +33,7 @@ public:
                                 std::function<void(std::exception_ptr)>,
                                 const Ice::Current& = Ice::emptyCurrent) override;
 
-    void useConnectionInfoCallback(int, int, const std::string&);//¿¼ÂÇÉ¾³ý´Ëº¯Êý
+    void useConnectionInfoCallback(int, int, const std::string&);//è€ƒè™‘åˆ é™¤æ­¤å‡½æ•°
     
     void start();
     void destroy();

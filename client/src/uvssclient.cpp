@@ -33,7 +33,7 @@ int UVSSClient::init()
         //props->setProperty("Ice.Warn.Connections", "1");
         //props->setProperty("Ice.MessageSizeMax", "51200");
         props->setProperty("Ice.MessageSizeMax", "2097152");
-//         props->setProperty("Ice.ACM.Client", "0");
+//        props->setProperty("Ice.ACM.Client", "0");
         Ice::InitializationData initData;
         initData.properties = props;
         this->ic = Ice::initialize(initData);
@@ -49,7 +49,7 @@ int UVSSClient::init()
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
-        this->client->useConnectionInfoCallback(-1, -1, "„1¤7„1¤70¶3„1¤7„1¤70´2„1¤7„1¤7");
+        this->client->useConnectionInfoCallback(-1, -1, "åˆå§‹åŒ–å¤±è´¥");
 
         return -1;
     }
@@ -87,7 +87,7 @@ void UVSSClient::uninit()
 
 int UVSSClient::connect(const std::string& iPAddress, int port)
 {
-    //„1¤7„1¤7„1¤709„1¤70¶4„1¤7„1¤70Û8„1¤7„1¤70Ð6„1¤70„5„1¤7
+    //é”çš„æ–¹å¼éœ€è¦æ›´ç»†è‡´ï¼
     std::unique_lock<std::mutex> lock(this->client->_mutex);
 
     try {
@@ -123,17 +123,17 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         this->client->serverProxyToEndpoint[serverProxy] = endpoint;
 
         this->client->useConnectionInfoCallback(this->client->index, 1,
-                "„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7 " + endpoint + ": " + "„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7 | „1¤7„1¤7„1¤70â9„1¤70µ7: " + boost::lexical_cast<std::string>(this->client->index));
+                "æœåŠ¡å™¨ç«¯ " + endpoint + ": " + "å·²è¿žæŽ¥ | è¿žæŽ¥æ ‡è¯†: " + boost::lexical_cast<std::string>(this->client->index));
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
-        this->client->useConnectionInfoCallback(-1, -2, "„1¤7„1¤7„1¤7„1¤70´2„1¤7„1¤7");
+        this->client->useConnectionInfoCallback(-1, -2, "è¿žæŽ¥å¤±è´¥");
 
         return -1;
     }
     catch (const char* msg) {
         std::cerr << msg << std::endl;
-        this->client->useConnectionInfoCallback(-1, -2, "„1¤7„1¤7„1¤7„1¤70´2„1¤7„1¤7");
+        this->client->useConnectionInfoCallback(-1, -2, "è¿žæŽ¥å¤±è´¥");
 
         return -1;
     }
@@ -143,7 +143,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
 
 int UVSSClient::disconnect(int index)
 {
-    //„1¤7„1¤7„1¤709„1¤70¶4„1¤7„1¤70Û8„1¤7„1¤70Ð6„1¤70„5„1¤7
+    //é”çš„æ–¹å¼éœ€è¦æ›´ç»†è‡´ï¼
     std::unique_lock<std::mutex> lock(this->client->_mutex);
 
     try {
@@ -153,27 +153,27 @@ int UVSSClient::disconnect(int index)
                 this->client->endpointToIndex.erase(endpoint);
                 for (auto y : this->client->serverProxyToEndpoint) {
                     if (y.second == endpoint) {
-                        //server„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7client
+                        //serverä¸èƒ½è¿žåˆ°client
                         y.first->ice_getConnection()->close(Ice::ConnectionClose::Forcefully);
-                        //client„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7server
-                        this->client->serverProxyToEndpoint.erase(y.first);//„1¤7„1¤7„1¤7„1¤7it2++
+                        //clientä¸èƒ½è¿žåˆ°server
+                        this->client->serverProxyToEndpoint.erase(y.first);//æ— é¡»it2++
 
-                        //0÷1„1¤7„1¤7„1¤71’00»4„1¤70Ç00õ4„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤71±9„1¤7
+                        //åªèƒ½åœ¨æ­¤å¤„é€šçŸ¥ï¼ä¸èƒ½ä¾é å¿ƒè·³çº¿ç¨‹
                         this->client->useConnectionInfoCallback(index, -3,
-                                                                "„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7 " + endpoint + ": " +
-                                                                "„1¤70Ö60Ñ3„1¤7 | „1¤7„1¤7„1¤70â9„1¤70µ7: " + boost::lexical_cast<std::string>(index));
+                                                                "æœåŠ¡å™¨ç«¯ " + endpoint + ": " +
+                                                                "å·²æ–­å¼€ | è¿žæŽ¥æ ‡è¯†: " + boost::lexical_cast<std::string>(index));
 
                         return 1;
                     }
                 }
 
-                return -1;//„1¤7„1¤7„1¤7„1¤70§4„1¤7„1¤7
+                return -1;//å¯ä»¥åŽ»æŽ‰
             }
         }
 
-        return -1;//0‹4„1¤7§Õ„1¤7„1¤7„1¤7„1¤7„1¤7
+        return -1;//æ²¡æœ‰æ­¤è¿žæŽ¥
     }
     catch (...) {
-        return -1;//„1¤70Ñ3„1¤70´2„1¤7„1¤7, „1¤7„1¤70¢2„1¤705„1¤7„1¤7„1¤70‹4„1¤7§á„1¤7„1¤7„1¤7
+        return -1;//æ–­å¼€å¤±è´¥, ä»¥å‰çš„ç¨‹åºæ²¡æœ‰è€ƒè™‘
     }
 }
