@@ -10,10 +10,7 @@
 #include <Ice/Ice.h>
 
 #include <clientserver.h>
-
 #include <uvssserversdk.h>
-
-typedef void (*UVSSServerCallback)(int, const char*);
 
 class ServerI : public UVSS::Server {
 public:
@@ -21,8 +18,8 @@ public:
 
     static void setConnectionInfoCallback(UVSSServerCallback);
     
-    virtual void addClient(Ice::Identity, const Ice::Current& = Ice::emptyCurrent) override;
-    virtual bool checkVersion(std::string, const Ice::Current& = Ice::emptyCurrent) override;
+    virtual void addClient(Ice::Identity, const Ice::Current&) override;
+    virtual bool checkVersion(std::string, const Ice::Current&) override;
 
     void filePathToBinary(const std::string&, UVSS::ByteSeq&);
     const std::string createCurrentTime();

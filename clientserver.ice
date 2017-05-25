@@ -5,9 +5,8 @@
 module UVSS {
 sequence<byte> ByteSeq;
 
-exception RequestCanceledException
-{
-};
+exception RequestCanceledException {
+}
 
 interface Client {
     ["amd"] idempotent void writeCheckInfo(
@@ -18,12 +17,12 @@ interface Client {
             string direction,
             string time,
             string extension)
-	throws RequestCanceledException;
-};
+            throws RequestCanceledException;
+}
 
 interface Server {
     bool checkVersion(string ver);
     void addClient(Ice::Identity id);
-};
-};
+}
+}
 

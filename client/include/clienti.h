@@ -31,7 +31,7 @@ public:
                                 std::string,
                                 std::function<void()>,
                                 std::function<void(std::exception_ptr)>,
-                                const Ice::Current& = Ice::emptyCurrent) override;
+                                const Ice::Current&) override;
 
     void useConnectionInfoCallback(int, int, const std::string&);//考虑删除此函数
     

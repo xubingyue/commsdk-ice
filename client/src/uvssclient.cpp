@@ -30,7 +30,8 @@ int UVSSClient::init()
         this->client->_workQueue->setCheckInfoCallback(this->checkInfoCallback);
 
         Ice::PropertiesPtr props = Ice::createProperties();
-        //props->setProperty("Ice.Warn.Connections", "1");
+        props->setProperty("Ice.Default.Host", "localhost");//-
+        props->setProperty("Ice.Warn.Connections", "1");//-
         //props->setProperty("Ice.MessageSizeMax", "51200");
         props->setProperty("Ice.MessageSizeMax", "2097152");
 //        props->setProperty("Ice.ACM.Client", "0");
@@ -100,27 +101,31 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
             }
         }
 
-        auto base = this->ic->stringToProxy(
-                "Server:tcp -h " + iPAddress + " -p " +
-                boost::lexical_cast<std::string>(port))->ice_twoway()->ice_timeout(-1)->ice_secure(
-                false);
+//         auto base = this->ic->stringToProxy(
+//                 "Server:tcp -h " + iPAddress + " -p " +
+//                 boost::lexical_cast<std::string>(port))->ice_twoway()->ice_timeout(-1)->ice_secure(
+//                 false);
 
-        auto serverProxy = Ice::checkedCast<UVSS::ServerPrx>(base);
-        if (serverProxy == 0) {
+        auto base = this->ic->stringToProxy(
+            "Server:tcp -h " + iPAddress + " -p " +
+            boost::lexical_cast<std::string>(port));
+        
+        auto server = Ice::checkedCast<UVSS::ServerPrx>(base);
+        if (!server) {
             throw "Invalid proxy";
         }
 
-        if (!serverProxy->checkVersion(UVSS_COMM_SDK_VER)) {
+        if (!server->checkVersion(UVSS_COMM_SDK_VER)) {
             return -3;
         }
 
-        serverProxy->ice_getConnection()->setAdapter(this->adapter);
-        serverProxy->addClient(this->id);
+        server->ice_getConnection()->setAdapter(this->adapter);
+        server->addClient(this->id);
 
         //lock
         ++this->client->index;
         this->client->endpointToIndex[endpoint] = this->client->index;
-        this->client->serverProxyToEndpoint[serverProxy] = endpoint;
+        this->client->serverProxyToEndpoint[server] = endpoint;
 
         this->client->useConnectionInfoCallback(this->client->index, 1,
                 "服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + boost::lexical_cast<std::string>(this->client->index));

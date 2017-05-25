@@ -44,7 +44,9 @@ void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
             boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
 
-    this->clientProxyToEndpoint[clientProxy] = endpoint;
+     this->clientProxyToEndpoint[clientProxy] = endpoint; // 是否独立
+//     auto v = clientProxy->ice_getEndpoints();
+//     std::cout << "xxxxxxxxx" << v[0]->toString() << std::endl;
 
     if (this->connectionInfoCallback != 0) {
         this->connectionInfoCallback(
