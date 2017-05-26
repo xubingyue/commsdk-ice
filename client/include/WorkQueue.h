@@ -37,7 +37,7 @@ public:
 
     void createImageDirectory(const std::string&);
 
-    static void setCheckInfoCallback(UVSSCheckInfoCallback);
+    static void setCheckInfoCallback(UVSSCheckInfoCallback);//-
 
 
 private:

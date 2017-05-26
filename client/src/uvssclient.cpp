@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include <algorithm>
+
 UVSSClient::UVSSClient()
 {
 }
@@ -26,11 +28,10 @@ void UVSSClient::setCheckInfoCallback(
 int UVSSClient::init()
 {
     try {
-        this->client = std::make_shared<ClientI>(std::make_shared<WorkQueue>());
-        this->client->_workQueue->setCheckInfoCallback(this->checkInfoCallback);
+        this->client = std::make_shared<ClientI>(std::make_shared<WorkQueue>()); //写在构造函数里
+        this->client->_workQueue->setCheckInfoCallback(this->checkInfoCallback); //写在UVSSClient::setCheckInfoCallback里
 
         Ice::PropertiesPtr props = Ice::createProperties();
-        props->setProperty("Ice.Default.Host", "localhost");//-
         props->setProperty("Ice.Warn.Connections", "1");//-
         //props->setProperty("Ice.MessageSizeMax", "51200");
         props->setProperty("Ice.MessageSizeMax", "2097152");
@@ -39,14 +40,16 @@ int UVSSClient::init()
         initData.properties = props;
         this->ic = Ice::initialize(initData);
 
+        //以上代码考虑写在构造函数中
+        
         this->id.name = IceUtil::generateUUID();
         this->id.category = "";
         this->adapter = this->ic->createObjectAdapter("");
         this->adapter->add(this->client, this->id);
+        
         this->adapter->activate();
-
-        this->client->start();
-        this->client->_workQueue->start();
+        this->client->start(); //心跳线程
+        this->client->_workQueue->start(); //AMD
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
@@ -75,6 +78,9 @@ void UVSSClient::uninit()
             std::cerr << ex << std::endl;
         }
     }
+    
+    //加上adapter->deactivate();？！！！
+    
     
     if (this->ic != 0) {
         try {
@@ -114,6 +120,11 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         if (!server) {
             throw "Invalid proxy";
         }
+        
+// std::cout << server->ice_getConnection()->getEndpoint()->toString() << std::endl;
+// std::cout << endpoint << std::endl;
+// tcp -h 192.168.1.9 -p 20145 -t 60000
+// 192.168.1.9:20145
 
         if (!server->checkVersion(UVSS_COMM_SDK_VER)) {
             return -3;
@@ -158,9 +169,9 @@ int UVSSClient::disconnect(int index)
                 this->client->endpointToIndex.erase(endpoint);
                 for (auto y : this->client->serverProxyToEndpoint) {
                     if (y.second == endpoint) {
-                        //server不能连到client
-                        y.first->ice_getConnection()->close(Ice::ConnectionClose::Forcefully);
-                        //client不能连到server
+                        //使server到client的心跳失败
+                        y.first->ice_getConnection()->close(Ice::ConnectionClose::Gracefully);
+                        //client不再连接server y.first
                         this->client->serverProxyToEndpoint.erase(y.first);//无须it2++
 
                         //只能在此处通知！不能依靠心跳线程

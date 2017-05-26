@@ -29,13 +29,18 @@ void ClientI::writeCheckInfoAsync(
         const Ice::Current& curr)
 {
     if (curr.con != 0) {
-        //std::cout << curr.con->getEndpoint()->toString();
         Ice::ConnectionInfoPtr info = curr.con->getInfo();
         Ice::TCPConnectionInfoPtr tcpInfo =
             std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
         if (tcpInfo != 0) {
+    //std::cout << curr.con->getEndpoint()->toString() << std::endl;
+     //tcp -h 127.0.0.1 -p 20145 -t 60000
+            
+            // 考虑简化下面代码
             std::string endpoint = tcpInfo->remoteAddress + ":" +
                                    boost::lexical_cast<std::string>(tcpInfo->remotePort);
+//             std::cout << endpoint << std::endl;
+            
             int index = this->endpointToIndex[endpoint];
             _workQueue->add(uVSSImageName, uVSSImage,
                             plateImageName, plateImage,
@@ -81,6 +86,10 @@ void ClientI::start()
                     else {
                         auto serverProxy = p.first;
                         std::string endpoint = p.second;
+                        
+                        //std::cout << "1: " << endpoint << std::endl;//ok
+                        //std::cout << "2: " << serverProxy->ice_getConnection()->getEndpoint()->toString() << std::endl;//wrong!
+                        
                         int index = this->endpointToIndex[endpoint];
 
                         useConnectionInfoCallback(index, -3,

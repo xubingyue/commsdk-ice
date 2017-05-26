@@ -41,13 +41,17 @@ void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
     Ice::TCPConnectionInfoPtr tcpInfo = 
             std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
 
+    //std::cout << curr.con->getEndpoint()->toString() << std::endl;
+    //tcp -p 20145 -t 60000
+            
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
             boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
 
      this->clientProxyToEndpoint[clientProxy] = endpoint; // 是否独立
 //     auto v = clientProxy->ice_getEndpoints();
-//     std::cout << "xxxxxxxxx" << v[0]->toString() << std::endl;
-
+//     std::cout << v.size() << std::endl;//0
+//std::cout << clientProxy->ice_getConnection()->getEndpoint()->toString() << std::endl;
+//tcp -p 20145 -t 60000
     if (this->connectionInfoCallback != 0) {
         this->connectionInfoCallback(
                 0, std::string("客户端 " + endpoint + ": 已连接").c_str());
@@ -75,7 +79,6 @@ void ServerI::start()
             if (!clientProxyToEndpoint.empty()) {
                 for (auto p : clientProxyToEndpoint) {
                     try {
-//                         std::cout << p.first->ice_getConnection()->getEndpoint()->toString() << std::endl;
                         p.first->ice_ping();
                     }
                     catch (...) {
@@ -85,13 +88,12 @@ void ServerI::start()
                             return;
                         }
                         else {
-                            std::string endpoint =
-                                this->clientProxyToEndpoint[p.first];
+                                std::string endpoint = p.second;
                             if (this->connectionInfoCallback != 0) {
                                 this->connectionInfoCallback(-1, std::string(
                                                                  "客户端 " + endpoint + ": 已断开").c_str());
                             }
-                            this->clientProxyToEndpoint.erase(p.first);
+                            this->clientProxyToEndpoint.erase(p.first); //不用考虑迭代器失效的问题，这里是在成员变量里删除
                         }
                     }
                 }
@@ -104,13 +106,11 @@ void ServerI::start()
 void ServerI::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
 {
     std::ifstream ifs(filePath, std::ios::binary);
-    
     ifs.seekg(0, std::ios::end);
     std::streampos fileSize = ifs.tellg();
     
-    ifs.seekg(0, std::ios::beg);
     file.resize(fileSize);
-    
+    ifs.seekg(0, std::ios::beg);
     ifs.read((char*)&file[0], fileSize);
 }
 
@@ -140,8 +140,6 @@ void ServerI::sendCheckInfo(
         const std::string& direction, const std::string& time,
         const std::string& extension)
 {
-    std::unique_lock<std::mutex> lock(_mutex);
-
     std::string timeName = createCurrentTime();
 
     boost::filesystem::path uVSSPath(uVSSImagePath);
@@ -160,16 +158,18 @@ void ServerI::sendCheckInfo(
         filePathToBinary(plateImagePath, plateImage);
     }
 
-        for (auto p : this->clientProxyToEndpoint) {
-        try {
+    std::unique_lock<std::mutex> lock(_mutex);
+    
+    for (auto p : this->clientProxyToEndpoint) {
+    try {
 //             p.first->writeCheckInfo(
 //                 uVSSImageName, uVSSImage, plateImageName, plateImage,
 //                 channel, plateNumber, direction, time, extension);
 
-            p.first->writeCheckInfoAsync(
-                uVSSImageName, uVSSImage, plateImageName, plateImage,
-                channel, plateNumber, direction, time, extension,
-                nullptr,
+        p.first->writeCheckInfoAsync(
+            uVSSImageName, uVSSImage, plateImageName, plateImage,
+            channel, plateNumber, direction, time, extension,
+            nullptr,
                 [](std::exception_ptr e)
                 {
                     try
@@ -184,12 +184,13 @@ void ServerI::sendCheckInfo(
         }
         catch (const Ice::Exception& ex) {
             ///just skip, no erase
+            //如果在此处删除失效的client代理，这里需要回调通知一次，心跳线程也可能回调通知一次（当心跳线程的client副本还没有检测这个失效的代理之前，在此处删除失效代理）
+            //如果在此处删除失效的client代理，而不回调通知，心跳线程可能会漏掉通知（当心跳线程的client副本已经检测完这个失效的代理之后，在此处删除失效代理）
+            //只让心跳线程实现检测对端连接的任务和删除失效client代理
             //it = this->clientProxyToEndpoint.erase(it);
             std::cerr << ex << std::endl;
         }
     }
-    
-//     std::cout << "ok" << std::endl;
 }
 
 void ServerI::destroy()

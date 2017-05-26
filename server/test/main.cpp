@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
             case 3:
                 SendUVSSCheckInfo(
                         "1.jpg", "2.jpg",
-                        "通道1", "鲁A12345", "进车", "2016", "扩展信息");
+                        "Channel 1", "ABC1234", "In", "2017", "extend information");
                 break;
             case 9:
                 break;
