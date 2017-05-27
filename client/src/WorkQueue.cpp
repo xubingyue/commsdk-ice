@@ -46,7 +46,10 @@ WorkQueue::run()
     while(!_done)
     {
         if(_callbacks.empty()) {
-            _condition.wait(lock);//maybe awake by 2 places, bei destroy huanxinghou kenenghaishikongde!
+            //可能在两处被唤醒
+            //被唤醒后，进入下一轮循环，如果是被destroy唤醒的，if条件不成立，跳出循环
+            //如果不是，_callbacks非空，进入else
+            _condition.wait(lock);
         }
         else {
             CallbackEntry entry = _callbacks.front();//1
@@ -124,6 +127,9 @@ WorkQueue::add(std::string uVSSImageName, UVSS::ByteSeq uVSSImage,
         std::function<void ()> response, std::function<void (exception_ptr)> error,
         int index)
 {
+    //destroy后仍然有可能执行add
+    //所以要判断if _done
+    
     unique_lock<mutex> lock(_mutex);
 
     if(!_done)
@@ -173,7 +179,7 @@ WorkQueue::destroy()
     // Set done flag and notify.
     //
     _done = true;
-    _condition.notify_one();//2 places maybe awake
+    _condition.notify_one();
 }
 
 void WorkQueue::createImageDirectory(const std::string& imageDirectory)

@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
             case 3:
                 SendUVSSCheckInfo(
                         "1.jpg", "2.jpg",
-                        "Channel 1", "ABC1234", "In", "2017", "extend information");
+                        "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information");
                 break;
             case 9:
                 break;
