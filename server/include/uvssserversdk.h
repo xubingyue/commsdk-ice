@@ -22,8 +22,7 @@ extern "C" {
     UVSS_COMM_API void SetUVSSServerPort(int);
     UVSS_COMM_API int InitUVSSServer();
     UVSS_COMM_API void UninitUVSSServer();
-    UVSS_COMM_API void SendUVSSCheckInfo(const char*, const char*,
-            const char*, const char*, const char*, const char*, const char*);
+    UVSS_COMM_API void SendUVSSCheckInfo(const char*, const char*, const char* const [], int);
     UVSS_COMM_API const char* GetUVSSServerVersion();
 
 #ifdef __cplusplus

@@ -25,11 +25,10 @@ void UninitUVSSServer()
 }
 
 void SendUVSSCheckInfo(const char* uVSSImagePath, const char* plateImagePath,
-        const char* channel, const char* plateNumber, const char* direction,
-        const char* time, const char* extension)
+        const char* const a[], int sz)
 {
-    serverSDK->sendCheckInfo(uVSSImagePath, plateImagePath,
-            channel, plateNumber, direction, time, extension);
+    std::vector<std::string> v(a, a+sz);
+    serverSDK->sendCheckInfo(uVSSImagePath, plateImagePath, v);
 }
 
 const char* GetUVSSServerVersion()

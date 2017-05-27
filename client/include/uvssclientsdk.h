@@ -32,10 +32,13 @@ typedef void(*UVSSMessageCallback)(int handle, int code,
 // Direction: 车辆方向
 // CheckDateTime: 检查日期时间 (格式: 2016/1/1 13:01:02)
 // Extension: 扩展信息, 一般为空 ("")
+// typedef void(*UVSSCheckInfoCallback)(int handle,
+//                                      const char *UVSSImagePath, const char *PlateImagePath,
+//                                      const char *Channel, const char *PlateNumber, const char *Direction,
+//                                      const char *CheckDateTime, const char *Extension);
 typedef void(*UVSSCheckInfoCallback)(int handle,
                                      const char *UVSSImagePath, const char *PlateImagePath,
-                                     const char *Channel, const char *PlateNumber, const char *Direction,
-                                     const char *CheckDateTime, const char *Extension);
+                                     const char* const ss[], int size);
 
 #ifdef __cplusplus
 extern "C" {

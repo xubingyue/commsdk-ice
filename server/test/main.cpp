@@ -42,9 +42,10 @@ int main(int argc, char* argv[])
                 UninitUVSSServer();
                 break;
             case 3:
-                SendUVSSCheckInfo(
-                        "1.jpg", "2.jpg",
-                        "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information");
+            {
+                const char* const a[7] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2" };
+                SendUVSSCheckInfo("1.jpg", "2.jpg", a, 7);
+            }
                 break;
             case 9:
                 break;

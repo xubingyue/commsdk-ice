@@ -136,9 +136,7 @@ const std::string ServerI::createCurrentTime()
 
 void ServerI::sendCheckInfo(
         const std::string& uVSSImagePath, const std::string& plateImagePath,
-        const std::string& channel, const std::string& plateNumber,
-        const std::string& direction, const std::string& time,
-        const std::string& extension)
+        const std::vector<std::string>& ss)
 {
     std::string timeName = createCurrentTime();
 
@@ -157,7 +155,7 @@ void ServerI::sendCheckInfo(
         plateImageName = "ANPR_" + timeName + ".jpg";
         filePathToBinary(plateImagePath, plateImage);
     }
-
+    
     std::unique_lock<std::mutex> lock(_mutex);
     
     for (auto p : this->clientProxyToEndpoint) {
@@ -168,7 +166,7 @@ void ServerI::sendCheckInfo(
 
         p.first->writeCheckInfoAsync(
             uVSSImageName, uVSSImage, plateImageName, plateImage,
-            channel, plateNumber, direction, time, extension,
+            ss,
             nullptr,
                 [](std::exception_ptr e)
                 {

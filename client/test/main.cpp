@@ -7,7 +7,7 @@ void menu();
 
 void clientConnectionInfoCallback(int, int, const char*);
 void clientCheckInfoCallback(int, const char*, const char*,
-        const char*, const char*, const char*, const char*, const char*);
+        const char* const [], int);
 
 int main(int argc, char* argv[])
 {
@@ -89,12 +89,13 @@ void menu()
 
 void clientCheckInfoCallback(int index,
         const char* uVSSImagePath, const char* plateImagePath,
-        const char* channel, const char* plateNumber, const char* direction,
-        const char* time, const char* extension)
+        const char* const a[], int sz)
 {
-    printf("\ncallback:\n%d\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
-            index, uVSSImagePath, plateImagePath,
-            channel, plateNumber, direction, time, extension);
+    printf("\ncallback:\n%d\n%s\n%s\n",
+            index, uVSSImagePath, plateImagePath);
+    for (int i = 0; i != sz; ++i) {
+        std::cout << a[i] << std::endl;
+    }
 }
 
 void clientConnectionInfoCallback(int index, int type,

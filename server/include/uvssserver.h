@@ -16,8 +16,7 @@ public:
     int init();
     void uninit();
     void sendCheckInfo(const std::string&, const std::string&,
-            const std::string&, const std::string&, const std::string&,
-            const std::string&, const std::string&);
+            const std::vector<std::string>&);
 
 private:
     Ice::CommunicatorPtr ic;

@@ -62,12 +62,13 @@ WorkQueue::run()
             UVSS::ByteSeq uVSSImage = get<1>(entry);
             std::string plateImageName = get<2>(entry);
             UVSS::ByteSeq plateImage = get<3>(entry);
-            std::string channel = get<4>(entry);
-            std::string plateNumber = get<5>(entry);
-            std::string direction = get<6>(entry);
-            std::string time = get<7>(entry);
-            std::string extension = get<8>(entry);
-            int index = get<11>(entry);
+//             std::string channel = get<4>(entry);
+//             std::string plateNumber = get<5>(entry);
+//             std::string direction = get<6>(entry);
+//             std::string time = get<7>(entry);
+//             std::string extension = get<8>(entry);
+            UVSS::StringSeq ss = get<4>(entry);
+            int index = get<7>(entry);
 
             createImageDirectory("UVSS");
 
@@ -89,12 +90,29 @@ WorkQueue::run()
                 ofs.write((char*)&plateImage[0], plateImage.size());
             }
 
+            int sz = ss.size();
+            char** dst = new char*[sz];
+            for (int i = 0; i != sz; ++i) {
+                int szi = ss[i].size();
+                dst[i] = new char[szi + 1];
+                strcpy(dst[i], ss[i].c_str());
+            }
+    
+    
+            
             this->checkInfoCallback(index,
                                     uVSSImagePath.c_str(), plateImagePath.c_str(),
-                                    channel.c_str(), plateNumber.c_str(), direction.c_str(),
-                                    time.c_str(), extension.c_str());
+                                    dst, sz);
 
-            auto& response = get<9>(entry);//4
+            for (int i = 0; i != sz; ++i) {
+                delete[] dst[i];
+                dst[i] = 0;
+            }
+            delete[] dst;
+            dst = 0;
+            
+            
+            auto& response = get<5>(entry);//4
             
             response();//5
         }
@@ -112,7 +130,7 @@ WorkQueue::run()
         catch(...)
         {
             std::cerr << "yyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
-            auto& error = get<10>(entry);
+            auto& error = get<6>(entry);
             error(current_exception());
         }
     }
@@ -121,9 +139,7 @@ WorkQueue::run()
 void
 WorkQueue::add(std::string uVSSImageName, UVSS::ByteSeq uVSSImage,
         std::string plateImageName, UVSS::ByteSeq plateImage,
-        std::string channel, std::string plateNumber,
-        std::string direction, std::string time,
-        std::string extension,
+        UVSS::StringSeq ss,
         std::function<void ()> response, std::function<void (exception_ptr)> error,
         int index)
 {
@@ -143,11 +159,7 @@ WorkQueue::add(std::string uVSSImageName, UVSS::ByteSeq uVSSImage,
         }
         _callbacks.push_back(make_tuple(uVSSImageName, uVSSImage,
                                         plateImageName, plateImage,
-                                        channel,
-                                        plateNumber,
-                                        direction,
-                                        time,
-                                        extension,
+                                        ss,
                                         std::move(response),
                                         std::move(error),
                                         index)

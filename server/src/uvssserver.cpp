@@ -81,10 +81,7 @@ void UVSSServer::uninit() //写在析构函数里？按理应该有uninit功能�
 
 void UVSSServer::sendCheckInfo(
         const std::string& uVSSImagePath, const std::string& plateImagePath,
-        const std::string& channel, const std::string& plateNumber,
-        const std::string& direction, const std::string& time,
-        const std::string& extension)
+        const std::vector<std::string>& v)
 {
-    this->server->sendCheckInfo(uVSSImagePath, plateImagePath,
-            channel, plateNumber, direction, time, extension);
+    this->server->sendCheckInfo(uVSSImagePath, plateImagePath, v);
 }
