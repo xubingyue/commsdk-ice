@@ -24,6 +24,8 @@ private:
     //adapter?
     int port;
     std::shared_ptr<ServerI> server;
+    
+    std::shared_ptr<WorkQueue> _workQueue;
 };
 
 #endif

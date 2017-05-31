@@ -38,7 +38,6 @@ public:
 
     static void setCheckInfoCallback(UVSSCheckInfoCallback);//-
 
-
 private:
 
     using CallbackEntry = std::tuple<

@@ -9,7 +9,7 @@ UVSSServer::UVSSServer() : port(20145)
 void UVSSServer::setConnectionInfoCallback(
         UVSSServerCallback connectionInfoCallback)
 {
-    ServerI::setConnectionInfoCallback(connectionInfoCallback);
+    WorkQueue::setConnectionInfoCallback(connectionInfoCallback);
 }
 
 void UVSSServer::setPort(int port)
@@ -20,7 +20,8 @@ void UVSSServer::setPort(int port)
 int UVSSServer::init()
 {
     try {
-        this->server = std::make_shared<ServerI>();
+        _workQueue = std::make_shared<WorkQueue>();
+        this->server = std::make_shared<ServerI>(_workQueue);
 
         Ice::PropertiesPtr props = Ice::createProperties();
         props->setProperty("Ice.Warn.Connections", "1");//-
@@ -39,7 +40,7 @@ int UVSSServer::init()
         adapter->add(this->server, Ice::stringToIdentity("Server"));
         
         adapter->activate();
-        this->server->start();//启动心跳线程
+        _workQueue->start();//启动心跳线程
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
@@ -56,7 +57,7 @@ void UVSSServer::uninit() //写在析构函数里？按理应该有uninit功能�
 {
     if (this->server != 0) {
         try {
-            this->server->destroy();
+            _workQueue->destroy();
         }
         catch (const Ice::Exception& ex) {
             std::cerr << ex << std::endl;
@@ -67,17 +68,19 @@ void UVSSServer::uninit() //写在析构函数里？按理应该有uninit功能�
 
    if (this->ic != 0) { //写在析构函数里？ 用Holder？
         try {
-            this->ic->destroy();
+            this->ic->destroy(); // shutdown()?
         }
         catch (const Ice::Exception& ex) {
             std::cerr << ex << std::endl;
         }
     }
+    
+    _workQueue->join();
 }
 
 void UVSSServer::sendCheckInfo(
         const std::vector<std::string>& path,
         const std::vector<std::string>& v)
 {
-    this->server->sendCheckInfo(path, v);
+    _workQueue->sendCheckInfo(path, v);
 }
