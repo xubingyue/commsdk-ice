@@ -80,8 +80,7 @@ void UVSSClient::uninit()
     }
     
     //加上adapter->deactivate();？！！！
-    
-    
+
     if (this->ic != 0) {
         try {
             this->ic->destroy();

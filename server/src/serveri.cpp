@@ -45,7 +45,7 @@ void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
     //tcp -p 20145 -t 60000
             
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
-            boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
+    boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
 
      this->clientProxyToEndpoint[clientProxy] = endpoint; // 是否独立
 //     auto v = clientProxy->ice_getEndpoints();
@@ -135,37 +135,31 @@ const std::string ServerI::createCurrentTime()
 }
 
 void ServerI::sendCheckInfo(
-        const std::string& uVSSImagePath, const std::string& plateImagePath,
+        const std::vector<std::string>& ns,
         const std::vector<std::string>& ss)
 {
-    std::string timeName = createCurrentTime();
-
-    boost::filesystem::path uVSSPath(uVSSImagePath);
-    std::string uVSSImageName;
-    UVSS::ByteSeq uVSSImage;
-    if (boost::filesystem::exists(uVSSPath)) {
-        uVSSImageName = "UVSS_" + timeName + ".jpg";
-        filePathToBinary(uVSSImagePath, uVSSImage);
-    }
-
-    boost::filesystem::path platePath(plateImagePath);
-    std::string plateImageName;
-    UVSS::ByteSeq plateImage;
-    if (boost::filesystem::exists(platePath)) {
-        plateImageName = "ANPR_" + timeName + ".jpg";
-        filePathToBinary(plateImagePath, plateImage);
-    }
+    std::vector<std::string> names;
+    UVSS::ByteSeqSeq bss;
     
+    std::string timeName = createCurrentTime();
+    
+    for (int i = 0; i != ns.size(); ++i) {
+        boost::filesystem::path pt(ns[i]);
+        UVSS::ByteSeq bs;
+        if (boost::filesystem::exists(pt)) {
+            names.push_back(timeName + "[" + boost::lexical_cast<std::string>(i) + "]_" + pt.filename().string());
+            filePathToBinary(ns[i], bs);
+            bss.push_back(bs);
+        }
+    }
+
     std::unique_lock<std::mutex> lock(_mutex);
     
     for (auto p : this->clientProxyToEndpoint) {
     try {
-//             p.first->writeCheckInfo(
-//                 uVSSImageName, uVSSImage, plateImageName, plateImage,
-//                 channel, plateNumber, direction, time, extension);
-
         p.first->writeCheckInfoAsync(
-            uVSSImageName, uVSSImage, plateImageName, plateImage,
+            names,
+            bss,
             ss,
             nullptr,
                 [](std::exception_ptr e)

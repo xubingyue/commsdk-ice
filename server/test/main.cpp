@@ -43,8 +43,9 @@ int main(int argc, char* argv[])
                 break;
             case 3:
             {
+                const char* const a1[2] = { "1.jpg", "2.jpg" };
                 const char* const a[7] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2" };
-                SendUVSSCheckInfo("1.jpg", "2.jpg", a, 7);
+                SendUVSSCheckInfo(a1, 2, a, 7);
             }
                 break;
             case 9:

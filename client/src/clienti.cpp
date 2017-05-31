@@ -19,8 +19,8 @@ void ClientI::setConnectionInfoCallback(
 }
 
 void ClientI::writeCheckInfoAsync(
-        std::string uVSSImageName, UVSS::ByteSeq uVSSImage,
-        std::string plateImageName, UVSS::ByteSeq plateImage,
+        UVSS::StringSeq ns,
+        UVSS::ByteSeqSeq bss,
         UVSS::StringSeq ss,
         std::function<void()> response,
         std::function<void(std::exception_ptr)> error,
@@ -40,8 +40,8 @@ void ClientI::writeCheckInfoAsync(
 //             std::cout << endpoint << std::endl;
             
             int index = this->endpointToIndex[endpoint];
-            _workQueue->add(uVSSImageName, uVSSImage,
-                            plateImageName, plateImage,
+            _workQueue->add(ns,
+                            bss,
                             ss,
                             move(response),
                             move(error),

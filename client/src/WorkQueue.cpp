@@ -58,17 +58,10 @@ WorkQueue::run()
             
             _callbacks.pop_front();//2
 
-            std::string uVSSImageName = get<0>(entry);
-            UVSS::ByteSeq uVSSImage = get<1>(entry);
-            std::string plateImageName = get<2>(entry);
-            UVSS::ByteSeq plateImage = get<3>(entry);
-//             std::string channel = get<4>(entry);
-//             std::string plateNumber = get<5>(entry);
-//             std::string direction = get<6>(entry);
-//             std::string time = get<7>(entry);
-//             std::string extension = get<8>(entry);
-            UVSS::StringSeq ss = get<4>(entry);
-            int index = get<7>(entry);
+            UVSS::StringSeq ns = get<0>(entry);
+            UVSS::ByteSeqSeq bss = get<1>(entry);
+            UVSS::StringSeq ss = get<2>(entry);
+            int index = get<5>(entry);
 
             createImageDirectory("UVSS");
 
@@ -76,19 +69,22 @@ WorkQueue::run()
                 boost::filesystem::current_path();
             std::string imagePath = currentPath.string() + "/UVSS/";
 
-            std::string uVSSImagePath;
-            if (!uVSSImageName.empty()) {
-                uVSSImagePath = imagePath + uVSSImageName;
-                std::ofstream ofs(uVSSImagePath, std::ios::binary);
-                ofs.write((char*)&uVSSImage[0], uVSSImage.size());
+            int nsz = ns.size();
+            for (int i = 0; i != nsz; ++i) {
+                if (!ns[i].empty()) {
+                    ns[i] = imagePath + ns[i];
+                    std::ofstream ofs(ns[i], std::ios::binary);
+                    ofs.write((char*)&bss[i][0], bss[i].size());
+                }
             }
 
-            std::string plateImagePath;
-            if (!plateImageName.empty()) {
-                plateImagePath = imagePath + plateImageName;
-                std::ofstream ofs(plateImagePath, std::ios::binary);
-                ofs.write((char*)&plateImage[0], plateImage.size());
+            char** dst1 = new char*[nsz];
+            for (int i = 0; i != nsz; ++i) {
+                int szi = ns[i].size();
+                dst1[i] = new char[szi + 1];
+                strcpy(dst1[i], ns[i].c_str());
             }
+
 
             int sz = ss.size();
             char** dst = new char*[sz];
@@ -97,11 +93,9 @@ WorkQueue::run()
                 dst[i] = new char[szi + 1];
                 strcpy(dst[i], ss[i].c_str());
             }
-    
-    
-            
+
             this->checkInfoCallback(index,
-                                    uVSSImagePath.c_str(), plateImagePath.c_str(),
+                                    dst1, nsz,
                                     dst, sz);
 
             for (int i = 0; i != sz; ++i) {
@@ -112,7 +106,7 @@ WorkQueue::run()
             dst = 0;
             
             
-            auto& response = get<5>(entry);//4
+            auto& response = get<3>(entry);//4
             
             response();//5
         }
@@ -130,15 +124,16 @@ WorkQueue::run()
         catch(...)
         {
             std::cerr << "yyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
-            auto& error = get<6>(entry);
+            auto& error = get<4>(entry);
             error(current_exception());
         }
     }
 }
 
 void
-WorkQueue::add(std::string uVSSImageName, UVSS::ByteSeq uVSSImage,
-        std::string plateImageName, UVSS::ByteSeq plateImage,
+WorkQueue::add(
+    UVSS::StringSeq ns,
+    UVSS::ByteSeqSeq bss,
         UVSS::StringSeq ss,
         std::function<void ()> response, std::function<void (exception_ptr)> error,
         int index)
@@ -157,8 +152,8 @@ WorkQueue::add(std::string uVSSImageName, UVSS::ByteSeq uVSSImage,
         {
             _condition.notify_one();
         }
-        _callbacks.push_back(make_tuple(uVSSImageName, uVSSImage,
-                                        plateImageName, plateImage,
+        _callbacks.push_back(make_tuple(ns,
+                                        bss,
                                         ss,
                                         std::move(response),
                                         std::move(error),

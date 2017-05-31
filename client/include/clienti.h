@@ -22,8 +22,9 @@ public:
 
     static void setConnectionInfoCallback(UVSSMessageCallback);
     
-    virtual void writeCheckInfoAsync(std::string, UVSS::ByteSeq,
-                                std::string, UVSS::ByteSeq,
+    virtual void writeCheckInfoAsync(
+                                UVSS::StringSeq,
+                                UVSS::ByteSeqSeq,
                                 UVSS::StringSeq,
                                 std::function<void()>,
                                 std::function<void(std::exception_ptr)>,

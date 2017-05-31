@@ -5,14 +5,14 @@
 module UVSS {
 sequence<byte> ByteSeq;
 sequence<string> StringSeq;
+sequence<ByteSeq> ByteSeqSeq;
 
 exception RequestCanceledException {
 }
 
 interface Client {
     ["amd"] idempotent void writeCheckInfo(
-            string uVSSImageName, ByteSeq uVSSImage,
-            string plateImageName, ByteSeq plateImage,
+            StringSeq ns, ByteSeqSeq bss,
             StringSeq ss)
             throws RequestCanceledException;
 }

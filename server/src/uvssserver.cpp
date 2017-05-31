@@ -24,9 +24,8 @@ int UVSSServer::init()
 
         Ice::PropertiesPtr props = Ice::createProperties();
         props->setProperty("Ice.Warn.Connections", "1");//-
-        //props->setProperty("Ice.Warn.Connections", "1");
-        //props->setProperty("Ice.MessageSizeMax", "51200");
         //props->setProperty("Ice.Default.Host", "localhost");//-只能localhost
+        //props->setProperty("Ice.MessageSizeMax", "51200");
         props->setProperty("Ice.MessageSizeMax", "2097152");
         Ice::InitializationData initData;
         initData.properties = props;
@@ -65,10 +64,7 @@ void UVSSServer::uninit() //写在析构函数里？按理应该有uninit功能�
     }
     
     //加上adapter->deactivate();？！！！
-    
-    
-    
-    
+
    if (this->ic != 0) { //写在析构函数里？ 用Holder？
         try {
             this->ic->destroy();
@@ -80,8 +76,8 @@ void UVSSServer::uninit() //写在析构函数里？按理应该有uninit功能�
 }
 
 void UVSSServer::sendCheckInfo(
-        const std::string& uVSSImagePath, const std::string& plateImagePath,
+        const std::vector<std::string>& path,
         const std::vector<std::string>& v)
 {
-    this->server->sendCheckInfo(uVSSImagePath, plateImagePath, v);
+    this->server->sendCheckInfo(path, v);
 }

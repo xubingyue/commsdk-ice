@@ -37,7 +37,7 @@ typedef void(*UVSSMessageCallback)(int handle, int code,
 //                                      const char *Channel, const char *PlateNumber, const char *Direction,
 //                                      const char *CheckDateTime, const char *Extension);
 typedef void(*UVSSCheckInfoCallback)(int handle,
-                                     const char *UVSSImagePath, const char *PlateImagePath,
+                                     const char* const ns[], int size1,
                                      const char* const ss[], int size);
 
 #ifdef __cplusplus

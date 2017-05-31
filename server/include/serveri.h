@@ -23,11 +23,7 @@ public:
 
     void filePathToBinary(const std::string&, UVSS::ByteSeq&);
     const std::string createCurrentTime();
-//     void sendCheckInfo(const std::string&, const std::string&,
-//             const std::string&, const std::string&, const std::string&,
-//             const std::string&, const std::string&);
-    void sendCheckInfo(const std::string&, const std::string&,
-        const std::vector<std::string>&);
+    void sendCheckInfo(const std::vector<std::string>&, const std::vector<std::string>&);
     
     void start();
     void destroy();
