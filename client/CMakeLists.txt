@@ -55,7 +55,7 @@ add_custom_command(
         COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../clientserver.ice
         DEPENDS ${PROJECT_SOURCE_DIR}/../clientserver.ice)
 
-set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp ${PROJECT_SOURCE_DIR}/src/clienti.cpp ${PROJECT_SOURCE_DIR}/src/uvssclient.cpp ${PROJECT_SOURCE_DIR}/src/uvssclientsdk.cpp ${PROJECT_SOURCE_DIR}/src/WorkQueue.cpp)
+set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp ${PROJECT_SOURCE_DIR}/src/clienti.cpp ${PROJECT_SOURCE_DIR}/src/uvssclient.cpp ${PROJECT_SOURCE_DIR}/src/uvssclientsdk.cpp ${PROJECT_SOURCE_DIR}/src/workqueue.cpp ${PROJECT_SOURCE_DIR}/src/rpcexecutor.cpp)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSSDK SHARED ${SOURCES})

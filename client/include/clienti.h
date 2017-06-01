@@ -1,27 +1,17 @@
 #ifndef CLIENTI_H
 #define CLIENTI_H
 
-#include <condition_variable>
-#include <map>
-#include <mutex>
-#include <string>
-#include <thread>
-
 #include <Ice/Ice.h>
 
 #include <clientserver.h>
-#include <WorkQueue.h>
+#include <workqueue.h>
 
-#include <memory>
-
-#include <uvssclientsdk.h>
+#include <rpcexecutor.h>
 
 class ClientI : public UVSS::Client {
 public:
-    ClientI(const std::shared_ptr<WorkQueue>&);
+    ClientI(const std::shared_ptr<WorkQueue>&, const std::shared_ptr<RpcExecutor>&);
 
-    static void setConnectionInfoCallback(UVSSMessageCallback);
-    
     virtual void writeCheckInfoAsync(
                                 UVSS::StringSeq,
                                 UVSS::ByteSeqSeq,
@@ -30,24 +20,11 @@ public:
                                 std::function<void(std::exception_ptr)>,
                                 const Ice::Current&) override;
 
-    void useConnectionInfoCallback(int, int, const std::string&);//考虑删除此函数
-    
-    void start();
-    void destroy();
-
-    std::mutex _mutex;
-    std::condition_variable _cv;
-    int index;
-    bool isDestroyed;
-    std::map<std::shared_ptr<UVSS::ServerPrx>, std::string> serverProxyToEndpoint;
-    std::map<std::string, int> endpointToIndex;
-    
-    std::thread _receiverThread;
-
     std::shared_ptr<WorkQueue> _workQueue;
-    
+    std::shared_ptr<RpcExecutor> _rpcExecutor;
+
 private:
-    static UVSSMessageCallback connectionInfoCallback;
+    
 };
 
 #endif

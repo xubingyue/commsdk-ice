@@ -1,5 +1,5 @@
-#ifndef WORKQUEUE_H
-#define WORKQUEUE_H
+#ifndef RPCEXECUTOR_H
+#define RPCEXECUTOR_H
 
 #include <condition_variable>
 #include <mutex>
@@ -9,10 +9,10 @@
 #include <clientserver.h>
 #include <uvssserversdk.h>
 
-class WorkQueue
+class RpcExecutor
 {
 public:
-    WorkQueue();
+    RpcExecutor();
     void start();
     void join();
     
@@ -37,4 +37,4 @@ private:
     static UVSSServerCallback connectionInfoCallback;
 };
 
-#endif // WORKQUEUE_H
+#endif // RPCEXECUTOR_H

@@ -2,7 +2,8 @@
 #include <uvssclient.h>
 #include <version.h>
 
-auto clientSDK = std::make_shared<UVSSClient>();
+// auto clientSDK = std::make_shared<UVSSClient>();
+UVSSClient* clientSDK;
 
 void SetUVSSMessageCallback(UVSSMessageCallback connectionInfoCallback)
 {
@@ -16,12 +17,14 @@ void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
 
 int UVSSInitialize()
 {
+    clientSDK = new UVSSClient;
     return clientSDK->init();
 }
 
 void UVSSUninitialize()
 {
     clientSDK->uninit();
+    delete clientSDK;
 }
 
 int UVSSConnect(const char* iPAddress, int port)

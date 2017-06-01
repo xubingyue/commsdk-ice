@@ -5,6 +5,7 @@
 #include <Ice/Ice.h>
 #include <clienti.h>
 
+#include <rpcexecutor.h>
 
 class UVSSClient {
 public:
@@ -21,9 +22,13 @@ private:
     Ice::CommunicatorPtr ic;
     Ice::ObjectAdapterPtr adapter;
     Ice::Identity id;
+    
     std::shared_ptr<ClientI> client;
     
-    UVSSCheckInfoCallback checkInfoCallback;
+    
+    
+    
+    std::shared_ptr<RpcExecutor> _rpcExecutor;
 };
 
 #endif

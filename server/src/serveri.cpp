@@ -8,7 +8,7 @@
 #include <clientserver.h>
 #include <version.h>
 
-ServerI::ServerI(const std::shared_ptr< WorkQueue >& workQueue) : _workQueue(workQueue)
+ServerI::ServerI(const std::shared_ptr<RpcExecutor>& workQueue) : _workQueue(workQueue)
 {
 }
 

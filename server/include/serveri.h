@@ -11,17 +11,17 @@
 #include <clientserver.h>
 #include <uvssserversdk.h>
 
-#include <workqueue.h>
+#include <rpcexecutor.h>
 
 class ServerI : public UVSS::Server {
 public:
-    ServerI(const std::shared_ptr<WorkQueue>&);
+    ServerI(const std::shared_ptr<RpcExecutor>&);
 
     virtual void addClient(Ice::Identity, const Ice::Current&) override;
     virtual bool checkVersion(std::string, const Ice::Current&) override;
 
 private:
-    std::shared_ptr<WorkQueue> _workQueue;
+    std::shared_ptr<RpcExecutor> _workQueue;
 };
 
 #endif

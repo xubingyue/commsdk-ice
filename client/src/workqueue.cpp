@@ -5,7 +5,7 @@
 // **********************************************************************
 #include <boost/filesystem.hpp>
 #include <Ice/Ice.h>
-#include <WorkQueue.h>
+#include <workqueue.h>
 
 #include <clientserver.h>
 #include <fstream>

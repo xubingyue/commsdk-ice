@@ -1,4 +1,4 @@
-#include <workqueue.h>
+#include <rpcexecutor.h>
 #include <Ice/Ice.h>
 
 #include <boost/lexical_cast.hpp>
@@ -8,14 +8,14 @@
 #include <ctime>
 #include <iomanip>
 
-UVSSServerCallback WorkQueue::connectionInfoCallback = 0;
+UVSSServerCallback RpcExecutor::connectionInfoCallback = 0;
 
-WorkQueue::WorkQueue() : _destroy(false)
+RpcExecutor::RpcExecutor() : _destroy(false)
 {
 }
 
 void
-WorkQueue::start()
+RpcExecutor::start()
 {
     std::thread t([this]()
         {
@@ -24,7 +24,7 @@ WorkQueue::start()
     _senderThread = move(t);
 }
 
-void WorkQueue::join()
+void RpcExecutor::join()
 {
     if(_senderThread.joinable())
     {
@@ -32,7 +32,7 @@ void WorkQueue::join()
     }
 }
 
-void WorkQueue::run()
+void RpcExecutor::run()
 {
     while (true) {
         std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;
@@ -75,7 +75,7 @@ void WorkQueue::run()
 }
 
 void
-WorkQueue::add(Ice::Identity id, const Ice::Current& curr)
+RpcExecutor::add(Ice::Identity id, const Ice::Current& curr)
 {
     std::unique_lock<std::mutex> lock(_mutex);
     
@@ -104,20 +104,20 @@ WorkQueue::add(Ice::Identity id, const Ice::Current& curr)
 }
 
 void
-WorkQueue::destroy()
+RpcExecutor::destroy()
 {
     std::unique_lock<std::mutex> lock(_mutex);
     this->_destroy = true;
     _cv.notify_one();
 }
 
-void WorkQueue::setConnectionInfoCallback(
+void RpcExecutor::setConnectionInfoCallback(
         UVSSServerCallback connectionInfoCallback)
 {
-    WorkQueue::connectionInfoCallback = connectionInfoCallback;
+    RpcExecutor::connectionInfoCallback = connectionInfoCallback;
 }
 
-void WorkQueue::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
+void RpcExecutor::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
 {
     std::ifstream ifs(filePath, std::ios::binary);
     ifs.seekg(0, std::ios::end);
@@ -128,7 +128,7 @@ void WorkQueue::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& fil
     ifs.read((char*)&file[0], fileSize);
 }
 
-const std::string WorkQueue::createCurrentTime()
+const std::string RpcExecutor::createCurrentTime()
 {
     auto now = std::chrono::system_clock::now();
 
@@ -148,7 +148,7 @@ const std::string WorkQueue::createCurrentTime()
     return currentTime.str();
 }
 
-void WorkQueue::sendCheckInfo(
+void RpcExecutor::sendCheckInfo(
         const std::vector<std::string>& ns,
         const std::vector<std::string>& ss)
 {
@@ -167,6 +167,9 @@ void WorkQueue::sendCheckInfo(
         }
     }
 
+    
+    /////////////////////
+    
     std::unique_lock<std::mutex> lock(_mutex);
     
     for (auto p : this->clientProxyToEndpoint) {

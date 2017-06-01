@@ -12,9 +12,9 @@ public:
     UVSSServer();
 
     void setConnectionInfoCallback(UVSSServerCallback);
-    void setPort(int);
-    int init();
-    void uninit();
+    static void setPort(int);
+    int init();//start
+    void uninit();//shutdown
     void sendCheckInfo(const std::vector<std::string>&,
             const std::vector<std::string>&);
 
@@ -22,10 +22,10 @@ private:
     Ice::CommunicatorPtr ic;
     //Ice::CommunicatorHolder ic;
     //adapter?
-    int port;
+    static int port;
     std::shared_ptr<ServerI> server;
     
-    std::shared_ptr<WorkQueue> _workQueue;
+    std::shared_ptr<RpcExecutor> _workQueue;
 };
 
 #endif
