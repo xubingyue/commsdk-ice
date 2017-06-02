@@ -23,16 +23,15 @@ UVSSClient::UVSSClient() :
     Ice::InitializationData initData;
     initData.properties = props;
     this->ic = Ice::initialize(initData);
+    this->adapter = this->ic->createObjectAdapter("");
+    this->id.name = IceUtil::generateUUID();
+    this->id.category = "";
 }
 
 int UVSSClient::init()
 {
     try {
-        this->id.name = IceUtil::generateUUID();
-        this->id.category = "";
-        this->adapter = this->ic->createObjectAdapter("");
         this->adapter->add(this->client, this->id);
-        
         this->adapter->activate();
         _rpcExecutor->start(); //心跳线程
         _workQueue->start(); //AMD
@@ -40,8 +39,6 @@ int UVSSClient::init()
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
         
-        // 应该有一个专用于初始化的回调函数
-        // 此处不完美，源于旧接口设计
         initializeCallback(-1, -1, "初始化失败");
 
         return -1;
@@ -52,28 +49,17 @@ int UVSSClient::init()
 
 void UVSSClient::uninit()
 {
-    _workQueue->destroy();
-
     try {
         _rpcExecutor->destroy();
+        _workQueue->destroy();
+//         加上adapter->deactivate();？！！！
+        this->ic->destroy(); //shutdown?
+        _rpcExecutor->join();
+        _workQueue->join();
     }
-    catch (const Ice::Exception& ex) {
-        std::cerr << ex << std::endl;
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
     }
-
-    //加上adapter->deactivate();？！！！
-
-    if (this->ic != 0) {
-        try {
-            this->ic->destroy();
-        }
-        catch (const Ice::Exception& ex) {
-            std::cerr << ex << std::endl;
-        }
-    }
-    
-    _workQueue->join();
-    _rpcExecutor->join();
 }
 
 int UVSSClient::connect(const std::string& iPAddress, int port)
@@ -93,10 +79,11 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
     auto base = this->ic->stringToProxy(
         "Server:tcp -h " + iPAddress + " -p " +
         boost::lexical_cast<std::string>(port));
-    
     auto server = Ice::checkedCast<UVSS::ServerPrx>(base);
     if (!server) {
         throw "Invalid proxy";
+        //有问题！！！！
+        //return -1 //callback
     }
 
 // std::cout << server->ice_getConnection()->getEndpoint()->toString() << std::endl;
