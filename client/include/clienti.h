@@ -2,15 +2,13 @@
 #define CLIENTI_H
 
 #include <Ice/Ice.h>
-
 #include <clientserver.h>
-#include <workqueue.h>
-
 #include <rpcexecutor.h>
+#include <workqueue.h>
 
 class ClientI : public UVSS::Client {
 public:
-    ClientI(const std::shared_ptr<WorkQueue>&, const std::shared_ptr<RpcExecutor>&);
+    ClientI(const std::shared_ptr<RpcExecutor>&, const std::shared_ptr<WorkQueue>&);
 
     virtual void writeCheckInfoAsync(
                                 UVSS::StringSeq,
@@ -20,11 +18,9 @@ public:
                                 std::function<void(std::exception_ptr)>,
                                 const Ice::Current&) override;
 
-    std::shared_ptr<WorkQueue> _workQueue;
-    std::shared_ptr<RpcExecutor> _rpcExecutor;
-
 private:
-    
+    std::shared_ptr<RpcExecutor> _rpcExecutor;
+    std::shared_ptr<WorkQueue> _workQueue;
 };
 
 #endif

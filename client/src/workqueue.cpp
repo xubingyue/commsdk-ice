@@ -1,8 +1,3 @@
-// **********************************************************************
-//
-// Copyright (c) 2003-2016 ZeroC, Inc. All rights reserved.
-//
-// **********************************************************************
 #include <boost/filesystem.hpp>
 #include <Ice/Ice.h>
 #include <workqueue.h>
@@ -105,7 +100,6 @@ WorkQueue::run()
             delete[] dst;
             dst = 0;
             
-            
             auto& response = get<3>(entry);//4
             
             response();//5
@@ -157,8 +151,7 @@ WorkQueue::add(
                                         ss,
                                         std::move(response),
                                         std::move(error),
-                                        index)
-                            );
+                                        index));
     }
     else
     {

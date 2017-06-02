@@ -3,8 +3,8 @@
 #include <Ice/Identity.ice>
 
 module UVSS {
-sequence<byte> ByteSeq;
 sequence<string> StringSeq;
+sequence<byte> ByteSeq;
 sequence<ByteSeq> ByteSeqSeq;
 
 exception RequestCanceledException {
@@ -22,4 +22,3 @@ interface Server {
     void addClient(Ice::Identity id);
 }
 }
-

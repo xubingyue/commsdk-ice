@@ -6,11 +6,12 @@
 #include <mutex>
 #include <string>
 #include <thread>
-
 #include <memory>
 
-#include <uvssclientsdk.h>
 #include <clientserver.h>
+#include <uvssclientsdk.h>
+
+typedef UVSSMessageCallback UVSSConnectionCallback;
 
 class RpcExecutor
 {
@@ -23,26 +24,22 @@ public:
     void destroy();
     int connect(const std::shared_ptr<UVSS::ServerPrx>&, const std::string&);
     int disconnect(int);
-    
     bool isRepeated(const std::string&);
-    
     int serverIndex(const Ice::Current& curr);
     
-    std::map<std::shared_ptr<UVSS::ServerPrx>, std::string> serverProxyToEndpoint;
-    std::map<std::string, int> endpointToIndex;
+    static void setConnectionCallback(UVSSConnectionCallback);
+
+private:
     int index;
     bool isDestroyed;
+    std::map<std::shared_ptr<UVSS::ServerPrx>, std::string> serverProxyToEndpoint;
+    std::map<std::string, int> endpointToIndex;
     
     std::mutex _mutex;
     std::condition_variable _cv;
     std::thread _receiverThread;
     
-    
-    static void setConnectionInfoCallback(UVSSMessageCallback);                                              
-    void useConnectionInfoCallback(int, int, const std::string&);//考虑删除此函数
-    
-private:
-    static UVSSMessageCallback connectionInfoCallback;
+    static UVSSConnectionCallback connectionCallback;
 };
 
 #endif // RPCEXECUTOR_H

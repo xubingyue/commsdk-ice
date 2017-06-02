@@ -1,14 +1,10 @@
 #include <clienti.h>
-#include <fstream>
-#include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
+#include <exception>
 #include <clientserver.h>
 
-#include <exception>
-
-ClientI::ClientI(const std::shared_ptr<WorkQueue>& workQueue,
-    const std::shared_ptr<RpcExecutor>& rpcExecutor)
-    :  _workQueue(workQueue), _rpcExecutor(rpcExecutor)
+ClientI::ClientI(const std::shared_ptr<RpcExecutor>& rpcExecutor,
+                 const std::shared_ptr<WorkQueue>& workQueue)
+    : _rpcExecutor(rpcExecutor), _workQueue(workQueue)
 {
 }
 
