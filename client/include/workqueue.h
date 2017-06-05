@@ -1,5 +1,5 @@
-#ifndef WORK_QUEUE_H
-#define WORK_QUEUE_H
+#ifndef WORKQUEUE_H
+#define WORKQUEUE_H
 
 #include <list>
 #include <condition_variable>

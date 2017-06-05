@@ -1,5 +1,5 @@
-#ifndef CLIENTI_H
-#define CLIENTI_H
+#ifndef CALLBACKRECEIVERI_H
+#define CALLBACKRECEIVERI_H
 
 #include <Ice/Ice.h>
 #include <callback.h>

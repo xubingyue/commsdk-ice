@@ -1,5 +1,5 @@
-#ifndef SERVERI_H
-#define SERVERI_H
+#ifndef CALLBACKSENDERI_H
+#define CALLBACKSENDERI_H
 
 #include <condition_variable>
 #include <mutex>

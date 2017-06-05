@@ -1,5 +1,5 @@
-#ifndef RPCEXECUTOR_H
-#define RPCEXECUTOR_H
+#ifndef PEERPROXIES_H
+#define PEERPROXIES_H
 
 #include <condition_variable>
 #include <mutex>
