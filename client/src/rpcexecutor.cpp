@@ -78,73 +78,44 @@ void RpcExecutor::run()
     }
 }
 
-// add
-int RpcExecutor::connect(const std::shared_ptr<UVSS::ServerPrx>& server, const std::string& endpoint)
+// 连接成功后 add!
+int RpcExecutor::add(const std::shared_ptr<UVSS::ServerPrx>& server, const std::string& endpoint)
 {
-            //锁的方式需要更细致！
     std::unique_lock<std::mutex> lock(_mutex);
 
-    try {
-        ++index;
-        endpointToIndex[endpoint] = index;
-        serverProxyToEndpoint[server] = endpoint;
-
-        std::string message("服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + boost::lexical_cast<std::string>(index));
-        connectionCallback(index, 1, message.c_str());
-    }
-    catch (const Ice::Exception& ex) {
-        std::cerr << ex << std::endl;
-        connectionCallback(-1, -2, "连接失败");
-
-        return -1;
-    }
-    catch (const char* msg) {
-        std::cerr << msg << std::endl;
-        connectionCallback(-1, -2, "连接失败");
-
-        return -1;
-    }
-
+    ++index;
+    endpointToIndex[endpoint] = index;
+    serverProxyToEndpoint[server] = endpoint;
     return index;
 }
 
-// remove
-int RpcExecutor::disconnect(int index)
+// 断开连接后 remove!
+bool RpcExecutor::findAndRemove(int index, std::string& endpoint)
 {
-        //锁的方式需要更细致！
+    //锁的方式需要更细致！
     std::unique_lock<std::mutex> lock(_mutex);
 
-    try {
-        for (auto x : endpointToIndex) {
-            if (x.second == index) {
-                std::string endpoint = x.first;
-                endpointToIndex.erase(endpoint);
-                for (auto y : serverProxyToEndpoint) {
-                    if (y.second == endpoint) {
-                        //使server到client的心跳失败
-                        y.first->ice_getConnection()->close(Ice::ConnectionClose::Gracefully);
-                        //client不再连接server y.first
-                        serverProxyToEndpoint.erase(y.first); // 必须在此处删除对端代理
-
-                        //移除要断开的server代理，无论发生在心跳线程中的servers副本拷贝前或后，心跳都不会发生连接错误，不会有server断开的通知
-                        //所以只能在此处通知！不能依靠心跳线程
-                        std::string message("服务器端 " + endpoint + ": " +
-                            "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
-                        connectionCallback(index, -3, message.c_str());
-                        return 1;
-                    }
+    for (auto x : endpointToIndex) {
+        if (x.second == index) {
+            /*std::string */endpoint = x.first;
+            endpointToIndex.erase(endpoint);
+            for (auto y : serverProxyToEndpoint) {
+                if (y.second == endpoint) {
+                    
+                    //使server到client的心跳失败
+                    y.first->ice_getConnection()->close(Ice::ConnectionClose::Gracefully);
+                    //client不再连接server y.first
+                    serverProxyToEndpoint.erase(y.first); // 必须在此处删除对端代理
+                    return true;
                 }
-
-                std::cerr << "error!" << std::endl;
-                return -1;//可以去掉 基本不可能发生
             }
-        }
 
-        return -1;//没有此连接
+            std::cerr << "error!" << std::endl;
+            return false;//可以去掉 基本不可能发生
+        }
     }
-    catch (...) {
-        return -1;//断开失败, 以前的程序没有考虑 y.first->ice_getConnection()->close(Ice::ConnectionClose::Gracefully);
-    }
+
+    return false;//没有此连接
 }
 
 void RpcExecutor::destroy()

@@ -7,6 +7,7 @@ UVSSClient* clientSDK;
 void SetUVSSMessageCallback(UVSSMessageCallback cb)
 {
     UVSSClient::setInitializeCallback(cb);
+    UVSSClient::setCCB(cb);
     clientSDK->setConnectionCallback(cb);
 }
 

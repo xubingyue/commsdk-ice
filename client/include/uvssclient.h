@@ -12,6 +12,7 @@
 #include <uvssclientsdk.h>
 
 typedef UVSSMessageCallback UVSSInitializeCallback;
+typedef UVSSMessageCallback ConnectCallback;
 
 class UVSSClient {
 public:
@@ -22,6 +23,8 @@ public:
     int disconnect(int);
     
     static void setInitializeCallback(UVSSInitializeCallback);
+    static void setCCB(ConnectCallback);
+    
     static void setConnectionCallback(UVSSMessageCallback);
     static void setCheckInfoCallback(UVSSCheckInfoCallback);
 
@@ -35,6 +38,7 @@ private:
     std::shared_ptr<ClientI> client;
     
     static UVSSInitializeCallback initializeCallback;
+    static ConnectCallback ccb_;
 };
 
 #endif

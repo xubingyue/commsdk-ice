@@ -22,9 +22,10 @@ public:
     
     static void setConnectionInfoCallback(UVSSServerCallback);
     
-    void filePathToBinary(const std::string&, UVSS::ByteSeq&);
-    const std::string createCurrentTime();
-    void sendCheckInfo(const std::vector<std::string>&, const std::vector<std::string>&);
+//     void filePathToBinary(const std::string&, UVSS::ByteSeq&);
+//     const std::string createCurrentTime();
+//     void sendCheckInfo(const std::vector<std::string>&, const std::vector<std::string>&);
+    void sendCheckInfo(const std::vector<std::string>&, const UVSS::ByteSeqSeq&, const std::vector<std::string>&);
     
 private:
     std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;

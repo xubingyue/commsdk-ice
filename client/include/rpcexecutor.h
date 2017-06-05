@@ -22,8 +22,8 @@ public:
     void join();
     void run();
     void destroy();
-    int connect(const std::shared_ptr<UVSS::ServerPrx>&, const std::string&);
-    int disconnect(int);
+    int add(const std::shared_ptr<UVSS::ServerPrx>&, const std::string&);
+    bool findAndRemove(int, std::string&);
     bool isRepeated(const std::string&);
     int serverIndex(const Ice::Current& curr);
     

@@ -9,7 +9,7 @@ void clientConnectionInfoCallback(int, int, const char*);
 void clientCheckInfoCallback(int, const char* const [], int,
         const char* const [], int);
 
-int main(int argc, char* argv[])
+int main(int argc, char* /*argv*/[])
 {
     if (argc > 1) {
         std::cerr << "too many arguments" << std::endl;
@@ -42,12 +42,8 @@ int main(int argc, char* argv[])
                 {
                     std::cout << "server IP:" << std::endl;
                     std::string ip;
-//#ifdef LOCALHOST
-//                    ip = "127.0.0.1";
-//                    std::cout << ip << std::endl;
-//#else
                     std::cin >> ip;
-//#endif
+                    
                     std::cout << "server port:" << std::endl;
                     int port;
                     std::cin >> port;

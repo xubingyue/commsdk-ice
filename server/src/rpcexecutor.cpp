@@ -4,9 +4,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 
-#include <chrono>
-#include <ctime>
-#include <iomanip>
+
 
 UVSSServerCallback RpcExecutor::connectionInfoCallback = 0;
 
@@ -117,57 +115,26 @@ void RpcExecutor::setConnectionInfoCallback(
     RpcExecutor::connectionInfoCallback = connectionInfoCallback;
 }
 
-void RpcExecutor::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
-{
-    std::ifstream ifs(filePath, std::ios::binary);
-    ifs.seekg(0, std::ios::end);
-    std::streampos fileSize = ifs.tellg();
-    
-    file.resize(fileSize);
-    ifs.seekg(0, std::ios::beg);
-    ifs.read((char*)&file[0], fileSize);
-}
-
-const std::string RpcExecutor::createCurrentTime()
-{
-    auto now = std::chrono::system_clock::now();
-
-    std::time_t timer = std::chrono::system_clock::to_time_t(now);
-    std::tm timeInfo = *std::localtime(&timer);
-
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-            now.time_since_epoch());
-    auto s = std::chrono::duration_cast<std::chrono::seconds>(
-            now.time_since_epoch());
-    auto msPart = ms - s;
-
-    std::stringstream currentTime;
-    currentTime << std::put_time(&timeInfo, "%Y%m%d%H%M%S")
-            << std::setw(3) << std::setfill('0') << msPart.count();
-
-    return currentTime.str();
-}
-
 void RpcExecutor::sendCheckInfo(
-        const std::vector<std::string>& ns,
+        const std::vector<std::string>& names,
+        const UVSS::ByteSeqSeq& bss, 
         const std::vector<std::string>& ss)
 {
-    std::vector<std::string> names;
-    UVSS::ByteSeqSeq bss;
-    
-    std::string timeName = createCurrentTime();
-    
-    for (int i = 0; i != ns.size(); ++i) {
-        boost::filesystem::path pt(ns[i]);
-        UVSS::ByteSeq bs;
-        if (boost::filesystem::exists(pt)) {
-            names.push_back(timeName + "[" + boost::lexical_cast<std::string>(i) + "]_" + pt.filename().string());
-            filePathToBinary(ns[i], bs);
-            bss.push_back(bs);
-        }
-    }
+//     std::vector<std::string> names;
+//     UVSS::ByteSeqSeq bss;
+//     
+//     std::string timeName = createCurrentTime();
+//     
+//     for (int i = 0; i != ns.size(); ++i) {
+//         boost::filesystem::path pt(ns[i]);
+//         UVSS::ByteSeq bs;
+//         if (boost::filesystem::exists(pt)) {
+//             names.push_back(timeName + "[" + boost::lexical_cast<std::string>(i) + "]_" + pt.filename().string());
+//             filePathToBinary(ns[i], bs);
+//             bss.push_back(bs);
+//         }
+//     }
 
-    
     /////////////////////
     
     std::unique_lock<std::mutex> lock(_mutex);
