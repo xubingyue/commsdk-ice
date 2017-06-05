@@ -1,15 +1,7 @@
 #ifndef CALLBACKSENDERI_H
 #define CALLBACKSENDERI_H
 
-#include <condition_variable>
-#include <mutex>
-#include <string>
-#include <thread>
-
-#include <Ice/Ice.h>
-
 #include <callback.h>
-#include <uvssserverwrapper.h>
 #include <peerproxies.h>
 
 class CallbackSenderI : public virtual UVSS::CallbackSender {
@@ -20,7 +12,7 @@ public:
     virtual bool checkVersion(std::string, const Ice::Current&) override;
 
 private:
-    std::shared_ptr<PeerProxies> _workQueue;
+    std::shared_ptr<PeerProxies> peerProxies_;
 };
 
 #endif

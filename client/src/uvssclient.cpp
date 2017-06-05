@@ -7,7 +7,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include <callbackreceiveri.h>
-#include <callback.h>
 #include <version.h>
 
 UVSSInitializeCallback UVSSClient::initializeCallback = 0;

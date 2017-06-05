@@ -1,12 +1,8 @@
 #include <callbackreceiveri.h>
 
-#include <exception>
-
-#include <callback.h>
-
 CallbackReceiverI::CallbackReceiverI(const std::shared_ptr<PeerProxies>& rpcExecutor,
                  const std::shared_ptr<WorkQueue>& workQueue)
-    : _rpcExecutor(rpcExecutor), _workQueue(workQueue)
+    : peerProxies_(rpcExecutor), _workQueue(workQueue)
 {
 }
 
@@ -18,7 +14,7 @@ void CallbackReceiverI::sendCheckInfoAsync(
     std::function<void(std::exception_ptr)> error,
     const Ice::Current& current)
 {
-    int index = _rpcExecutor->serverIndex(current);
+    int index = peerProxies_->serverIndex(current);
 
     _workQueue->add(filenames,
                     files,

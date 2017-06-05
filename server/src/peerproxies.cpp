@@ -1,9 +1,7 @@
 #include <peerproxies.h>
 
-#include <Ice/Ice.h>
-
 #include <boost/lexical_cast.hpp>
-#include <boost/filesystem.hpp>
+#include <Ice/Ice.h>
 
 UVSSServerCallback PeerProxies::connectionInfoCallback = 0;
 

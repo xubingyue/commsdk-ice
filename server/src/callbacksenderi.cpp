@@ -1,19 +1,14 @@
 #include <callbacksenderi.h>
 
-#include <fstream>
-#include <memory>
-#include <sstream>
-
-#include <callback.h>
 #include <version.h>
 
-CallbackSenderI::CallbackSenderI(const std::shared_ptr<PeerProxies>& workQueue) : _workQueue(workQueue)
+CallbackSenderI::CallbackSenderI(const std::shared_ptr<PeerProxies>& workQueue) : peerProxies_(workQueue)
 {
 }
 
 void CallbackSenderI::addClient(Ice::Identity ident, const Ice::Current& current)
 {
-    _workQueue->add(ident, current);
+    peerProxies_->add(ident, current);
 }
 
 bool CallbackSenderI::checkVersion(std::string version, const Ice::Current& /*current*/)

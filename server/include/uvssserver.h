@@ -1,11 +1,10 @@
 #ifndef UVSSSERVER_H
 #define UVSSSERVER_H
 
-#include <string>
-
 #include <Ice/Ice.h>
 
 #include <callbacksenderi.h>
+#include <peerproxies.h>
 
 class UVSSServer {
 public:
@@ -28,7 +27,6 @@ private:
 //     adapter?
     static int port;
     std::shared_ptr<CallbackSenderI> server;
-
     std::shared_ptr<PeerProxies> _peerProxies;
 };
 

@@ -5,9 +5,9 @@
 
 #include <Ice/Ice.h>
 
-#include <callbackreceiveri.h>
 #include <peerproxies.h>
 #include <workqueue.h>
+#include <callbackreceiveri.h>
 #include <uvssclientwrapper.h>
 
 typedef UVSSMessageCallback UVSSInitializeCallback;

@@ -1,11 +1,6 @@
 #include <workqueue.h>
 
-#include <fstream>
-
 #include <boost/filesystem.hpp>
-#include <Ice/Ice.h>
-
-#include <callback.h>
 
 using namespace std;
 

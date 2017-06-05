@@ -1,7 +1,6 @@
 #ifndef CALLBACKRECEIVERI_H
 #define CALLBACKRECEIVERI_H
 
-#include <Ice/Ice.h>
 #include <callback.h>
 #include <peerproxies.h>
 #include <workqueue.h>
@@ -19,7 +18,7 @@ public:
         const Ice::Current&) override;
 
 private:
-    std::shared_ptr<PeerProxies> _rpcExecutor;
+    std::shared_ptr<PeerProxies> peerProxies_;
     std::shared_ptr<WorkQueue> _workQueue;
 };
 
