@@ -5,14 +5,14 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 
-UVSSServerCallback RpcExecutor::connectionInfoCallback = 0;
+UVSSServerCallback PeerProxies::connectionInfoCallback = 0;
 
-RpcExecutor::RpcExecutor() : _destroy(false)
+PeerProxies::PeerProxies() : _destroy(false)
 {
 }
 
 void
-RpcExecutor::start()
+PeerProxies::start()
 {
     std::thread t([this]()
     {
@@ -21,7 +21,7 @@ RpcExecutor::start()
     _senderThread = move(t);
 }
 
-void RpcExecutor::join()
+void PeerProxies::join()
 {
     if(_senderThread.joinable())
     {
@@ -29,10 +29,10 @@ void RpcExecutor::join()
     }
 }
 
-void RpcExecutor::run()
+void PeerProxies::run()
 {
     while (true) {
-        std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;
+        std::map<std::shared_ptr<UVSS::CallbackReceiverPrx>, std::string> clientProxyToEndpoint;
 
         {
             std::unique_lock<std::mutex> lock(this->_mutex);
@@ -72,12 +72,12 @@ void RpcExecutor::run()
 }
 
 void
-RpcExecutor::add(Ice::Identity id, const Ice::Current& curr)
+PeerProxies::add(Ice::Identity id, const Ice::Current& curr)
 {
     std::unique_lock<std::mutex> lock(_mutex);
 
     auto clientProxy =
-        Ice::uncheckedCast<UVSS::ClientPrx>(curr.con->createProxy(id));
+        Ice::uncheckedCast<UVSS::CallbackReceiverPrx>(curr.con->createProxy(id));
 
     Ice::ConnectionInfoPtr info = curr.con->getInfo();
     Ice::TCPConnectionInfoPtr tcpInfo =
@@ -103,20 +103,20 @@ RpcExecutor::add(Ice::Identity id, const Ice::Current& curr)
 }
 
 void
-RpcExecutor::destroy()
+PeerProxies::destroy()
 {
     std::unique_lock<std::mutex> lock(_mutex);
     this->_destroy = true;
     _cv.notify_one();
 }
 
-void RpcExecutor::setConnectionInfoCallback(
+void PeerProxies::setConnectionInfoCallback(
     UVSSServerCallback connectionInfoCallback)
 {
-    RpcExecutor::connectionInfoCallback = connectionInfoCallback;
+    PeerProxies::connectionInfoCallback = connectionInfoCallback;
 }
 
-void RpcExecutor::sendCheckInfo(
+void PeerProxies::sendCheckInfo(
     const std::vector<std::string>& names,
     const UVSS::ByteSeqSeq& bss,
     const std::vector<std::string>& ss)
@@ -125,7 +125,7 @@ void RpcExecutor::sendCheckInfo(
 
     for (auto p : this->clientProxyToEndpoint) {
         try {
-            p.first->writeCheckInfoAsync(
+            p.first->sendCheckInfoAsync(
                 names,
                 bss,
                 ss,

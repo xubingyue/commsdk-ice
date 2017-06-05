@@ -14,7 +14,7 @@ int UVSSServer::port = 20145;
 void UVSSServer::setConnectionInfoCallback(
     UVSSServerCallback connectionInfoCallback)
 {
-    RpcExecutor::setConnectionInfoCallback(connectionInfoCallback);
+    PeerProxies::setConnectionInfoCallback(connectionInfoCallback);
 }
 
 void UVSSServer::setPort(int port)
@@ -24,8 +24,8 @@ void UVSSServer::setPort(int port)
 
 UVSSServer::UVSSServer()
 {
-    _workQueue = std::make_shared<RpcExecutor>();
-    this->server = std::make_shared<ServerI>(_workQueue);
+    _peerProxies = std::make_shared<PeerProxies>();
+    this->server = std::make_shared<CallbackSenderI>(_peerProxies);
 
     Ice::PropertiesPtr props = Ice::createProperties();
     props->setProperty("Ice.Warn.Connections", "1");//-
@@ -46,7 +46,7 @@ int UVSSServer::init()
 
         //
         adapter->activate();
-        _workQueue->start();//启动心跳线程
+        _peerProxies->start();//启动心跳线程
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
@@ -62,7 +62,7 @@ int UVSSServer::init()
 void UVSSServer::uninit() //写在析构函数里？按理应该有uninit功能，析构函数写成空？
 {
     try {
-        _workQueue->destroy();
+        _peerProxies->destroy();
     }
     catch (const Ice::Exception& ex) {
         std::cerr << ex << std::endl;
@@ -79,7 +79,7 @@ void UVSSServer::uninit() //写在析构函数里？按理应该有uninit功能�
         }
     }
 
-    _workQueue->join();
+    _peerProxies->join();
 }
 
 void UVSSServer::sendCheckInfo(
@@ -101,7 +101,7 @@ void UVSSServer::sendCheckInfo(
         }
     }
 
-    _workQueue->sendCheckInfo(names, bss, v);
+    _peerProxies->sendCheckInfo(names, bss, v);
 }
 
 void UVSSServer::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)

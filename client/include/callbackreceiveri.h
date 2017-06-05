@@ -6,11 +6,11 @@
 #include <peerproxies.h>
 #include <workqueue.h>
 
-class ClientI : public UVSS::Client {
+class CallbackReceiverI : public virtual UVSS::CallbackReceiver {
 public:
-    ClientI(const std::shared_ptr<RpcExecutor>&, const std::shared_ptr<WorkQueue>&);
+    CallbackReceiverI(const std::shared_ptr<PeerProxies>&, const std::shared_ptr<WorkQueue>&);
 
-    virtual void writeCheckInfoAsync(
+    virtual void sendCheckInfoAsync(
         UVSS::StringSeq,
         UVSS::ByteSeqSeq,
         UVSS::StringSeq,
@@ -19,7 +19,7 @@ public:
         const Ice::Current&) override;
 
 private:
-    std::shared_ptr<RpcExecutor> _rpcExecutor;
+    std::shared_ptr<PeerProxies> _rpcExecutor;
     std::shared_ptr<WorkQueue> _workQueue;
 };
 

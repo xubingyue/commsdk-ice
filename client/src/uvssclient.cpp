@@ -14,9 +14,9 @@ UVSSInitializeCallback UVSSClient::initializeCallback = 0;
 ConnectCallback UVSSClient::ccb_ = 0;
 
 UVSSClient::UVSSClient() :
-    _rpcExecutor(std::make_shared<RpcExecutor>()),
+    peerProxies_(std::make_shared<PeerProxies>()),
     _workQueue(std::make_shared<WorkQueue>()),
-    client(std::make_shared<ClientI>(_rpcExecutor, _workQueue))
+    client(std::make_shared<CallbackReceiverI>(peerProxies_, _workQueue))
 {
     Ice::PropertiesPtr props = Ice::createProperties();
     props->setProperty("Ice.Warn.Connections", "1");//-
@@ -35,7 +35,7 @@ int UVSSClient::init()
     try {
         this->adapter->add(this->client, this->id);
         this->adapter->activate();
-        _rpcExecutor->start(); //心跳线程
+        peerProxies_->start(); //心跳线程
         _workQueue->start(); //AMD
     }
     catch (const Ice::Exception& ex) {
@@ -52,11 +52,11 @@ int UVSSClient::init()
 void UVSSClient::uninit()
 {
     try {
-        _rpcExecutor->destroy();
+        peerProxies_->destroy();
         _workQueue->destroy();
 //         加上adapter->deactivate();？！！！
         this->ic->destroy(); //shutdown?
-        _rpcExecutor->join();
+        peerProxies_->join();
         _workQueue->join();
     }
     catch (const std::exception& e) {
@@ -69,14 +69,14 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
     try {
         std::string endpoint = iPAddress + ":" + boost::lexical_cast<std::string>(port);
         int index;
-        if (_rpcExecutor->isRepeated(endpoint)) {
+        if (peerProxies_->isRepeated(endpoint)) {
             return -2;
         }
 
         auto base = this->ic->stringToProxy(
                         "Server:tcp -h " + iPAddress + " -p " +
                         boost::lexical_cast<std::string>(port));
-        auto server = Ice::checkedCast<UVSS::ServerPrx>(base);
+        auto server = Ice::checkedCast<UVSS::CallbackSenderPrx>(base);
         if (!server) {
             std::cerr << "Invalid proxy" << std::endl;
             ccb_(-1, -2, "连接失败");
@@ -96,7 +96,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         server->ice_getConnection()->setAdapter(this->adapter);
         server->addClient(this->id);
 
-        index = _rpcExecutor->add(server, endpoint);
+        index = peerProxies_->add(server, endpoint);
 
         std::string message("服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + boost::lexical_cast<std::string>(index));
         ccb_(index, 1, message.c_str());
@@ -114,7 +114,7 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
 int UVSSClient::disconnect(int index)
 {
     std::string endpoint;
-    bool ret = _rpcExecutor->findAndRemove(index, endpoint);
+    bool ret = peerProxies_->findAndRemove(index, endpoint);
     if (ret) {
 //         移除要断开的server代理，无论发生在心跳线程中的servers副本拷贝前或后，心跳都不会发生连接错误，不会有server断开的通知
 //         所以只能在此处通知！不能依靠心跳线程
@@ -140,7 +140,7 @@ void UVSSClient::setCCB(ConnectCallback ccb)
 void UVSSClient::setConnectionCallback(
     UVSSMessageCallback connectionCallback)
 {
-    RpcExecutor::setConnectionCallback(connectionCallback);
+    PeerProxies::setConnectionCallback(connectionCallback);
 }
 
 void UVSSClient::setCheckInfoCallback(

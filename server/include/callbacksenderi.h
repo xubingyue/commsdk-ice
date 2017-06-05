@@ -12,15 +12,15 @@
 #include <uvssserverwrapper.h>
 #include <peerproxies.h>
 
-class ServerI : public UVSS::Server {
+class CallbackSenderI : public virtual UVSS::CallbackSender {
 public:
-    ServerI(const std::shared_ptr<RpcExecutor>&);
+    CallbackSenderI(const std::shared_ptr<PeerProxies>&);
 
     virtual void addClient(Ice::Identity, const Ice::Current&) override;
     virtual bool checkVersion(std::string, const Ice::Current&) override;
 
 private:
-    std::shared_ptr<RpcExecutor> _workQueue;
+    std::shared_ptr<PeerProxies> _workQueue;
 };
 
 #endif

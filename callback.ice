@@ -10,15 +10,15 @@ sequence<ByteSeq> ByteSeqSeq;
 exception RequestCanceledException {
 }
 
-interface Client {
-    ["amd"] idempotent void writeCheckInfo(
-            StringSeq ns, ByteSeqSeq bss,
-            StringSeq ss)
-            throws RequestCanceledException;
+interface CallbackReceiver {
+    ["amd"] idempotent void sendCheckInfo(
+        StringSeq filenames, ByteSeqSeq files,
+        StringSeq strings)
+        throws RequestCanceledException;
 }
 
-interface Server {
-    bool checkVersion(string ver);
-    void addClient(Ice::Identity id);
+interface CallbackSender {
+    bool checkVersion(string version);
+    void addClient(Ice::Identity ident);
 }
 }

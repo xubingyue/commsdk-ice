@@ -27,9 +27,9 @@ private:
 //     Ice::CommunicatorHolder ic;
 //     adapter?
     static int port;
-    std::shared_ptr<ServerI> server;
+    std::shared_ptr<CallbackSenderI> server;
 
-    std::shared_ptr<RpcExecutor> _workQueue;
+    std::shared_ptr<PeerProxies> _peerProxies;
 };
 
 #endif

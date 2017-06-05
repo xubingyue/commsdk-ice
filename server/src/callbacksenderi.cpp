@@ -7,16 +7,16 @@
 #include <callback.h>
 #include <version.h>
 
-ServerI::ServerI(const std::shared_ptr<RpcExecutor>& workQueue) : _workQueue(workQueue)
+CallbackSenderI::CallbackSenderI(const std::shared_ptr<PeerProxies>& workQueue) : _workQueue(workQueue)
 {
 }
 
-void ServerI::addClient(Ice::Identity id, const Ice::Current& curr)
+void CallbackSenderI::addClient(Ice::Identity ident, const Ice::Current& current)
 {
-    _workQueue->add(id, curr);
+    _workQueue->add(ident, current);
 }
 
-bool ServerI::checkVersion(std::string ver, const Ice::Current&)
+bool CallbackSenderI::checkVersion(std::string version, const Ice::Current& /*current*/)
 {
-    return ver == UVSS_COMM_SDK_VER;
+    return version == UVSS_COMM_SDK_VER;
 }

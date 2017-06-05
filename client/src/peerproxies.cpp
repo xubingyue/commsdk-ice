@@ -3,13 +3,13 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-UVSSConnectionCallback RpcExecutor::connectionCallback = 0;
+UVSSConnectionCallback PeerProxies::connectionCallback = 0;
 
-RpcExecutor::RpcExecutor() : index(0), isDestroyed(false)
+PeerProxies::PeerProxies() : index(0), isDestroyed(false)
 {
 }
 
-void RpcExecutor::start()
+void PeerProxies::start()
 {
     std::thread t([this]() {
         this->run();
@@ -17,17 +17,17 @@ void RpcExecutor::start()
     _receiverThread = std::move(t);
 }
 
-void RpcExecutor::join()
+void PeerProxies::join()
 {
     if (_receiverThread.joinable()) {
         _receiverThread.join();
     }
 }
 
-void RpcExecutor::run()
+void PeerProxies::run()
 {
     while (true) {
-        std::map<std::shared_ptr<UVSS::ServerPrx>, std::string> serverProxyToEndpoint;
+        std::map<std::shared_ptr<UVSS::CallbackSenderPrx>, std::string> serverProxyToEndpoint;
 
         {
             std::unique_lock<std::mutex> lock(this->_mutex);
@@ -80,7 +80,7 @@ void RpcExecutor::run()
 }
 
 // 连接成功后 add!
-int RpcExecutor::add(const std::shared_ptr<UVSS::ServerPrx>& server, const std::string& endpoint)
+int PeerProxies::add(const std::shared_ptr<UVSS::CallbackSenderPrx>& server, const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(_mutex);
 
@@ -91,7 +91,7 @@ int RpcExecutor::add(const std::shared_ptr<UVSS::ServerPrx>& server, const std::
 }
 
 // 断开连接后 remove!
-bool RpcExecutor::findAndRemove(int index, std::string& endpoint)
+bool PeerProxies::findAndRemove(int index, std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(_mutex);
 
@@ -118,14 +118,14 @@ bool RpcExecutor::findAndRemove(int index, std::string& endpoint)
     return false;//没有此连接
 }
 
-void RpcExecutor::destroy()
+void PeerProxies::destroy()
 {
     std::unique_lock<std::mutex> lock(_mutex);
     this->isDestroyed = true;
     _cv.notify_one();
 }
 
-bool RpcExecutor::isRepeated(const std::string& endpoint)
+bool PeerProxies::isRepeated(const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(_mutex);
     for (auto p : serverProxyToEndpoint) {
@@ -136,7 +136,7 @@ bool RpcExecutor::isRepeated(const std::string& endpoint)
     return false;
 }
 
-int RpcExecutor::serverIndex(const Ice::Current& curr)
+int PeerProxies::serverIndex(const Ice::Current& curr)
 {
     std::unique_lock<std::mutex> lock(_mutex);
     if (curr.con != 0) {
@@ -159,8 +159,8 @@ int RpcExecutor::serverIndex(const Ice::Current& curr)
     return -1; //new
 }
 
-void RpcExecutor::setConnectionCallback(
+void PeerProxies::setConnectionCallback(
     UVSSConnectionCallback connectionInfoCallback)
 {
-    RpcExecutor::connectionCallback = connectionInfoCallback;
+    PeerProxies::connectionCallback = connectionInfoCallback;
 }

@@ -32,9 +32,9 @@ private:
     Ice::ObjectAdapterPtr adapter;
     Ice::Identity id;
 
-    std::shared_ptr<RpcExecutor> _rpcExecutor;
+    std::shared_ptr<PeerProxies> peerProxies_;
     std::shared_ptr<WorkQueue> _workQueue;
-    std::shared_ptr<ClientI> client;
+    std::shared_ptr<CallbackReceiverI> client;
 
     static UVSSInitializeCallback initializeCallback;
     static ConnectCallback ccb_;

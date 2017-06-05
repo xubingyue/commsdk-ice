@@ -4,25 +4,25 @@
 
 #include <callback.h>
 
-ClientI::ClientI(const std::shared_ptr<RpcExecutor>& rpcExecutor,
+CallbackReceiverI::CallbackReceiverI(const std::shared_ptr<PeerProxies>& rpcExecutor,
                  const std::shared_ptr<WorkQueue>& workQueue)
     : _rpcExecutor(rpcExecutor), _workQueue(workQueue)
 {
 }
 
-void ClientI::writeCheckInfoAsync(
-    UVSS::StringSeq ns,
-    UVSS::ByteSeqSeq bss,
-    UVSS::StringSeq ss,
+void CallbackReceiverI::sendCheckInfoAsync(
+    UVSS::StringSeq filenames,
+    UVSS::ByteSeqSeq files,
+    UVSS::StringSeq strings,
     std::function<void()> response,
     std::function<void(std::exception_ptr)> error,
-    const Ice::Current& curr)
+    const Ice::Current& current)
 {
-    int index = _rpcExecutor->serverIndex(curr);
+    int index = _rpcExecutor->serverIndex(current);
 
-    _workQueue->add(ns,
-                    bss,
-                    ss,
+    _workQueue->add(filenames,
+                    files,
+                    strings,
                     move(response),
                     move(error),
                     index);

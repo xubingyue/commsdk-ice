@@ -9,10 +9,10 @@
 #include <callback.h>
 #include <uvssserverwrapper.h>
 
-class RpcExecutor
+class PeerProxies
 {
 public:
-    RpcExecutor();
+    PeerProxies();
     void start();
     void join();
 
@@ -24,7 +24,7 @@ public:
     static void setConnectionInfoCallback(UVSSServerCallback);
 
 private:
-    std::map<std::shared_ptr<UVSS::ClientPrx>, std::string> clientProxyToEndpoint;
+    std::map<std::shared_ptr<UVSS::CallbackReceiverPrx>, std::string> clientProxyToEndpoint;
     bool _destroy;
 
     std::mutex _mutex;

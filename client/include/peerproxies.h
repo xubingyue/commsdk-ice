@@ -13,16 +13,16 @@
 
 typedef UVSSMessageCallback UVSSConnectionCallback;
 
-class RpcExecutor
+class PeerProxies
 {
 public:
-    RpcExecutor();
+    PeerProxies();
 
     void start();
     void join();
     void run();
     void destroy();
-    int add(const std::shared_ptr<UVSS::ServerPrx>&, const std::string&);
+    int add(const std::shared_ptr<UVSS::CallbackSenderPrx>&, const std::string&);
     bool findAndRemove(int, std::string&);
     bool isRepeated(const std::string&);
     int serverIndex(const Ice::Current& curr);
@@ -32,7 +32,7 @@ public:
 private:
     int index;
     bool isDestroyed;
-    std::map<std::shared_ptr<UVSS::ServerPrx>, std::string> serverProxyToEndpoint;
+    std::map<std::shared_ptr<UVSS::CallbackSenderPrx>, std::string> serverProxyToEndpoint;
     std::map<std::string, int> endpointToIndex;
 
     std::mutex _mutex;
