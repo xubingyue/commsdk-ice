@@ -6,8 +6,8 @@
 #include <mutex>
 #include <thread>
 
-#include <clientserver.h>
-#include <uvssclientsdk.h>
+#include <callback.h>
+#include <uvssclientwrapper.h>
 
 class WorkQueue
 {

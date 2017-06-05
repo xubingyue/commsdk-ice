@@ -7,7 +7,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <serveri.h>
+#include <callbacksenderi.h>
 
 int UVSSServer::port = 20145;
 

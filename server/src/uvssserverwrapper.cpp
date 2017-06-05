@@ -1,4 +1,4 @@
-#include <uvssserversdk.h>
+#include <uvssserverwrapper.h>
 
 #include <uvssserver.h>
 #include <version.h>

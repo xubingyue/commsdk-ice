@@ -5,7 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <Ice/Ice.h>
 
-#include <clientserver.h>
+#include <callback.h>
 
 using namespace std;
 

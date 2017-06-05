@@ -5,7 +5,7 @@
 
 #include <Ice/Ice.h>
 
-#include <serveri.h>
+#include <callbacksenderi.h>
 
 class UVSSServer {
 public:

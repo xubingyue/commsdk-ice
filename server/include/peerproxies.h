@@ -6,8 +6,8 @@
 #include <thread>
 #include <map>
 
-#include <clientserver.h>
-#include <uvssserversdk.h>
+#include <callback.h>
+#include <uvssserverwrapper.h>
 
 class RpcExecutor
 {

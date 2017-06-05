@@ -1,4 +1,4 @@
-#include <rpcexecutor.h>
+#include <peerproxies.h>
 
 #include <Ice/Ice.h>
 

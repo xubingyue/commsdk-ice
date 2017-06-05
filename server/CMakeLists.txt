@@ -21,18 +21,18 @@ include_directories("${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}" "D:\
 link_directories("D:\\Ice-3.7b0\\ice\\cpp\\lib\\x64\\Debug" "${PROJECT_BINARY_DIR}" "C:\\local\\boost_1_63_0\\lib64-msvc-14.0")
 
 add_custom_command(
-        OUTPUT ${PROJECT_BINARY_DIR}/clientserver.h ${PROJECT_BINARY_DIR}/clientserver.cpp
-        COMMAND COMMAND D:\\Ice-3.7b0\\ice\\cpp\\bin\\x64\\Debug\\slice2cpp -ID:\\Ice-3.7b0\\ice\\slice ${PROJECT_SOURCE_DIR}/../clientserver.ice
-        DEPENDS ${PROJECT_SOURCE_DIR}/../clientserver.ice)
+        OUTPUT ${PROJECT_BINARY_DIR}/callback.h ${PROJECT_BINARY_DIR}/callback.cpp
+        COMMAND COMMAND D:\\Ice-3.7b0\\ice\\cpp\\bin\\x64\\Debug\\slice2cpp -ID:\\Ice-3.7b0\\ice\\slice ${PROJECT_SOURCE_DIR}/../callback.ice
+        DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
 
-set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp ${PROJECT_SOURCE_DIR}/src/serveri.cpp ${PROJECT_SOURCE_DIR}/src/uvssserver.cpp ${PROJECT_SOURCE_DIR}/src/uvssserversdk.cpp)
+set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp ${PROJECT_SOURCE_DIR}/src/callbacksenderi.cpp ${PROJECT_SOURCE_DIR}/src/uvssserver.cpp ${PROJECT_SOURCE_DIR}/src/uvssserverwrapper.cpp ${PROJECT_SOURCE_DIR}/src/peerproxies.cpp)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSServer SHARED ${SOURCES})
 target_link_libraries(UVSSServer ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_63.lib)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}\\bin)
-add_executable(server ${PROJECT_SOURCE_DIR}/test/main.cpp)
+add_executable(server ${PROJECT_SOURCE_DIR}/test/test.cpp)
 target_link_libraries(server UVSSServer ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_63.lib)
 
 ELSEIF (UNIX)
@@ -51,18 +51,18 @@ include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${PROJECT_BI
 link_directories("/usr/lib/x86_64-linux-gnu" "${PROJECT_BINARY_DIR}")
 
 add_custom_command(
-        OUTPUT ${PROJECT_BINARY_DIR}/clientserver.h ${PROJECT_BINARY_DIR}/clientserver.cpp
-        COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../clientserver.ice
-        DEPENDS ${PROJECT_SOURCE_DIR}/../clientserver.ice)
+        OUTPUT ${PROJECT_BINARY_DIR}/callback.h ${PROJECT_BINARY_DIR}/callback.cpp
+        COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../callback.ice
+        DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
 
-set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/clientserver.cpp ${PROJECT_SOURCE_DIR}/src/serveri.cpp ${PROJECT_SOURCE_DIR}/src/uvssserver.cpp ${PROJECT_SOURCE_DIR}/src/uvssserversdk.cpp ${PROJECT_SOURCE_DIR}/src/rpcexecutor.cpp)
+set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp ${PROJECT_SOURCE_DIR}/src/callbacksenderi.cpp ${PROJECT_SOURCE_DIR}/src/uvssserver.cpp ${PROJECT_SOURCE_DIR}/src/uvssserverwrapper.cpp ${PROJECT_SOURCE_DIR}/src/peerproxies.cpp)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSServer SHARED ${SOURCES})
 target_link_libraries(UVSSServer Ice++11 pthread boost_filesystem)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-add_executable(server ${PROJECT_SOURCE_DIR}/test/main.cpp)
+add_executable(server ${PROJECT_SOURCE_DIR}/test/test.cpp)
 target_link_libraries(server UVSSServer Ice++11 pthread boost_filesystem)
 
 ENDIF ()

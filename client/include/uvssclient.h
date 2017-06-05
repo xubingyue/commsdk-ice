@@ -5,10 +5,10 @@
 
 #include <Ice/Ice.h>
 
-#include <clienti.h>
-#include <rpcexecutor.h>
+#include <callbackreceiveri.h>
+#include <peerproxies.h>
 #include <workqueue.h>
-#include <uvssclientsdk.h>
+#include <uvssclientwrapper.h>
 
 typedef UVSSMessageCallback UVSSInitializeCallback;
 typedef UVSSMessageCallback ConnectCallback;

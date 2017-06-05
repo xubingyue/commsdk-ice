@@ -5,3 +5,4 @@ g++ -o client *.o -L/opt/Ice-3.7a4/lib/x86_64-linux-gnu -lIce -lIceUtil -lpthrea
 iconv -f GBK -t UTF-8 xx -o xx
 dos2unix
 
+slice2cpp clientserver.ice -I/usr/share/slice --impl-c++11

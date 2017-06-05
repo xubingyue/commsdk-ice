@@ -1,4 +1,4 @@
-#include <rpcexecutor.h>
+#include <peerproxies.h>
 
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>

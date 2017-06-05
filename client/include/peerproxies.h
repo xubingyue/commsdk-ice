@@ -8,8 +8,8 @@
 #include <thread>
 #include <memory>
 
-#include <clientserver.h>
-#include <uvssclientsdk.h>
+#include <callback.h>
+#include <uvssclientwrapper.h>
 
 typedef UVSSMessageCallback UVSSConnectionCallback;
 

@@ -8,9 +8,9 @@
 
 #include <Ice/Ice.h>
 
-#include <clientserver.h>
-#include <uvssserversdk.h>
-#include <rpcexecutor.h>
+#include <callback.h>
+#include <uvssserverwrapper.h>
+#include <peerproxies.h>
 
 class ServerI : public UVSS::Server {
 public:

@@ -1,8 +1,8 @@
-#include <clienti.h>
+#include <callbackreceiveri.h>
 
 #include <exception>
 
-#include <clientserver.h>
+#include <callback.h>
 
 ClientI::ClientI(const std::shared_ptr<RpcExecutor>& rpcExecutor,
                  const std::shared_ptr<WorkQueue>& workQueue)

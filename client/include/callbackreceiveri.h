@@ -2,8 +2,8 @@
 #define CLIENTI_H
 
 #include <Ice/Ice.h>
-#include <clientserver.h>
-#include <rpcexecutor.h>
+#include <callback.h>
+#include <peerproxies.h>
 #include <workqueue.h>
 
 class ClientI : public UVSS::Client {
