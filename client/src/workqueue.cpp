@@ -1,10 +1,11 @@
-#include <boost/filesystem.hpp>
-#include <Ice/Ice.h>
 #include <workqueue.h>
 
-#include <clientserver.h>
 #include <fstream>
 
+#include <boost/filesystem.hpp>
+#include <Ice/Ice.h>
+
+#include <clientserver.h>
 
 using namespace std;
 
@@ -18,9 +19,9 @@ void
 WorkQueue::start()
 {
     thread t([this]()
-        {
-            this->run();
-        });
+    {
+        this->run();
+    });
     _thread = move(t);
 }
 
@@ -41,16 +42,16 @@ WorkQueue::run()
     while(!_done)
     {
         if(_callbacks.empty()) {
-            //可能在两处被唤醒
-            //被唤醒后，进入下一轮循环，如果是被destroy唤醒的，if条件不成立，跳出循环
-            //如果不是，_callbacks非空，进入else
+//             可能在两处被唤醒
+//             被唤醒后，进入下一轮循环，如果是被destroy唤醒的，if条件不成立，跳出循环
+//             如果不是，_callbacks非空，进入else
             _condition.wait(lock);
         }
         else {
             CallbackEntry entry = _callbacks.front();//1
-            
+
 //             _condition.wait_for(lock, std::chrono::seconds(5));
-            
+
             _callbacks.pop_front();//2
 
             UVSS::StringSeq ns = get<0>(entry);
@@ -99,9 +100,9 @@ WorkQueue::run()
             }
             delete[] dst;
             dst = 0;
-            
+
             auto& response = get<3>(entry);//4
-            
+
             response();//5
         }
     }
@@ -128,13 +129,13 @@ void
 WorkQueue::add(
     UVSS::StringSeq ns,
     UVSS::ByteSeqSeq bss,
-        UVSS::StringSeq ss,
-        std::function<void ()> response, std::function<void (exception_ptr)> error,
-        int index)
+    UVSS::StringSeq ss,
+    std::function<void ()> response, std::function<void (exception_ptr)> error,
+    int index)
 {
     //destroy后仍然有可能执行add
     //所以要判断if _done
-    
+
     unique_lock<mutex> lock(_mutex);
 
     if(!_done)

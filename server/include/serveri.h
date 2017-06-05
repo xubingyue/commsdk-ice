@@ -10,7 +10,6 @@
 
 #include <clientserver.h>
 #include <uvssserversdk.h>
-
 #include <rpcexecutor.h>
 
 class ServerI : public UVSS::Server {

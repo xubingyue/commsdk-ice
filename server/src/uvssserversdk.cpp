@@ -1,8 +1,8 @@
 #include <uvssserversdk.h>
+
 #include <uvssserver.h>
 #include <version.h>
 
-// auto serverSDK = std::make_shared<UVSSServer>(); //改为只声明变量
 UVSSServer* serverSDK;
 
 void SetUVSSServerCallback(UVSSServerCallback connectionInfoCallback)
@@ -18,17 +18,17 @@ void SetUVSSServerPort(int port)
 int InitUVSSServer()
 {
     serverSDK = new UVSSServer;
-    return serverSDK->init(); //改为new + init()
+    return serverSDK->init();
 }
 
 void UninitUVSSServer()
 {
-    serverSDK->uninit(); //改为delete
+    serverSDK->uninit();
     delete serverSDK;
 }
 
 void SendUVSSCheckInfo(const char* const a1[], int sz1,
-        const char* const a[], int sz)
+                       const char* const a[], int sz)
 {
     std::vector<std::string> v1(a1, a1+sz1);
     std::vector<std::string> v(a, a+sz);

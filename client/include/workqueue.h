@@ -1,13 +1,12 @@
 #ifndef WORK_QUEUE_H
 #define WORK_QUEUE_H
 
-#include <clientserver.h>
-
 #include <list>
 #include <condition_variable>
 #include <mutex>
 #include <thread>
 
+#include <clientserver.h>
 #include <uvssclientsdk.h>
 
 class WorkQueue
@@ -19,11 +18,11 @@ public:
     void run();
 
     void add(
-            UVSS::StringSeq,
-             UVSS::ByteSeqSeq,
-             UVSS::StringSeq,
-             std::function<void ()>, std::function<void (std::exception_ptr)>,
-             int);
+        UVSS::StringSeq,
+        UVSS::ByteSeqSeq,
+        UVSS::StringSeq,
+        std::function<void ()>, std::function<void (std::exception_ptr)>,
+        int);
     void destroy();
     void start();
     void join();
@@ -35,8 +34,8 @@ public:
 private:
 
     using CallbackEntry = std::tuple<
-                            UVSS::StringSeq,
-                            UVSS::ByteSeqSeq,
+                          UVSS::StringSeq,
+                          UVSS::ByteSeqSeq,
                           UVSS::StringSeq,
                           std::function<void ()>,
                           std::function<void (std::exception_ptr)>,

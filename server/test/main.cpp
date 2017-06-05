@@ -1,11 +1,12 @@
 #include <cstdio>
 #include <iostream>
+
 #include <uvssserversdk.h>
 
 void menu();
 void serverConnectionInfoCallback(int, const char*);
 
-int main(int argc, char* argv[])
+int main(int argc, char* /*argv*/[])
 {
     if (argc > 1) {
         std::cerr << "too many arguments" << std::endl;
@@ -28,13 +29,13 @@ int main(int argc, char* argv[])
                 menu();
                 break;
             case 1:
-                {
-                    std::cout << "server port:" << std::endl;
-                    int port;
-                    std::cin >> port;
-                    SetUVSSServerPort(port);
-                }
-                break;
+            {
+                std::cout << "server port:" << std::endl;
+                int port;
+                std::cin >> port;
+                SetUVSSServerPort(port);
+            }
+            break;
             case 2:
                 InitUVSSServer();
                 break;
@@ -47,7 +48,7 @@ int main(int argc, char* argv[])
                 const char* const a[7] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2" };
                 SendUVSSCheckInfo(a1, 2, a, 7);
             }
-                break;
+            break;
             case 9:
                 break;
             }
@@ -64,16 +65,16 @@ void menu()
 {
     std::cout << "ServerVersion: " << GetUVSSServerVersion() << std::endl;
     std::cout << "usage:\n"
-        "0: help\n"
-        "1: set port\n"
-        "2: init\n"
-        "-2: uninit\n"
-        "3: send CheckInfo\n"
-        "9: exit\n";
+              "0: help\n"
+              "1: set port\n"
+              "2: init\n"
+              "-2: uninit\n"
+              "3: send CheckInfo\n"
+              "9: exit\n";
 }
 
 void serverConnectionInfoCallback(int type,
-        const char* connectionInfo)
+                                  const char* connectionInfo)
 {
     printf("\ncallback:\n%d, %s\n", type, connectionInfo);
 }

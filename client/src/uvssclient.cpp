@@ -1,12 +1,13 @@
 #include <uvssclient.h>
-#include <map>
-#include <boost/lexical_cast.hpp>
-#include <clienti.h>
-#include <clientserver.h>
 
+#include <map>
 #include <memory>
 #include <algorithm>
 
+#include <boost/lexical_cast.hpp>
+
+#include <clienti.h>
+#include <clientserver.h>
 #include <version.h>
 
 UVSSInitializeCallback UVSSClient::initializeCallback = 0;
@@ -66,7 +67,6 @@ void UVSSClient::uninit()
 int UVSSClient::connect(const std::string& iPAddress, int port)
 {
     try {
-        // 考虑是否改变
         std::string endpoint = iPAddress + ":" + boost::lexical_cast<std::string>(port);
         int index;
         if (_rpcExecutor->isRepeated(endpoint)) {
@@ -83,12 +83,12 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
             return -1;
         }
 
-// std::cout << server->ice_getConnection()->getEndpoint()->toString() << std::endl;
-// std::cout << endpoint << std::endl;
-// tcp -h 192.168.1.9 -p 20145 -t 60000
-// 192.168.1.9:20145
+//         std::cout << server->ice_getConnection()->getEndpoint()->toString() << std::endl;
+//         std::cout << endpoint << std::endl;
+//         tcp -h 192.168.1.9 -p 20145 -t 60000
+//         192.168.1.9:20145
 
-    // 考虑去掉个功能
+//         考虑去掉个功能
         if (!server->checkVersion(UVSS_COMM_SDK_VER)) {
             return -3;
         }
@@ -116,8 +116,8 @@ int UVSSClient::disconnect(int index)
     std::string endpoint;
     bool ret = _rpcExecutor->findAndRemove(index, endpoint);
     if (ret) {
-        //移除要断开的server代理，无论发生在心跳线程中的servers副本拷贝前或后，心跳都不会发生连接错误，不会有server断开的通知
-        //所以只能在此处通知！不能依靠心跳线程
+//         移除要断开的server代理，无论发生在心跳线程中的servers副本拷贝前或后，心跳都不会发生连接错误，不会有server断开的通知
+//         所以只能在此处通知！不能依靠心跳线程
         std::string message("服务器端 " + endpoint + ": " +
                             "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
         ccb_(index, -3, message.c_str());

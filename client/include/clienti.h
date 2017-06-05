@@ -11,12 +11,12 @@ public:
     ClientI(const std::shared_ptr<RpcExecutor>&, const std::shared_ptr<WorkQueue>&);
 
     virtual void writeCheckInfoAsync(
-                                UVSS::StringSeq,
-                                UVSS::ByteSeqSeq,
-                                UVSS::StringSeq,
-                                std::function<void()>,
-                                std::function<void(std::exception_ptr)>,
-                                const Ice::Current&) override;
+        UVSS::StringSeq,
+        UVSS::ByteSeqSeq,
+        UVSS::StringSeq,
+        std::function<void()>,
+        std::function<void(std::exception_ptr)>,
+        const Ice::Current&) override;
 
 private:
     std::shared_ptr<RpcExecutor> _rpcExecutor;
