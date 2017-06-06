@@ -4,7 +4,7 @@
 #include <callback.h>
 #include <peerproxies.h>
 
-class CallbackSenderI : public virtual UVSS::CallbackSender {
+class CallbackSenderI : public virtual Uvss::CallbackSender {
 public:
     CallbackSenderI(const std::shared_ptr<PeerProxies>&);
 

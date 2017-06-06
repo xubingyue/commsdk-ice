@@ -18,9 +18,9 @@ public:
     void run();
 
     void add(
-        UVSS::StringSeq,
-        UVSS::ByteSeqSeq,
-        UVSS::StringSeq,
+        Uvss::StringSeq,
+        Uvss::ByteSeqSeq,
+        Uvss::StringSeq,
         std::function<void ()>, std::function<void (std::exception_ptr)>,
         int);
     void destroy();
@@ -34,9 +34,9 @@ public:
 private:
 
     using CallbackEntry = std::tuple<
-                          UVSS::StringSeq,
-                          UVSS::ByteSeqSeq,
-                          UVSS::StringSeq,
+                          Uvss::StringSeq,
+                          Uvss::ByteSeqSeq,
+                          Uvss::StringSeq,
                           std::function<void ()>,
                           std::function<void (std::exception_ptr)>,
                           int>;

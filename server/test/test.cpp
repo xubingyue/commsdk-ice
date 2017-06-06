@@ -1,21 +1,19 @@
-#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 
 #include <uvssserverwrapper.h>
 
 void menu();
-void serverConnectionInfoCallback(int, const char*);
+void uvssServerCallback(int, const char*);
 
-int main(int argc, char* /*argv*/[])
+int main(int argc, char* argv[])
 {
     if (argc > 1) {
-        std::cerr << "too many arguments" << std::endl;
-
-        return 1;
+        std::cerr << argv[0] << ": too many arguments" << std::endl;
+        return EXIT_FAILURE;
     }
 
-    SetUVSSServerCallback(serverConnectionInfoCallback);
-
+    SetUVSSServerCallback(uvssServerCallback);
     menu();
 
     int key;
@@ -29,13 +27,13 @@ int main(int argc, char* /*argv*/[])
                 menu();
                 break;
             case 1:
-            {
-                std::cout << "server port:" << std::endl;
-                int port;
-                std::cin >> port;
-                SetUVSSServerPort(port);
-            }
-            break;
+                {
+                    std::cout << "port:" << std::endl;
+                    int port;
+                    std::cin >> port;
+                    SetUVSSServerPort(port);
+                }
+                break;
             case 2:
                 InitUVSSServer();
                 break;
@@ -43,12 +41,12 @@ int main(int argc, char* /*argv*/[])
                 UninitUVSSServer();
                 break;
             case 3:
-            {
-                const char* const a1[2] = { "1.jpg", "2.jpg" };
-                const char* const a[7] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2" };
-                SendUVSSCheckInfo(a1, 2, a, 7);
-            }
-            break;
+                {
+                    const char* const filePaths[2] = { "1.jpg", "2.jpg" };
+                    const char* const strings[7] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2" };
+                    SendUVSSCheckInfo(filePaths, 2, strings, 7);
+                }
+                break;
             case 9:
                 break;
             }
@@ -58,23 +56,22 @@ int main(int argc, char* /*argv*/[])
         }
     } while ((std::cin.good()) && (key != 9));
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 void menu()
 {
-    std::cout << "ServerVersion: " << GetUVSSServerVersion() << std::endl;
-    std::cout << "usage:\n"
-              "0: help\n"
-              "1: set port\n"
-              "2: init\n"
-              "-2: uninit\n"
-              "3: send CheckInfo\n"
-              "9: exit\n";
+    std::cout << "Server Version: " << GetUVSSServerVersion() << std::endl;
+    std::cout << "Usage:\n"
+                "0: help\n"
+                "1: set port\n"
+                "2: init\n"
+                "-2: uninit\n"
+                "3: send CheckInfo\n"
+                "9: exit\n";
 }
 
-void serverConnectionInfoCallback(int type,
-                                  const char* connectionInfo)
+void uvssServerCallback(int type, const char* message)
 {
-    printf("\ncallback:\n%d, %s\n", type, connectionInfo);
+    std::cout << "callback\n" << type << ", " << message << std::endl;
 }

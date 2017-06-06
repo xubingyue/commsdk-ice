@@ -3,150 +3,142 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-UVSSServerCallback PeerProxies::connectionInfoCallback = 0;
+UVSSServerCallback PeerProxies::connectionCallback_ = 0;
 
-PeerProxies::PeerProxies() : _destroy(false)
+PeerProxies::PeerProxies() : destroy_(false)
 {
-}
-
-void
-PeerProxies::start()
-{
-    std::thread t([this]()
-    {
-        this->run();
-    });
-    _senderThread = move(t);
-}
-
-void PeerProxies::join()
-{
-    if(_senderThread.joinable())
-    {
-        _senderThread.join();
-    }
 }
 
 void PeerProxies::run()
 {
     while (true) {
-        std::map<std::shared_ptr<UVSS::CallbackReceiverPrx>, std::string> clientProxyToEndpoint;
-
+        std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>, std::string> clientEndpointMap;
         {
-            std::unique_lock<std::mutex> lock(this->_mutex);
-            this->_cv.wait_for(lock, std::chrono::seconds(2));
+            std::unique_lock<std::mutex> lock(mutex_);
+            cv_.wait_for(lock, std::chrono::seconds(2));
 
-            if (this->_destroy) {
+            if (destroy_) {
                 return;
             }
             else {
-                clientProxyToEndpoint = this->clientProxyToEndpoint;
+                clientEndpointMap = clientEndpointMap_;
             }
         }
 
-        if (!clientProxyToEndpoint.empty()) {
-            for (auto p : clientProxyToEndpoint) {
+        if (!clientEndpointMap.empty()) {
+            for (auto p : clientEndpointMap) {
                 try {
                     p.first->ice_ping();
                 }
-                catch (...) {
-                    std::unique_lock<std::mutex> lock(_mutex);
+                catch (const Ice::Exception& ex) {
+                    std::cerr << ex << std::endl;
 
-                    if (this->_destroy) {
-                        return;
-                    }
-                    else {
-                        std::string endpoint = p.second;
-                        if (this->connectionInfoCallback != 0) {
-                            this->connectionInfoCallback(-1, std::string(
-                                                             "客户端 " + endpoint + ": 已断开").c_str());
-                        }
-                        this->clientProxyToEndpoint.erase(p.first); //不用考虑迭代器失效的问题，这里是在成员变量里删除
-                    }
+//                     与C# GUI妥协的做法
+//                     std::unique_lock<std::mutex> lock(mutex_);
+//                     if (destroy_) {
+//                         return;
+//                     }
+//                     else {
+//                         std::string endpoint = p.second;
+//                         std::string message("客户端 " + endpoint + ": 已断开");
+//                         clientEndpointMap_.erase(p.first);
+//                         connectionCallback_(-1, message.c_str());
+//                     }
+
+//                     正确做法
+                    std::string endpoint = p.second;
+                    std::string message("客户端 " + endpoint + ": 已断开");
+                    std::unique_lock<std::mutex> lock(mutex_); // 保证删除和回调通知一致
+                    clientEndpointMap_.erase(p.first);
+                    connectionCallback_(-1, message.c_str());
                 }
             }
         }
     }
 }
 
-void
-PeerProxies::add(Ice::Identity id, const Ice::Current& curr)
+void PeerProxies::start()
 {
-    std::unique_lock<std::mutex> lock(_mutex);
+    std::thread t([this]()
+    {
+        run();
+    });
+    senderThread_ = move(t);
+}
 
-    auto clientProxy =
-        Ice::uncheckedCast<UVSS::CallbackReceiverPrx>(curr.con->createProxy(id));
+void PeerProxies::add(const Ice::Identity& ident, const Ice::Current& current)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
 
-    Ice::ConnectionInfoPtr info = curr.con->getInfo();
+    auto client =
+        Ice::uncheckedCast<Uvss::CallbackReceiverPrx>(current.con->createProxy(ident));
+
+//     std::cout << current.con->getEndpoint()->toString() << std::endl;
+//     tcp -p 20145 -t 60000
+//     auto v = client->ice_getEndpoints();
+//     std::cout << v.size() << std::endl;
+//     0
+//     std::cout << client->ice_getConnection()->getEndpoint()->toString() << std::endl;
+//     tcp -p 20145 -t 60000
+
+    Ice::ConnectionInfoPtr info = current.con->getInfo();
     Ice::TCPConnectionInfoPtr tcpInfo =
         std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
-
-//     std::cout << curr.con->getEndpoint()->toString() << std::endl;
-//     tcp -p 20145 -t 60000
-
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
-                           boost::lexical_cast<std::string>(tcpInfo->remotePort);//去掉开头的::ffff:
+        boost::lexical_cast<std::string>(tcpInfo->remotePort); // 去掉开头的::ffff:
 
-    this->clientProxyToEndpoint[clientProxy] = endpoint; // 是否独立
+    clientEndpointMap_[client] = endpoint;
 
-//     auto v = clientProxy->ice_getEndpoints();
-//     std::cout << v.size() << std::endl;//0
-//     std::cout << clientProxy->ice_getConnection()->getEndpoint()->toString() << std::endl;
-//     tcp -p 20145 -t 60000
-
-    if (this->connectionInfoCallback != 0) {
-        this->connectionInfoCallback(
-            0, std::string("客户端 " + endpoint + ": 已连接").c_str());
-    }
+    std::string message("客户端 " + endpoint + ": 已连接");
+    connectionCallback_(0, message.c_str());
 }
 
-void
-PeerProxies::destroy()
+void PeerProxies::sendCheckInfo(const std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char>>& files,
+    const std::vector<std::string>& strings)
 {
-    std::unique_lock<std::mutex> lock(_mutex);
-    this->_destroy = true;
-    _cv.notify_one();
-}
+    std::unique_lock<std::mutex> lock(mutex_);
 
-void PeerProxies::setConnectionInfoCallback(
-    UVSSServerCallback connectionInfoCallback)
-{
-    PeerProxies::connectionInfoCallback = connectionInfoCallback;
-}
-
-void PeerProxies::sendCheckInfo(
-    const std::vector<std::string>& names,
-    const UVSS::ByteSeqSeq& bss,
-    const std::vector<std::string>& ss)
-{
-    std::unique_lock<std::mutex> lock(_mutex);
-
-    for (auto p : this->clientProxyToEndpoint) {
+    for (auto p : clientEndpointMap_) {
         try {
-            p.first->sendCheckInfoAsync(
-                names,
-                bss,
-                ss,
+            p.first->sendCheckInfoAsync(fileNames, files, strings,
                 nullptr,
                 [](std::exception_ptr e)
             {
-                try
-                {
+                try {
                     std::rethrow_exception(e);
                 }
-                catch(const std::exception& ex)
-                {
+                catch(const std::exception& ex) {
                     std::cerr << "sayHello AMI call failed:\n" << ex.what() << std::endl;
                 }
             });
         }
         catch (const Ice::Exception& ex) {
-//             just skip, no erase
-//             如果在此处删除失效的client代理，这里需要回调通知一次，心跳线程也可能回调通知一次（当心跳线程的client副本还没有检测这个失效的代理之前，在此处删除失效代理）
-//             如果在此处删除失效的client代理，而不回调通知，心跳线程可能会漏掉通知（当心跳线程的client副本已经检测完这个失效的代理之后，在此处删除失效代理）
-//             只让心跳线程实现检测对端连接的任务和删除失效client代理
-//             it = this->clientProxyToEndpoint.erase(it);
-            std::cerr << ex << std::endl;
+            std::cerr << "sendCheckInfo:\n" << ex << std::endl;
+//             不在此处删除失效的client代理
+//             只让心跳线程检测对端连接和删除失效的client代理
+//             若在此处删除失效的client代理：
+//             1.若在这里回调通知，心跳线程也可能再回调通知一次（在此处删除失效代理后，若心跳线程还没有检测client副本里这个失效代理）
+//             2.若不在这里回调通知，心跳线程可能会漏掉通知（在此处删除失效代理后，若心跳线程已经检测了client副本里这个代理，而检测时此代理是正常的）
         }
     }
+}
+
+void PeerProxies::destroy()
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    destroy_ = true;
+    cv_.notify_one();
+}
+
+void PeerProxies::join()
+{
+    if(senderThread_.joinable()) {
+        senderThread_.join();
+    }
+}
+
+void PeerProxies::setConnectionCallback(ConnectionCallback connectionCallback)
+{
+    connectionCallback_ = connectionCallback;
 }

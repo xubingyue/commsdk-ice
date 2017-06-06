@@ -2,7 +2,8 @@
 
 #include <version.h>
 
-CallbackSenderI::CallbackSenderI(const std::shared_ptr<PeerProxies>& workQueue) : peerProxies_(workQueue)
+CallbackSenderI::CallbackSenderI(const std::shared_ptr<PeerProxies>& peerProxies) :
+    peerProxies_(peerProxies)
 {
 }
 

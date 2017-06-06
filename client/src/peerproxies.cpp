@@ -27,7 +27,7 @@ void PeerProxies::join()
 void PeerProxies::run()
 {
     while (true) {
-        std::map<std::shared_ptr<UVSS::CallbackSenderPrx>, std::string> serverProxyToEndpoint;
+        std::map<std::shared_ptr<Uvss::CallbackSenderPrx>, std::string> serverProxyToEndpoint;
 
         {
             std::unique_lock<std::mutex> lock(this->_mutex);
@@ -80,7 +80,7 @@ void PeerProxies::run()
 }
 
 // 连接成功后 add!
-int PeerProxies::add(const std::shared_ptr<UVSS::CallbackSenderPrx>& server, const std::string& endpoint)
+int PeerProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& server, const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(_mutex);
 

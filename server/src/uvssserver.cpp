@@ -9,113 +9,60 @@
 
 #include <callbacksenderi.h>
 
-int UVSSServer::port = 20145;
+int UvssServer::port_ = 20145;
 
-void UVSSServer::setConnectionInfoCallback(
-    UVSSServerCallback connectionInfoCallback)
+UvssServer::UvssServer() :
+    peerProxies_(std::make_shared<PeerProxies>()),
+    sender_(std::make_shared<CallbackSenderI>(peerProxies_))
 {
-    PeerProxies::setConnectionInfoCallback(connectionInfoCallback);
-}
-
-void UVSSServer::setPort(int port)
-{
-    UVSSServer::port = port;
-}
-
-UVSSServer::UVSSServer()
-{
-    _peerProxies = std::make_shared<PeerProxies>();
-    this->server = std::make_shared<CallbackSenderI>(_peerProxies);
-
+//     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
-    props->setProperty("Ice.Warn.Connections", "1");//-
-    //props->setProperty("Ice.Default.Host", "localhost");//-只能localhost
-    props->setProperty("Ice.MessageSizeMax", "2097152");// "51200
+//     props->setProperty("Ice.Default.Host", "localhost"); // 这样只能localhost
+    props->setProperty("Ice.Warn.Connections", "1");
+    props->setProperty("Ice.MessageSizeMax", "2097152"); // 51200
     Ice::InitializationData initData;
     initData.properties = props;
-    this->ic = Ice::initialize(initData);
+
+    ic_ = Ice::initialize(initData);
+    adapter_ = ic_->createObjectAdapterWithEndpoints("UvssServerAdapter",
+        "tcp -p " + boost::lexical_cast<std::string>(port_));
 }
 
-int UVSSServer::init()
+UvssServer::~UvssServer()
+{
+    ic_->destroy();
+    peerProxies_->join();
+}
+
+int UvssServer::start()
 {
     try {
-        Ice::ObjectAdapterPtr adapter =
-            this->ic->createObjectAdapterWithEndpoints(
-                "UVSS.Server", "tcp -p " + boost::lexical_cast<std::string>(this->port));
-        adapter->add(this->server, Ice::stringToIdentity("Server"));
-
-        //
-        adapter->activate();
-        _peerProxies->start();//启动心跳线程
+        adapter_->add(sender_, Ice::stringToIdentity("UvssServer"));
+        adapter_->activate();
+        peerProxies_->start(); // 启动心跳线程
     }
-    catch (const Ice::Exception& ex) {
-        std::cerr << ex << std::endl;
-        //no callback
-
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return -1;
     }
 
     return 0;
 }
 
-//unint有问题！//使用时，没有warning
-void UVSSServer::uninit() //写在析构函数里？按理应该有uninit功能，析构函数写成空？
-{
-    try {
-        _peerProxies->destroy();
-    }
-    catch (const Ice::Exception& ex) {
-        std::cerr << ex << std::endl;
-    }
-
-    //加上adapter->deactivate();？！！！
-
-    if (this->ic != 0) { //写在析构函数里？ 用Holder？
-        try {
-            this->ic->destroy(); // shutdown()?
-        }
-        catch (const Ice::Exception& ex) {
-            std::cerr << ex << std::endl;
-        }
-    }
-
-    _peerProxies->join();
-}
-
-void UVSSServer::sendCheckInfo(
-    const std::vector<std::string>& ns,
-    const std::vector<std::string>& v)
-{
-    std::vector<std::string> names;
-    UVSS::ByteSeqSeq bss;
-
-    std::string timeName = createCurrentTime();
-
-    for (int i = 0; i != ns.size(); ++i) {
-        boost::filesystem::path pt(ns[i]);
-        UVSS::ByteSeq bs;
-        if (boost::filesystem::exists(pt)) {
-            names.push_back(timeName + "[" + boost::lexical_cast<std::string>(i) + "]_" + pt.filename().string());
-            filePathToBinary(ns[i], bs);
-            bss.push_back(bs);
-        }
-    }
-
-    _peerProxies->sendCheckInfo(names, bss, v);
-}
-
-void UVSSServer::filePathToBinary(const std::string& filePath, UVSS::ByteSeq& file)
+void UvssServer::filePathToFile(const std::string& filePath,
+                                std::vector<unsigned char>& file)
 {
     std::ifstream ifs(filePath, std::ios::binary);
+
     ifs.seekg(0, std::ios::end);
     std::streampos fileSize = ifs.tellg();
-
     file.resize(fileSize);
+
     ifs.seekg(0, std::ios::beg);
     ifs.read((char*)&file[0], fileSize);
 }
 
-const std::string UVSSServer::createCurrentTime()
+const std::string UvssServer::createCurrentTime()
 {
     auto now = std::chrono::system_clock::now();
 
@@ -133,4 +80,45 @@ const std::string UVSSServer::createCurrentTime()
                 << std::setw(3) << std::setfill('0') << msPart.count();
 
     return currentTime.str();
+}
+
+void UvssServer::sendCheckInfo(const std::vector<std::string>& filePaths,
+                               const std::vector<std::string>& strings)
+{
+    std::string time = createCurrentTime();
+
+    std::vector<std::string> fileNames;
+    std::vector<std::vector<unsigned char>> files;
+    for (int i = 0; i != filePaths.size(); ++i) {
+        std::string fileName;
+        std::vector<unsigned char> file;
+
+        boost::filesystem::path filePath(filePaths[i]);
+        if (boost::filesystem::exists(filePath)) {
+            fileName = time + "[" + boost::lexical_cast<std::string>(i) + "]_" + filePath.filename().string();
+            filePathToFile(filePaths[i], file);
+        }
+
+        fileNames.push_back(fileName);
+        files.push_back(file);
+    }
+
+    peerProxies_->sendCheckInfo(fileNames, files, strings);
+}
+
+// 使用时，没有warning?
+void UvssServer::shutdown()
+{
+    peerProxies_->destroy();
+    ic_->shutdown();
+}
+
+void UvssServer::setConnectionCallback(ConnectionCallback connectionCallback)
+{
+    PeerProxies::setConnectionCallback(connectionCallback);
+}
+
+void UvssServer::setPort(int port)
+{
+    port_ = port;
 }

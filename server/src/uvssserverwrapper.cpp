@@ -3,36 +3,36 @@
 #include <uvssserver.h>
 #include <version.h>
 
-UVSSServer* serverSDK;
+UvssServer* uvssServer;
 
-void SetUVSSServerCallback(UVSSServerCallback connectionInfoCallback)
+void SetUVSSServerCallback(UVSSServerCallback connectionCallback)
 {
-    serverSDK->setConnectionInfoCallback(connectionInfoCallback);
+    uvssServer->setConnectionCallback(connectionCallback);
 }
 
 void SetUVSSServerPort(int port)
 {
-    serverSDK->setPort(port);
+    uvssServer->setPort(port);
 }
 
 int InitUVSSServer()
 {
-    serverSDK = new UVSSServer;
-    return serverSDK->init();
+    uvssServer = new UvssServer;
+    return uvssServer->start();
 }
 
 void UninitUVSSServer()
 {
-    serverSDK->uninit();
-    delete serverSDK;
+    uvssServer->shutdown();
+    delete uvssServer;
 }
 
-void SendUVSSCheckInfo(const char* const a1[], int sz1,
-                       const char* const a[], int sz)
+void SendUVSSCheckInfo(const char* const filePaths[], int filePathsSize,
+                       const char* const strings[], int stringsSize)
 {
-    std::vector<std::string> v1(a1, a1+sz1);
-    std::vector<std::string> v(a, a+sz);
-    serverSDK->sendCheckInfo(v1, v);
+    std::vector<std::string> filePathsVec(filePaths, filePaths + filePathsSize);
+    std::vector<std::string> stringsVec(strings, strings + stringsSize);
+    uvssServer->sendCheckInfo(filePathsVec, stringsVec);
 }
 
 const char* GetUVSSServerVersion()

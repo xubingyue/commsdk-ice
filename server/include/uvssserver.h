@@ -3,31 +3,33 @@
 
 #include <Ice/Ice.h>
 
-#include <callbacksenderi.h>
 #include <peerproxies.h>
+#include <callbacksenderi.h>
 
-class UVSSServer {
+class UvssServer {
 public:
-    UVSSServer();
+    UvssServer();
+    ~UvssServer();
 
-    void setConnectionInfoCallback(UVSSServerCallback);
-    static void setPort(int);
-    int init();//start
-    void uninit();//shutdown
+    int start();
 
+    void filePathToFile(const std::string&, std::vector<unsigned char>&);
+    const std::string createCurrentTime();
     void sendCheckInfo(const std::vector<std::string>&,
                        const std::vector<std::string>&);
 
-    void filePathToBinary(const std::string&, UVSS::ByteSeq&);
-    const std::string createCurrentTime();
+    void shutdown(); // destroy?
+
+    static void setConnectionCallback(ConnectionCallback);
+    static void setPort(int);
 
 private:
-    Ice::CommunicatorPtr ic;
-//     Ice::CommunicatorHolder ic;
-//     adapter?
-    static int port;
-    std::shared_ptr<CallbackSenderI> server;
-    std::shared_ptr<PeerProxies> _peerProxies;
+    Ice::CommunicatorPtr ic_; // Ice::CommunicatorHolder ic_;
+    Ice::ObjectAdapterPtr adapter_;
+    std::shared_ptr<PeerProxies> peerProxies_;
+    std::shared_ptr<CallbackSenderI> sender_;
+
+    static int port_;
 };
 
 #endif

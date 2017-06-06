@@ -73,9 +73,9 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
         }
 
         auto base = this->ic->stringToProxy(
-                        "Server:tcp -h " + iPAddress + " -p " +
+                        "UvssServer:tcp -h " + iPAddress + " -p " +
                         boost::lexical_cast<std::string>(port));
-        auto server = Ice::checkedCast<UVSS::CallbackSenderPrx>(base);
+        auto server = Ice::checkedCast<Uvss::CallbackSenderPrx>(base);
         if (!server) {
             std::cerr << "Invalid proxy" << std::endl;
             ccb_(-1, -2, "连接失败");

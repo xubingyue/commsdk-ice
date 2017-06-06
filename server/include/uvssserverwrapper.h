@@ -11,8 +11,7 @@
 #   define UVSS_COMM_API
 #endif
 
-typedef void(*UVSSServerCallback)(int messageType,
-                                  const char *message);
+typedef void(*UVSSServerCallback)(int messageType, const char* message);
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,14 +19,13 @@ extern "C" {
 
 UVSS_COMM_API void SetUVSSServerCallback(UVSSServerCallback);
 UVSS_COMM_API void SetUVSSServerPort(int);
-UVSS_COMM_API int InitUVSSServer();
-UVSS_COMM_API void UninitUVSSServer();
-UVSS_COMM_API void SendUVSSCheckInfo(const char* const [], int, const char* const [], int);
 UVSS_COMM_API const char* GetUVSSServerVersion();
+UVSS_COMM_API int InitUVSSServer();
+UVSS_COMM_API void SendUVSSCheckInfo(const char* const [], int, const char* const [], int);
+UVSS_COMM_API void UninitUVSSServer();
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

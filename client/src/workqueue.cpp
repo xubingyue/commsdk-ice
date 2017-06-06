@@ -49,9 +49,9 @@ WorkQueue::run()
 
             _callbacks.pop_front();//2
 
-            UVSS::StringSeq ns = get<0>(entry);
-            UVSS::ByteSeqSeq bss = get<1>(entry);
-            UVSS::StringSeq ss = get<2>(entry);
+            Uvss::StringSeq ns = get<0>(entry);
+            Uvss::ByteSeqSeq bss = get<1>(entry);
+            Uvss::StringSeq ss = get<2>(entry);
             int index = get<5>(entry);
 
             createImageDirectory("UVSS");
@@ -109,7 +109,7 @@ WorkQueue::run()
     {
         try
         {
-            throw UVSS::RequestCanceledException();
+            throw Uvss::RequestCanceledException();
         }
         catch(...)
         {
@@ -122,9 +122,9 @@ WorkQueue::run()
 
 void
 WorkQueue::add(
-    UVSS::StringSeq ns,
-    UVSS::ByteSeqSeq bss,
-    UVSS::StringSeq ss,
+    Uvss::StringSeq ns,
+    Uvss::ByteSeqSeq bss,
+    Uvss::StringSeq ss,
     std::function<void ()> response, std::function<void (exception_ptr)> error,
     int index)
 {
@@ -156,7 +156,7 @@ WorkQueue::add(
         //
         try
         {
-            throw UVSS::RequestCanceledException();
+            throw Uvss::RequestCanceledException();
         }
         catch(...)
         {

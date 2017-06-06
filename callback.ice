@@ -2,7 +2,7 @@
 
 #include <Ice/Identity.ice>
 
-module UVSS {
+module Uvss {
 sequence<string> StringSeq;
 sequence<byte> ByteSeq;
 sequence<ByteSeq> ByteSeqSeq;
@@ -12,7 +12,7 @@ exception RequestCanceledException {
 
 interface CallbackReceiver {
     ["amd"] idempotent void sendCheckInfo(
-        StringSeq filenames, ByteSeqSeq files,
+        StringSeq fileNames, ByteSeqSeq files,
         StringSeq strings)
         throws RequestCanceledException;
 }

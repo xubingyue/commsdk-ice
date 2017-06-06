@@ -5,21 +5,21 @@
 #include <peerproxies.h>
 #include <workqueue.h>
 
-class CallbackReceiverI : public virtual UVSS::CallbackReceiver {
+class CallbackReceiverI : public virtual Uvss::CallbackReceiver {
 public:
     CallbackReceiverI(const std::shared_ptr<PeerProxies>&, const std::shared_ptr<WorkQueue>&);
 
     virtual void sendCheckInfoAsync(
-        UVSS::StringSeq,
-        UVSS::ByteSeqSeq,
-        UVSS::StringSeq,
+        Uvss::StringSeq,
+        Uvss::ByteSeqSeq,
+        Uvss::StringSeq,
         std::function<void()>,
         std::function<void(std::exception_ptr)>,
         const Ice::Current&) override;
 
 private:
     std::shared_ptr<PeerProxies> peerProxies_;
-    std::shared_ptr<WorkQueue> _workQueue;
+    std::shared_ptr<WorkQueue> workQueue_;
 };
 
 #endif

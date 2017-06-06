@@ -9,29 +9,32 @@
 #include <callback.h>
 #include <uvssserverwrapper.h>
 
+typedef UVSSServerCallback ConnectionCallback;
+
 class PeerProxies
 {
 public:
     PeerProxies();
+    void run();
     void start();
+    void add(const Ice::Identity&, const Ice::Current&); // 用const&
+    void sendCheckInfo(const std::vector<std::string>&,
+                       const std::vector<std::vector<unsigned char>>&,
+                       const std::vector<std::string>&);
+    void destroy();
     void join();
 
-    void run();
-    void add(Ice::Identity id, const Ice::Current& curr);
-    void sendCheckInfo(const std::vector<std::string>&, const UVSS::ByteSeqSeq&, const std::vector<std::string>&);
-    void destroy();
-
-    static void setConnectionInfoCallback(UVSSServerCallback);
+    static void setConnectionCallback(ConnectionCallback);
 
 private:
-    std::map<std::shared_ptr<UVSS::CallbackReceiverPrx>, std::string> clientProxyToEndpoint;
-    bool _destroy;
+    std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>, std::string> clientEndpointMap_;
+    bool destroy_;
 
-    std::mutex _mutex;
-    std::condition_variable _cv;
-    std::thread _senderThread;
+    std::mutex mutex_;
+    std::condition_variable cv_;
+    std::thread senderThread_;
 
-    static UVSSServerCallback connectionInfoCallback;
+    static ConnectionCallback connectionCallback_;
 };
 
-#endif // RPCEXECUTOR_H
+#endif // PEERPROXIES_H
