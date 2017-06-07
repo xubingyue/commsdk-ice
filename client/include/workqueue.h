@@ -9,46 +9,45 @@
 #include <callback.h>
 #include <uvssclientwrapper.h>
 
-class WorkQueue
-{
-public:
+typedef UVSSCheckInfoCallback CheckInfoCallback;
 
+class WorkQueue {
+public:
     WorkQueue();
 
     void run();
-
-    void add(
-        Uvss::StringSeq,
-        Uvss::ByteSeqSeq,
-        Uvss::StringSeq,
-        std::function<void ()>, std::function<void (std::exception_ptr)>,
-        int);
-    void destroy();
     void start();
-    void join();
 
+    void add(const std::vector<std::string>&,
+             const std::vector<std::vector<unsigned char>>&,
+             const std::vector<std::string>&,
+             std::function<void ()>,
+             std::function<void (std::exception_ptr)>,
+             int);
     void createImageDirectory(const std::string&);
 
-    static void setCheckInfoCallback(UVSSCheckInfoCallback);//-
+    void destroy();
+    void join();
+
+    static void setCheckInfoCallback(CheckInfoCallback);
 
 private:
-
     using CallbackEntry = std::tuple<
-                          Uvss::StringSeq,
-                          Uvss::ByteSeqSeq,
-                          Uvss::StringSeq,
+                          std::vector<std::string>,
+                          std::vector<std::vector<unsigned char>>,
+                          std::vector<std::string>,
                           std::function<void ()>,
                           std::function<void (std::exception_ptr)>,
                           int>;
 
-    std::mutex _mutex;
-    std::condition_variable _condition;
+    std::list<CallbackEntry> callbacks_;
+    bool done_;
 
-    std::list<CallbackEntry> _callbacks;
-    bool _done;
-    std::thread _thread;
+    std::mutex mutex_;
+    std::condition_variable condition_;
+    std::thread thread_;
 
-    static UVSSCheckInfoCallback checkInfoCallback;
+    static CheckInfoCallback checkInfoCallback_;
 };
 
 #endif

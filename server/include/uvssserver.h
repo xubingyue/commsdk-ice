@@ -26,6 +26,8 @@ public:
 private:
     Ice::CommunicatorPtr ic_; // Ice::CommunicatorHolder ic_;
     Ice::ObjectAdapterPtr adapter_;
+    Ice::Identity ident_;
+
     std::shared_ptr<PeerProxies> peerProxies_;
     std::shared_ptr<CallbackSenderI> sender_;
 

@@ -2,57 +2,36 @@
 
 #include <boost/filesystem.hpp>
 
-using namespace std;
+CheckInfoCallback WorkQueue::checkInfoCallback_ = 0;
 
-UVSSCheckInfoCallback WorkQueue::checkInfoCallback = 0;
-
-WorkQueue::WorkQueue() : _done(false)
+WorkQueue::WorkQueue() : done_(false)
 {
 }
 
-void
-WorkQueue::start()
+void WorkQueue::run()
 {
-    thread t([this]()
-    {
-        this->run();
-    });
-    _thread = move(t);
-}
+    std::unique_lock<std::mutex> lock(mutex_);
 
-void
-WorkQueue::join()
-{
-    if(_thread.joinable())
-    {
-        _thread.join();
-    }
-}
-
-void
-WorkQueue::run()
-{
-    unique_lock<mutex> lock(_mutex);
-
-    while(!_done)
-    {
-        if(_callbacks.empty()) {
-//             可能在两处被唤醒
-//             被唤醒后，进入下一轮循环，如果是被destroy唤醒的，if条件不成立，跳出循环
-//             如果不是，_callbacks非空，进入else
-            _condition.wait(lock);
+    while (!done_) {
+        if (callbacks_.empty()) {
+//             可能被add或destroy处唤醒
+//             被唤醒后，进入下一轮while循环，
+//             如果是被destroy唤醒的，done_== true，while条件不成立，跳出循环
+//             如果是被add唤醒的，callbacks_.empty() == false，if条件不成立，进入else分支
+            condition_.wait(lock);
         }
         else {
-            CallbackEntry entry = _callbacks.front();//1
+            CallbackEntry entry = callbacks_.front();
 
-//             _condition.wait_for(lock, std::chrono::seconds(5));
 
-            _callbacks.pop_front();//2
 
-            Uvss::StringSeq ns = get<0>(entry);
-            Uvss::ByteSeqSeq bss = get<1>(entry);
-            Uvss::StringSeq ss = get<2>(entry);
-            int index = get<5>(entry);
+
+            callbacks_.pop_front();
+
+            auto& fileNames = std::get<0>(entry);
+            auto& files = std::get<1>(entry);
+            auto& strings = std::get<2>(entry);
+            int& index = std::get<5>(entry);
 
             createImageDirectory("UVSS");
 
@@ -60,34 +39,34 @@ WorkQueue::run()
                 boost::filesystem::current_path();
             std::string imagePath = currentPath.string() + "/UVSS/";
 
-            int nsz = ns.size();
+            int nsz = fileNames.size();
             for (int i = 0; i != nsz; ++i) {
-                if (!ns[i].empty()) {
-                    ns[i] = imagePath + ns[i];
-                    std::ofstream ofs(ns[i], std::ios::binary);
-                    ofs.write((char*)&bss[i][0], bss[i].size());
+                if (!fileNames[i].empty()) {
+                    fileNames[i] = imagePath + fileNames[i];
+                    std::ofstream ofs(fileNames[i], std::ios::binary);
+                    ofs.write((char*)&files[i][0], files[i].size());
                 }
             }
 
             char** dst1 = new char*[nsz];
             for (int i = 0; i != nsz; ++i) {
-                int szi = ns[i].size();
+                int szi = fileNames[i].size();
                 dst1[i] = new char[szi + 1];
-                strcpy(dst1[i], ns[i].c_str());
+                strcpy(dst1[i], fileNames[i].c_str());
             }
 
 
-            int sz = ss.size();
+            int sz = strings.size();
             char** dst = new char*[sz];
             for (int i = 0; i != sz; ++i) {
-                int szi = ss[i].size();
+                int szi = strings[i].size();
                 dst[i] = new char[szi + 1];
-                strcpy(dst[i], ss[i].c_str());
+                strcpy(dst[i], strings[i].c_str());
             }
 
-            this->checkInfoCallback(index,
-                                    dst1, nsz,
-                                    dst, sz);
+            this->checkInfoCallback_(index,
+                                     dst1, nsz,
+                                     dst, sz);
 
             for (int i = 0; i != sz; ++i) {
                 delete[] dst[i];
@@ -96,7 +75,7 @@ WorkQueue::run()
             delete[] dst;
             dst = 0;
 
-            auto& response = get<3>(entry);//4
+            auto& response = std::get<3>(entry);//4
 
             response();//5
         }
@@ -105,7 +84,7 @@ WorkQueue::run()
     //
     // Throw exception for any outstanding requests.
     //
-    for(auto& entry : _callbacks)
+    for(auto& entry : callbacks_)
     {
         try
         {
@@ -114,35 +93,43 @@ WorkQueue::run()
         catch(...)
         {
             std::cerr << "yyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
-            auto& error = get<4>(entry);
-            error(current_exception());
+            auto& error = std::get<4>(entry);
+            error(std::current_exception());
         }
     }
 }
 
-void
-WorkQueue::add(
-    Uvss::StringSeq ns,
-    Uvss::ByteSeqSeq bss,
-    Uvss::StringSeq ss,
-    std::function<void ()> response, std::function<void (exception_ptr)> error,
+void WorkQueue::start()
+{
+    std::thread t([this]()
+    {
+        this->run();
+    });
+    thread_ = std::move(t);
+}
+
+void WorkQueue::add(
+    const std::vector<std::string>& ns,
+    const std::vector<std::vector<unsigned char>>& bss,
+    const std::vector<std::string>& ss,
+    std::function<void ()> response, std::function<void (std::exception_ptr)> error,
     int index)
 {
     //destroy后仍然有可能执行add
     //所以要判断if _done
 
-    unique_lock<mutex> lock(_mutex);
+    std::unique_lock<std::mutex> lock(mutex_);
 
-    if(!_done)
+    if(!done_)
     {
         //
         // Add work item.
         //
-        if(_callbacks.size() == 0)//rugo == 1 shi huanxing run.wait
+        if(callbacks_.size() == 0)//rugo == 1 shi huanxing run.wait
         {
-            _condition.notify_one();
+            condition_.notify_one();
         }
-        _callbacks.push_back(make_tuple(ns,
+        callbacks_.push_back(make_tuple(ns,
                                         bss,
                                         ss,
                                         std::move(response),
@@ -161,21 +148,9 @@ WorkQueue::add(
         catch(...)
         {
             std::cerr << "nnnnnnnnnnnnnnnnnnnnn" << std::endl;
-            error(current_exception());
+            error(std::current_exception());
         }
     }
-}
-
-void
-WorkQueue::destroy()
-{
-    unique_lock<mutex> lock(_mutex);
-
-    //
-    // Set done flag and notify.
-    //
-    _done = true;
-    _condition.notify_one();
 }
 
 void WorkQueue::createImageDirectory(const std::string& imageDirectory)
@@ -190,8 +165,26 @@ void WorkQueue::createImageDirectory(const std::string& imageDirectory)
     }
 }
 
-void WorkQueue::setCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
+void WorkQueue::destroy()
 {
-    WorkQueue::checkInfoCallback = checkInfoCallback;
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    //
+    // Set done flag and notify.
+    //
+    done_ = true;
+    condition_.notify_one();
 }
 
+void WorkQueue::join()
+{
+    if(thread_.joinable())
+    {
+        thread_.join();
+    }
+}
+
+void WorkQueue::setCheckInfoCallback(CheckInfoCallback checkInfoCallback)
+{
+    WorkQueue::checkInfoCallback_ = checkInfoCallback;
+}

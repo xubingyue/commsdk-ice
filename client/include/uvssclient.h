@@ -1,8 +1,6 @@
 #ifndef UVSSCLIENT_H
 #define UVSSCLIENT_H
 
-#include <string>
-
 #include <Ice/Ice.h>
 
 #include <peerproxies.h>
@@ -10,34 +8,39 @@
 #include <callbackreceiveri.h>
 #include <uvssclientwrapper.h>
 
-typedef UVSSMessageCallback UVSSInitializeCallback;
-typedef UVSSMessageCallback ConnectCallback;
+typedef UVSSMessageCallback InitializationCallback;
+typedef UVSSMessageCallback ConnectionCallback;
+typedef UVSSCheckInfoCallback CheckInfoCallback;
 
-class UVSSClient {
+class UvssClient {
 public:
-    UVSSClient();
-    int init();
-    void uninit();
-    int connect(const std::string& = "127.0.0.1", int = 20145);
+    UvssClient();
+    ~UvssClient();
+
+    int start();
+
+    int connect(const std::string&, int);
     int disconnect(int);
 
-    static void setInitializeCallback(UVSSInitializeCallback);
-    static void setCCB(ConnectCallback);
+    void shutdown();
 
-    static void setConnectionCallback(UVSSMessageCallback);
-    static void setCheckInfoCallback(UVSSCheckInfoCallback);
+    static void setInitializationCallback(InitializationCallback);
+    static void setConnectionCallback(ConnectionCallback);
+
+    static void setHeartbeatCallback(HeartbeatCallback);
+    static void setCheckInfoCallback(CheckInfoCallback);
 
 private:
-    Ice::CommunicatorPtr ic;
-    Ice::ObjectAdapterPtr adapter;
-    Ice::Identity id;
+    Ice::CommunicatorPtr ic_;
+    Ice::ObjectAdapterPtr adapter_;
+    Ice::Identity ident_;
 
     std::shared_ptr<PeerProxies> peerProxies_;
-    std::shared_ptr<WorkQueue> _workQueue;
-    std::shared_ptr<CallbackReceiverI> client;
+    std::shared_ptr<WorkQueue> workQueue_;
+    std::shared_ptr<CallbackReceiverI> client_;
 
-    static UVSSInitializeCallback initializeCallback;
-    static ConnectCallback ccb_;
+    static InitializationCallback initializationCallback_;
+    static ConnectionCallback connectionCallback_;
 };
 
 #endif

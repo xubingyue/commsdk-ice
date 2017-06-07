@@ -34,22 +34,26 @@ void PeerProxies::run()
                     std::cerr << ex << std::endl;
 
 //                     与C# GUI妥协的做法
+//                     当destroy时，没有删除此刻失效的server代理、使用回调
 //                     std::unique_lock<std::mutex> lock(mutex_);
 //                     if (destroy_) {
 //                         return;
 //                     }
 //                     else {
+//                         auto client = p.first;
 //                         std::string endpoint = p.second;
 //                         std::string message("客户端 " + endpoint + ": 已断开");
-//                         clientEndpointMap_.erase(p.first);
+//                         clientEndpointMap_.erase(client);
 //                         connectionCallback_(-1, message.c_str());
 //                     }
 
 //                     正确做法
+                    auto client = p.first;
                     std::string endpoint = p.second;
                     std::string message("客户端 " + endpoint + ": 已断开");
+
                     std::unique_lock<std::mutex> lock(mutex_); // 保证删除和回调通知一致
-                    clientEndpointMap_.erase(p.first);
+                    clientEndpointMap_.erase(client);
                     connectionCallback_(-1, message.c_str());
                 }
             }
@@ -63,7 +67,7 @@ void PeerProxies::start()
     {
         run();
     });
-    senderThread_ = move(t);
+    senderThread_ = std::move(t);
 }
 
 void PeerProxies::add(const Ice::Identity& ident, const Ice::Current& current)

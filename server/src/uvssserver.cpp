@@ -26,6 +26,7 @@ UvssServer::UvssServer() :
     ic_ = Ice::initialize(initData);
     adapter_ = ic_->createObjectAdapterWithEndpoints("UvssServerAdapter",
         "tcp -p " + boost::lexical_cast<std::string>(port_));
+    ident_ = Ice::stringToIdentity("UvssServer");
 }
 
 UvssServer::~UvssServer()
@@ -37,7 +38,7 @@ UvssServer::~UvssServer()
 int UvssServer::start()
 {
     try {
-        adapter_->add(sender_, Ice::stringToIdentity("UvssServer"));
+        adapter_->add(sender_, ident_);
         adapter_->activate();
         peerProxies_->start(); // 启动心跳线程
     }

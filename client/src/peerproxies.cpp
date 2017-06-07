@@ -3,132 +3,122 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-UVSSConnectionCallback PeerProxies::connectionCallback = 0;
+HeartbeatCallback PeerProxies::heartbeatCallback_ = 0;
 
-PeerProxies::PeerProxies() : index(0), isDestroyed(false)
+PeerProxies::PeerProxies() : connectionId_(0), destroy_(false)
 {
-}
-
-void PeerProxies::start()
-{
-    std::thread t([this]() {
-        this->run();
-    });
-    _receiverThread = std::move(t);
-}
-
-void PeerProxies::join()
-{
-    if (_receiverThread.joinable()) {
-        _receiverThread.join();
-    }
 }
 
 void PeerProxies::run()
 {
     while (true) {
-        std::map<std::shared_ptr<Uvss::CallbackSenderPrx>, std::string> serverProxyToEndpoint;
-
+        std::map<std::shared_ptr<Uvss::CallbackSenderPrx>, std::string> serverEndpointMap;
         {
-            std::unique_lock<std::mutex> lock(this->_mutex);
-            this->_cv.wait_for(lock, std::chrono::seconds(2));
+            std::unique_lock<std::mutex> lock(mutex_);
+            cv_.wait_for(lock, std::chrono::seconds(2));
 
-            if (this->isDestroyed) {
+            if (destroy_) {
                 return;
             }
             else {
-//                 每次循环都应保持一致，无论this->serverProxyToEndpoint是否为空！
-                serverProxyToEndpoint = this->serverProxyToEndpoint;
+//                 每次循环都应保持一致，无论serverProxyToEndpoint是否为空！
+                serverEndpointMap = serverEndpointMap_;
             }
         }
 
-        if (!serverProxyToEndpoint.empty()) {
-            for (auto p : serverProxyToEndpoint) {
+        if (!serverEndpointMap.empty()) {
+            for (auto p : serverEndpointMap) {
                 try {
                     p.first->ice_ping();
                 }
-                catch (...) {
-                    std::unique_lock<std::mutex> lock(_mutex);
+                catch (const Ice::Exception& ex) {
+                    std::cerr << ex << std::endl;
 
-                    if (this->isDestroyed) {
-//                         当destroy时，采取的方式：没有再删除失效的server连接、使用回调，
-//                         否则，以前C# UI退出时会有问题，
-//                         这种做法并不完美，若要修改仍需测试
-                        return;
-                    }
-                    else {
-                        auto serverProxy = p.first;
-                        std::string endpoint = p.second;
+//                     wrong!server代理已经失效
+//                     std::cout << p.first->ice_getConnection()->getEndpoint()->toString() << std::endl;
 
-//                         std::cout << "1: " << endpoint << std::endl;//ok
-//                         std::cout << "2: " << serverProxy->ice_getConnection()->getEndpoint()->toString() << std::endl;//wrong!代理已经失效
+//                     与C# GUI妥协的做法
+//                     当destroy时，没有删除此刻失效的server代理、使用回调
+//                     std::unique_lock<std::mutex> lock(mutex_);
+//                     if (destroy_) {
+//                         return;
+//                     }
+//                     else {
+//                         auto server = p.first;
+//                         std::string endpoint = p.second;
+//                         int connectionId = endpointConnectionIdMap_[endpoint];
+//                         std::string message("服务器端 " + endpoint + ": " +
+//                                             "已断开 | 连接标识: " + boost::lexical_cast<std::string>(connectionId));
+//                         serverEndpointMap_.erase(server);
+//                         endpointConnectionIdMap_.erase(endpoint);
+//                         connectionCallback_(connectionId, -3, message.c_str());
+//                     }
 
-//                         lock
-                        int index = this->endpointToIndex[endpoint];
-                        this->serverProxyToEndpoint.erase(serverProxy);
-                        this->endpointToIndex.erase(endpoint);
-//                         unlock
 
-                        std::string message("服务器端 " + endpoint + ": " +
-                                            "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
-                        connectionCallback(index, -3, message.c_str());
-                    }
+//                     正确做法
+                    auto server = p.first;
+                    std::string endpoint = p.second;
+                    int connectionId = endpointConnectionIdMap_[endpoint];
+                    std::string message("服务器端 " + endpoint + ": " +
+                                        "已断开 | 连接标识: " + boost::lexical_cast<std::string>(connectionId));
+
+                    std::unique_lock<std::mutex> lock(mutex_);
+                    serverEndpointMap_.erase(server);
+                    endpointConnectionIdMap_.erase(endpoint);
+                    heartbeatCallback_(connectionId, -3, message.c_str());
                 }
             }
         }
     }
+}
+
+void PeerProxies::start()
+{
+    std::thread t([this]() 
+    {
+        run();
+    });
+    senderThread_ = std::move(t);
 }
 
 // 连接成功后 add!
 int PeerProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& server, const std::string& endpoint)
 {
-    std::unique_lock<std::mutex> lock(_mutex);
+    std::unique_lock<std::mutex> lock(mutex_);
 
-    ++index;
-    endpointToIndex[endpoint] = index;
-    serverProxyToEndpoint[server] = endpoint;
-    return index;
+    serverEndpointMap_[server] = endpoint;
+    ++connectionId_;
+    endpointConnectionIdMap_[endpoint] = connectionId_;
+    return connectionId_;
 }
 
-// 断开连接后 remove!
-bool PeerProxies::findAndRemove(int index, std::string& endpoint)
+// 断开连接后 findAndRemove!
+bool PeerProxies::findAndRemove(int connectionId, std::string& endpoint, std::shared_ptr<Uvss::CallbackSenderPrx>& server)
 {
-    std::unique_lock<std::mutex> lock(_mutex);
+    std::unique_lock<std::mutex> lock(mutex_);
 
-    for (auto x : endpointToIndex) {
-        if (x.second == index) {
+    for (auto x : endpointConnectionIdMap_) {
+        if (x.second == connectionId) {
             endpoint = x.first;
-            endpointToIndex.erase(endpoint);
-            for (auto y : serverProxyToEndpoint) {
+            endpointConnectionIdMap_.erase(endpoint);
+            for (auto y : serverEndpointMap_) {
                 if (y.second == endpoint) {
-
-                    //使server到client的心跳失败
-                    y.first->ice_getConnection()->close(Ice::ConnectionClose::Gracefully);
-                    //client不再连接server y.first
-                    serverProxyToEndpoint.erase(y.first); // 必须在此处删除对端代理
+                    server = y.first;
+                    serverEndpointMap_.erase(y.first); // client不再连接此server
                     return true;
                 }
             }
-
-            std::cerr << "error!" << std::endl;
-            return false;//可以去掉 基本不可能发生
+            std::cerr << "impossible?" << std::endl;
         }
     }
 
-    return false;//没有此连接
-}
-
-void PeerProxies::destroy()
-{
-    std::unique_lock<std::mutex> lock(_mutex);
-    this->isDestroyed = true;
-    _cv.notify_one();
+    return false; // 没有此连接
 }
 
 bool PeerProxies::isRepeated(const std::string& endpoint)
 {
-    std::unique_lock<std::mutex> lock(_mutex);
-    for (auto p : serverProxyToEndpoint) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    for (auto p : serverEndpointMap_) {
         if (p.second == endpoint) {
             return true;
         }
@@ -136,31 +126,28 @@ bool PeerProxies::isRepeated(const std::string& endpoint)
     return false;
 }
 
-int PeerProxies::serverIndex(const Ice::Current& curr)
+int PeerProxies::serverConnectionId(const std::string& endpoint)
 {
-    std::unique_lock<std::mutex> lock(_mutex);
-    if (curr.con != 0) {
-        Ice::ConnectionInfoPtr info = curr.con->getInfo();
-        Ice::TCPConnectionInfoPtr tcpInfo =
-            std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
-        if (tcpInfo != 0) {
-//             std::cout << curr.con->getEndpoint()->toString() << std::endl;
-//             tcp -h 127.0.0.1 -p 20145 -t 60000
-
-//             考虑简化下面代码
-            std::string endpoint = tcpInfo->remoteAddress + ":" +
-                                   boost::lexical_cast<std::string>(tcpInfo->remotePort);
-//             std::cout << endpoint << std::endl;
-
-            return this->endpointToIndex[endpoint];
-        }
-    }
-
-    return -1; //new
+    std::unique_lock<std::mutex> lock(mutex_);
+    return endpointConnectionIdMap_[endpoint];
 }
 
-void PeerProxies::setConnectionCallback(
-    UVSSConnectionCallback connectionInfoCallback)
+void PeerProxies::destroy()
 {
-    PeerProxies::connectionCallback = connectionInfoCallback;
+    std::unique_lock<std::mutex> lock(mutex_);
+    destroy_ = true;
+    cv_.notify_one();
+}
+
+void PeerProxies::join()
+{
+    if (senderThread_.joinable()) {
+        senderThread_.join();
+    }
+}
+
+void PeerProxies::setHeartbeatCallback(
+    HeartbeatCallback connectionCallback)
+{
+    heartbeatCallback_ = connectionCallback;
 }

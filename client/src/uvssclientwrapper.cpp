@@ -3,13 +3,13 @@
 #include <uvssclient.h>
 #include <version.h>
 
-UVSSClient* clientSDK;
+UvssClient* clientSDK;
 
 void SetUVSSMessageCallback(UVSSMessageCallback cb)
 {
-    UVSSClient::setInitializeCallback(cb);
-    UVSSClient::setCCB(cb);
-    clientSDK->setConnectionCallback(cb);
+    UvssClient::setInitializationCallback(cb);
+    UvssClient::setConnectionCallback(cb);
+    clientSDK->setHeartbeatCallback(cb);
 }
 
 void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
@@ -19,13 +19,13 @@ void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
 
 int UVSSInitialize()
 {
-    clientSDK = new UVSSClient;
-    return clientSDK->init();
+    clientSDK = new UvssClient;
+    return clientSDK->start();
 }
 
 void UVSSUninitialize()
 {
-    clientSDK->uninit();
+    clientSDK->shutdown();
     delete clientSDK;
 }
 

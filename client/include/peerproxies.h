@@ -3,43 +3,41 @@
 
 #include <condition_variable>
 #include <map>
-#include <memory>
 #include <mutex>
-#include <string>
 #include <thread>
 
 #include <callback.h>
 #include <uvssclientwrapper.h>
 
-typedef UVSSMessageCallback UVSSConnectionCallback;
+typedef UVSSMessageCallback HeartbeatCallback;
 
 class PeerProxies
 {
 public:
     PeerProxies();
-
-    void start();
-    void join();
     void run();
-    void destroy();
+    void start();
     int add(const std::shared_ptr<Uvss::CallbackSenderPrx>&, const std::string&);
-    bool findAndRemove(int, std::string&);
+    bool findAndRemove(int, std::string&, std::shared_ptr<Uvss::CallbackSenderPrx>&);
     bool isRepeated(const std::string&);
-    int serverIndex(const Ice::Current& curr);
+    int serverConnectionId(const std::string&);
 
-    static void setConnectionCallback(UVSSConnectionCallback);
+    void destroy();
+    void join();
+
+    static void setHeartbeatCallback(HeartbeatCallback);
 
 private:
-    int index;
-    bool isDestroyed;
-    std::map<std::shared_ptr<Uvss::CallbackSenderPrx>, std::string> serverProxyToEndpoint;
-    std::map<std::string, int> endpointToIndex;
+    std::map<std::shared_ptr<Uvss::CallbackSenderPrx>, std::string> serverEndpointMap_;
+    std::map<std::string, int> endpointConnectionIdMap_;
+    int connectionId_;
+    bool destroy_;
 
-    std::mutex _mutex;
-    std::condition_variable _cv;
-    std::thread _receiverThread;
+    std::mutex mutex_;
+    std::condition_variable cv_;
+    std::thread senderThread_;
 
-    static UVSSConnectionCallback connectionCallback;
+    static HeartbeatCallback heartbeatCallback_;
 };
 
-#endif // RPCEXECUTOR_H
+#endif // PEERPROXIES_H

@@ -9,77 +9,65 @@
 #include <callbackreceiveri.h>
 #include <version.h>
 
-UVSSInitializeCallback UVSSClient::initializeCallback = 0;
-ConnectCallback UVSSClient::ccb_ = 0;
+InitializationCallback UvssClient::initializationCallback_ = 0;
+ConnectionCallback UvssClient::connectionCallback_ = 0;
 
-UVSSClient::UVSSClient() :
+UvssClient::UvssClient() :
     peerProxies_(std::make_shared<PeerProxies>()),
-    _workQueue(std::make_shared<WorkQueue>()),
-    client(std::make_shared<CallbackReceiverI>(peerProxies_, _workQueue))
+    workQueue_(std::make_shared<WorkQueue>()),
+    client_(std::make_shared<CallbackReceiverI>(peerProxies_, workQueue_))
 {
+//     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
-    props->setProperty("Ice.Warn.Connections", "1");//-
+    props->setProperty("Ice.Warn.Connections", "1");
     props->setProperty("Ice.MessageSizeMax", "2097152"); // 51200
 //     props->setProperty("Ice.ACM.Client", "0");
     Ice::InitializationData initData;
     initData.properties = props;
-    this->ic = Ice::initialize(initData);
-    this->adapter = this->ic->createObjectAdapter("");
-    this->id.name = IceUtil::generateUUID();
-    this->id.category = "";
+
+    ic_ = Ice::initialize(initData);
+    adapter_ = ic_->createObjectAdapter("");
+    ident_.name = IceUtil::generateUUID();
+    ident_.category = "";
 }
 
-int UVSSClient::init()
+UvssClient::~UvssClient()
+{
+    ic_->destroy();
+    peerProxies_->join();
+    workQueue_->join();
+}
+
+int UvssClient::start()
 {
     try {
-        this->adapter->add(this->client, this->id);
-        this->adapter->activate();
-        peerProxies_->start(); //心跳线程
-        _workQueue->start(); //AMD
+        adapter_->add(client_, ident_);
+        adapter_->activate();
+        peerProxies_->start(); // 启动心跳线程
+        workQueue_->start(); // AMD
     }
-    catch (const Ice::Exception& ex) {
-        std::cerr << ex << std::endl;
-
-        initializeCallback(-1, -1, "初始化失败");
-
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        initializationCallback_(-1, -1, "初始化失败");
         return -1;
     }
 
     return 1;
 }
 
-void UVSSClient::uninit()
+int UvssClient::connect(const std::string& ipAddress, int port)
 {
     try {
-        peerProxies_->destroy();
-        _workQueue->destroy();
-//         加上adapter->deactivate();？！！！
-        this->ic->destroy(); //shutdown?
-        peerProxies_->join();
-        _workQueue->join();
-    }
-    catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-    }
-}
-
-int UVSSClient::connect(const std::string& iPAddress, int port)
-{
-    try {
-        std::string endpoint = iPAddress + ":" + boost::lexical_cast<std::string>(port);
-        int index;
+        std::string endpoint(ipAddress + ":" + boost::lexical_cast<std::string>(port));
         if (peerProxies_->isRepeated(endpoint)) {
             return -2;
         }
 
-        auto base = this->ic->stringToProxy(
-                        "UvssServer:tcp -h " + iPAddress + " -p " +
+        auto base = ic_->stringToProxy("UvssServer:tcp -h " + ipAddress + " -p " +
                         boost::lexical_cast<std::string>(port));
         auto server = Ice::checkedCast<Uvss::CallbackSenderPrx>(base);
         if (!server) {
-            std::cerr << "Invalid proxy" << std::endl;
-            ccb_(-1, -2, "连接失败");
-            return -1;
+            throw std::runtime_error("Invalid proxy");
         }
 
 //         std::cout << server->ice_getConnection()->getEndpoint()->toString() << std::endl;
@@ -92,58 +80,69 @@ int UVSSClient::connect(const std::string& iPAddress, int port)
             return -3;
         }
 
-        server->ice_getConnection()->setAdapter(this->adapter);
-        server->addClient(this->id);
+        server->ice_getConnection()->setAdapter(adapter_);
+        server->addClient(ident_);
 
-        index = peerProxies_->add(server, endpoint);
+        int connectionId = peerProxies_->add(server, endpoint);
 
-        std::string message("服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + boost::lexical_cast<std::string>(index));
-        ccb_(index, 1, message.c_str());
+        std::string message("服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + boost::lexical_cast<std::string>(connectionId));
+        connectionCallback_(connectionId, 1, message.c_str());
 
-        return index;
+        return connectionId;
     }
-    catch (const Ice::Exception& ex) {
-        std::cerr << ex << std::endl;
-        ccb_(-1, -2, "连接失败");
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        connectionCallback_(-1, -2, "连接失败");
 
         return -1;
     }
 }
 
-int UVSSClient::disconnect(int index)
+int UvssClient::disconnect(int index)
 {
     std::string endpoint;
-    bool ret = peerProxies_->findAndRemove(index, endpoint);
-    if (ret) {
-//         移除要断开的server代理，无论发生在心跳线程中的servers副本拷贝前或后，心跳都不会发生连接错误，不会有server断开的通知
-//         所以只能在此处通知！不能依靠心跳线程
+    std::shared_ptr<Uvss::CallbackSenderPrx> server;
+    bool ok = peerProxies_->findAndRemove(index, endpoint, server);
+    if (ok) {
+//         移除要断开的server代理，无论发生在心跳线程中的servers副本拷贝前或后，心跳都不会检测到连接错误，不会有server断开的通知
+//         所以只能在此处通知，不能依靠心跳线程，这里断开通知仅和移除有关
         std::string message("服务器端 " + endpoint + ": " +
                             "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
-        ccb_(index, -3, message.c_str());
+        connectionCallback_(index, -3, message.c_str());
+
+//         使server端到client的心跳失败，发生回调通知
+        server->ice_getConnection()->close(Ice::ConnectionClose::Gracefully);
+
         return 1;
-    } else {
+    }
+    else {
         return -1;
     }
 }
 
-void UVSSClient::setInitializeCallback(UVSSInitializeCallback cb)
+void UvssClient::shutdown()
 {
-    initializeCallback = cb;
+    peerProxies_->destroy();
+    workQueue_->destroy();
+    ic_->shutdown();
 }
 
-void UVSSClient::setCCB(ConnectCallback ccb)
+void UvssClient::setInitializationCallback(InitializationCallback initializationCallback)
 {
-    ccb_ = ccb;
+    initializationCallback_ = initializationCallback;
 }
 
-void UVSSClient::setConnectionCallback(
-    UVSSMessageCallback connectionCallback)
+void UvssClient::setConnectionCallback(ConnectionCallback connectionCallback)
 {
-    PeerProxies::setConnectionCallback(connectionCallback);
+    connectionCallback_ = connectionCallback;
 }
 
-void UVSSClient::setCheckInfoCallback(
-    UVSSCheckInfoCallback checkInfoCallback)
+void UvssClient::setHeartbeatCallback(HeartbeatCallback heartbeatCallback)
+{
+    PeerProxies::setHeartbeatCallback(heartbeatCallback);
+}
+
+void UvssClient::setCheckInfoCallback(CheckInfoCallback checkInfoCallback)
 {
     WorkQueue::setCheckInfoCallback(checkInfoCallback);
 }

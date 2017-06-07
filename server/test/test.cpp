@@ -4,7 +4,7 @@
 #include <uvssserverwrapper.h>
 
 void menu();
-void uvssServerCallback(int, const char*);
+void onUvssServerCallback(int, const char*);
 
 int main(int argc, char* argv[])
 {
@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    SetUVSSServerCallback(uvssServerCallback);
+    SetUVSSServerCallback(onUvssServerCallback);
     menu();
 
     int key;
@@ -71,7 +71,7 @@ void menu()
                 "9: exit\n";
 }
 
-void uvssServerCallback(int type, const char* message)
+void onUvssServerCallback(int type, const char* message)
 {
     std::cout << "callback\n" << type << ", " << message << std::endl;
 }
