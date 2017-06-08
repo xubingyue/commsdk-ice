@@ -11,9 +11,9 @@ exception RequestCanceledException {
 }
 
 interface CallbackReceiver {
-    ["amd"] idempotent void sendCheckInfo(
-        StringSeq fileNames, ByteSeqSeq files,
-        StringSeq strings)
+    ["amd"] idempotent void sendData(
+        StringSeq strings,
+        StringSeq fileNames, ByteSeqSeq files)
         throws RequestCanceledException;
 }
 

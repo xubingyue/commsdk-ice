@@ -27,12 +27,12 @@ void UninitUVSSServer()
     delete uvssServer;
 }
 
-void SendUVSSCheckInfo(const char* const filePaths[], int filePathsSize,
-                       const char* const strings[], int stringsSize)
+void SendUVSSCheckInfo(const char* const strings[], int stringsSize,
+                       const char* const filePaths[], int filePathsSize)
 {
-    std::vector<std::string> filePathsVec(filePaths, filePaths + filePathsSize);
     std::vector<std::string> stringsVec(strings, strings + stringsSize);
-    uvssServer->sendCheckInfo(filePathsVec, stringsVec);
+    std::vector<std::string> filePathsVec(filePaths, filePaths + filePathsSize);
+    uvssServer->sendCheckInfo(stringsVec, filePathsVec);
 }
 
 const char* GetUVSSServerVersion()

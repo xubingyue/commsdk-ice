@@ -9,10 +9,10 @@ CallbackReceiverI::CallbackReceiverI(const std::shared_ptr<PeerProxies>& peerPro
 {
 }
 
-void CallbackReceiverI::sendCheckInfoAsync(
+void CallbackReceiverI::sendDataAsync(
+    std::vector<std::string> strings,
     std::vector<std::string> fileNames,
     std::vector<std::vector<unsigned char>> files,
-    std::vector<std::string> strings,
     std::function<void()> response,
     std::function<void(std::exception_ptr)> error,
     const Ice::Current& current)
@@ -26,7 +26,6 @@ void CallbackReceiverI::sendCheckInfoAsync(
 //             std::cout << endpoint << std::endl;
     int connectionId = peerProxies_->serverConnectionId(endpoint);
 
-    workQueue_->add(fileNames, files, strings,
-                    std::move(response), std::move(error),
-                    connectionId);
+    workQueue_->add(strings, fileNames, files, connectionId,
+                    std::move(response), std::move(error));
 }

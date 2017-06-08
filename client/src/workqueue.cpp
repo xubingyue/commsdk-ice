@@ -27,8 +27,8 @@ void WorkQueue::run()
             boost::filesystem::path currentPath = boost::filesystem::current_path();
             std::string imagePath = currentPath.string() + "/UVSS/";
 
-            auto& filePaths = std::get<0>(entry);
-            auto& files = std::get<1>(entry);
+            auto& filePaths = std::get<1>(entry);
+            auto& files = std::get<2>(entry);
             int filePathsSize = filePaths.size();
 
             for (int i = 0; i != filePathsSize; ++i) {
@@ -46,7 +46,7 @@ void WorkQueue::run()
                 strcpy(filePathsC[i], filePaths[i].c_str());
             }
 
-            auto& strings = std::get<2>(entry);
+            auto& strings = std::get<0>(entry);
             int stringsSize = strings.size();
 
             char** stringsC = new char*[stringsSize];
@@ -56,13 +56,13 @@ void WorkQueue::run()
                 strcpy(stringsC[i], strings[i].c_str());
             }
 
-            int& connectionId = std::get<5>(entry);
+            int& connectionId = std::get<3>(entry);
 
             this->checkInfoCallback_(connectionId,
                                      filePathsC, filePathsSize,
                                      stringsC, stringsSize);
 
-            auto& response = std::get<3>(entry);
+            auto& response = std::get<4>(entry);
             response();
             callbacks_.pop_front();
 
@@ -87,7 +87,7 @@ void WorkQueue::run()
             throw Uvss::RequestCanceledException();
         }
         catch (...) {
-            auto& error = std::get<4>(entry);
+            auto& error = std::get<5>(entry);
             error(std::current_exception());
         }
     }
@@ -103,12 +103,12 @@ void WorkQueue::start()
 }
 
 void WorkQueue::add(
+    const std::vector<std::string>& strings,
     const std::vector<std::string>& fileNames,
     const std::vector<std::vector<unsigned char>>& files,
-    const std::vector<std::string>& strings,
+    int index,
     std::function<void ()> response,
-    std::function<void (std::exception_ptr)> error,
-    int index)
+    std::function<void (std::exception_ptr)> error)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -118,12 +118,12 @@ void WorkQueue::add(
         if (callbacks_.size() == 0) {
             condition_.notify_one();
         }
-        callbacks_.push_back(make_tuple(std::move(fileNames),
+        callbacks_.push_back(make_tuple(std::move(strings),
+                                        std::move(fileNames),
                                         std::move(files),
-                                        std::move(strings),
+                                        index,
                                         std::move(response),
-                                        std::move(error),
-                                        index));
+                                        std::move(error)));
     }
     else {
         try {

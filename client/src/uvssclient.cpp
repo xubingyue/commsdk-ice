@@ -20,7 +20,7 @@ UvssClient::UvssClient() :
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
     props->setProperty("Ice.Warn.Connections", "1");
-    props->setProperty("Ice.MessageSizeMax", "2097152"); // 51200
+    props->setProperty("Ice.MessageSizeMax", "0");
 //     props->setProperty("Ice.ACM.Client", "0");
     Ice::InitializationData initData;
     initData.properties = props;
@@ -75,7 +75,7 @@ int UvssClient::connect(const std::string& ipAddress, int port)
 //         tcp -h 192.168.1.9 -p 20145 -t 60000
 //         192.168.1.9:20145
 
-//         考虑去掉个功能
+//         保留检查对端版本的功能
         if (!server->checkVersion(UVSS_COMM_SDK_VER)) {
             return -3;
         }

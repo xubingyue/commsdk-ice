@@ -19,7 +19,7 @@ UvssServer::UvssServer() :
     Ice::PropertiesPtr props = Ice::createProperties();
 //     props->setProperty("Ice.Default.Host", "localhost"); // 这样只能localhost
     props->setProperty("Ice.Warn.Connections", "1");
-    props->setProperty("Ice.MessageSizeMax", "2097152"); // 51200
+    props->setProperty("Ice.MessageSizeMax", "0");
     Ice::InitializationData initData;
     initData.properties = props;
 
@@ -83,8 +83,8 @@ const std::string UvssServer::createCurrentTime()
     return currentTime.str();
 }
 
-void UvssServer::sendCheckInfo(const std::vector<std::string>& filePaths,
-                               const std::vector<std::string>& strings)
+void UvssServer::sendCheckInfo(const std::vector<std::string>& strings,
+                               const std::vector<std::string>& filePaths)
 {
     std::string time = createCurrentTime();
 
@@ -104,7 +104,7 @@ void UvssServer::sendCheckInfo(const std::vector<std::string>& filePaths,
         files.push_back(file);
     }
 
-    peerProxies_->sendCheckInfo(fileNames, files, strings);
+    peerProxies_->sendCheckInfo(strings, fileNames, files);
 }
 
 // 使用时，没有warning?

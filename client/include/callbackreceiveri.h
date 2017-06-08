@@ -9,10 +9,10 @@ class CallbackReceiverI : public virtual Uvss::CallbackReceiver {
 public:
     CallbackReceiverI(const std::shared_ptr<PeerProxies>&, const std::shared_ptr<WorkQueue>&);
 
-    virtual void sendCheckInfoAsync(
+    virtual void sendDataAsync(
+        std::vector<std::string>,
         std::vector<std::string>,
         std::vector<std::vector<unsigned char>>,
-        std::vector<std::string>,
         std::function<void()>,
         std::function<void(std::exception_ptr)>,
         const Ice::Current&) override;

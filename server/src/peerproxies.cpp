@@ -97,15 +97,16 @@ void PeerProxies::add(const Ice::Identity& ident, const Ice::Current& current)
     connectionCallback_(0, message.c_str());
 }
 
-void PeerProxies::sendCheckInfo(const std::vector<std::string>& fileNames,
-    const std::vector<std::vector<unsigned char>>& files,
-    const std::vector<std::string>& strings)
+void PeerProxies::sendCheckInfo(
+    const std::vector<std::string>& strings,
+    const std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char>>& files)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
     for (auto p : clientEndpointMap_) {
         try {
-            p.first->sendCheckInfoAsync(fileNames, files, strings,
+            p.first->sendDataAsync(strings, fileNames, files,
                 nullptr,
                 [](std::exception_ptr e)
             {

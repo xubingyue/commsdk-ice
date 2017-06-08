@@ -19,11 +19,11 @@ public:
     void start();
 
     void add(const std::vector<std::string>&,
-             const std::vector<std::vector<unsigned char>>&,
              const std::vector<std::string>&,
+             const std::vector<std::vector<unsigned char>>&,
+             int,
              std::function<void ()>,
-             std::function<void (std::exception_ptr)>,
-             int);
+             std::function<void (std::exception_ptr)>);
     void createFileDirectory(const std::string&);
 
     void destroy();
@@ -34,11 +34,11 @@ public:
 private:
     using CallbackEntry = std::tuple<
                           std::vector<std::string>,
-                          std::vector<std::vector<unsigned char>>,
                           std::vector<std::string>,
+                          std::vector<std::vector<unsigned char>>,
+                          int,
                           std::function<void ()>,
-                          std::function<void (std::exception_ptr)>,
-                          int>;
+                          std::function<void (std::exception_ptr)>>;
 
     std::list<CallbackEntry> callbacks_;
     bool done_;

@@ -19,8 +19,8 @@ public:
     void start();
     void add(const Ice::Identity&, const Ice::Current&);
     void sendCheckInfo(const std::vector<std::string>&,
-                       const std::vector<std::vector<unsigned char>>&,
-                       const std::vector<std::string>&);
+                       const std::vector<std::string>&,
+                       const std::vector<std::vector<unsigned char>>&);
     void destroy();
     void join();
 

@@ -42,9 +42,9 @@ int main(int argc, char* argv[])
                 break;
             case 3:
                 {
-                    const char* const filePaths[2] = { "1.jpg", "2.jpg" };
                     const char* const strings[7] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2" };
-                    SendUVSSCheckInfo(filePaths, 2, strings, 7);
+                    const char* const filePaths[2] = { "1.jpg", "2.jpg" };
+                    SendUVSSCheckInfo(strings, 7, filePaths, 2);
                 }
                 break;
             case 9:
