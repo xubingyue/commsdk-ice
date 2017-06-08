@@ -24,7 +24,7 @@ public:
              std::function<void ()>,
              std::function<void (std::exception_ptr)>,
              int);
-    void createImageDirectory(const std::string&);
+    void createFileDirectory(const std::string&);
 
     void destroy();
     void join();

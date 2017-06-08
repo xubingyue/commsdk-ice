@@ -21,78 +21,72 @@ void WorkQueue::run()
             condition_.wait(lock);
         }
         else {
-            CallbackEntry entry = callbacks_.front();
+            CallbackEntry& entry = callbacks_.front(); // &?
 
-
-
-
-            callbacks_.pop_front();
-
-            auto& fileNames = std::get<0>(entry);
-            auto& files = std::get<1>(entry);
-            auto& strings = std::get<2>(entry);
-            int& index = std::get<5>(entry);
-
-            createImageDirectory("UVSS");
-
-            boost::filesystem::path currentPath =
-                boost::filesystem::current_path();
+            createFileDirectory("UVSS");
+            boost::filesystem::path currentPath = boost::filesystem::current_path();
             std::string imagePath = currentPath.string() + "/UVSS/";
 
-            int nsz = fileNames.size();
-            for (int i = 0; i != nsz; ++i) {
-                if (!fileNames[i].empty()) {
-                    fileNames[i] = imagePath + fileNames[i];
-                    std::ofstream ofs(fileNames[i], std::ios::binary);
+            auto& filePaths = std::get<0>(entry);
+            auto& files = std::get<1>(entry);
+            int filePathsSize = filePaths.size();
+
+            for (int i = 0; i != filePathsSize; ++i) {
+                if (!filePaths[i].empty()) {
+                    filePaths[i] = imagePath + filePaths[i];
+                    std::ofstream ofs(filePaths[i], std::ios::binary);
                     ofs.write((char*)&files[i][0], files[i].size());
                 }
             }
 
-            char** dst1 = new char*[nsz];
-            for (int i = 0; i != nsz; ++i) {
-                int szi = fileNames[i].size();
-                dst1[i] = new char[szi + 1];
-                strcpy(dst1[i], fileNames[i].c_str());
+            char** filePathsC = new char* [filePathsSize];
+            for (int i = 0; i != filePathsSize; ++i) {
+                int szi = filePaths[i].size();
+                filePathsC[i] = new char[szi + 1];
+                strcpy(filePathsC[i], filePaths[i].c_str());
             }
 
+            auto& strings = std::get<2>(entry);
+            int stringsSize = strings.size();
 
-            int sz = strings.size();
-            char** dst = new char*[sz];
-            for (int i = 0; i != sz; ++i) {
+            char** stringsC = new char*[stringsSize];
+            for (int i = 0; i != stringsSize; ++i) {
                 int szi = strings[i].size();
-                dst[i] = new char[szi + 1];
-                strcpy(dst[i], strings[i].c_str());
+                stringsC[i] = new char[szi + 1];
+                strcpy(stringsC[i], strings[i].c_str());
             }
 
-            this->checkInfoCallback_(index,
-                                     dst1, nsz,
-                                     dst, sz);
+            int& connectionId = std::get<5>(entry);
 
-            for (int i = 0; i != sz; ++i) {
-                delete[] dst[i];
-                dst[i] = 0;
+            this->checkInfoCallback_(connectionId,
+                                     filePathsC, filePathsSize,
+                                     stringsC, stringsSize);
+
+            auto& response = std::get<3>(entry);
+            response();
+            callbacks_.pop_front();
+
+            for (int i = 0; i != filePathsSize; ++i) {
+                delete[] filePathsC[i];
+                filePathsC[i] = 0;
             }
-            delete[] dst;
-            dst = 0;
+            delete[] filePathsC;
+            filePathsC = 0;
 
-            auto& response = std::get<3>(entry);//4
-
-            response();//5
+            for (int i = 0; i != stringsSize; ++i) {
+                delete[] stringsC[i];
+                stringsC[i] = 0;
+            }
+            delete[] stringsC;
+            stringsC = 0;
         }
     }
 
-    //
-    // Throw exception for any outstanding requests.
-    //
-    for(auto& entry : callbacks_)
-    {
-        try
-        {
+    for (auto& entry : callbacks_) {
+        try {
             throw Uvss::RequestCanceledException();
         }
-        catch(...)
-        {
-            std::cerr << "yyyyyyyyyyyyyyyyyyyyyyyy" << std::endl;
+        catch (...) {
             auto& error = std::get<4>(entry);
             error(std::current_exception());
         }
@@ -103,59 +97,47 @@ void WorkQueue::start()
 {
     std::thread t([this]()
     {
-        this->run();
+        run();
     });
     thread_ = std::move(t);
 }
 
 void WorkQueue::add(
-    const std::vector<std::string>& ns,
-    const std::vector<std::vector<unsigned char>>& bss,
-    const std::vector<std::string>& ss,
-    std::function<void ()> response, std::function<void (std::exception_ptr)> error,
+    const std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char>>& files,
+    const std::vector<std::string>& strings,
+    std::function<void ()> response,
+    std::function<void (std::exception_ptr)> error,
     int index)
 {
-    //destroy后仍然有可能执行add
-    //所以要判断if _done
-
     std::unique_lock<std::mutex> lock(mutex_);
 
-    if(!done_)
-    {
-        //
-        // Add work item.
-        //
-        if(callbacks_.size() == 0)//rugo == 1 shi huanxing run.wait
-        {
+//     destroy后仍然有可能执行add
+//     所以要判断if _done
+    if (!done_) {
+        if (callbacks_.size() == 0) {
             condition_.notify_one();
         }
-        callbacks_.push_back(make_tuple(ns,
-                                        bss,
-                                        ss,
+        callbacks_.push_back(make_tuple(std::move(fileNames),
+                                        std::move(files),
+                                        std::move(strings),
                                         std::move(response),
                                         std::move(error),
                                         index));
     }
-    else
-    {
-        //
-        // Destroyed, throw exception.
-        //
-        try
-        {
+    else {
+        try {
             throw Uvss::RequestCanceledException();
         }
-        catch(...)
-        {
-            std::cerr << "nnnnnnnnnnnnnnnnnnnnn" << std::endl;
+        catch (...) {
             error(std::current_exception());
         }
     }
 }
 
-void WorkQueue::createImageDirectory(const std::string& imageDirectory)
+void WorkQueue::createFileDirectory(const std::string& fileDirectory)
 {
-    boost::filesystem::path dir(imageDirectory);
+    boost::filesystem::path dir(fileDirectory);
 
     if (boost::filesystem::exists(dir)) {
         return;
@@ -169,17 +151,13 @@ void WorkQueue::destroy()
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
-    //
-    // Set done flag and notify.
-    //
     done_ = true;
     condition_.notify_one();
 }
 
 void WorkQueue::join()
 {
-    if(thread_.joinable())
-    {
+    if (thread_.joinable()) {
         thread_.join();
     }
 }

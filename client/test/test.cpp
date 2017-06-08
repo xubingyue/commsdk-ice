@@ -1,26 +1,24 @@
-#include <cstdio>
+#include <cstdlib>
 #include <iostream>
-#include <string>
+
 #include <uvssclientwrapper.h>
 
 void menu();
-
-void clientConnectionInfoCallback(int, int, const char*);
-void clientCheckInfoCallback(int, const char* const [], int,
+void onUvssMessageCallback(int, int, const char*);
+void onUvssCheckInfoCallback(int, const char* const [], int,
                              const char* const [], int);
 
-int main(int argc, char* /*argv*/[])
+int main(int argc, char* argv[])
 {
     if (argc > 1) {
-        std::cerr << "too many arguments" << std::endl;
+        std::cerr << argv[0] << ": too many arguments" << std::endl;
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
-    SetUVSSMessageCallback(clientConnectionInfoCallback);
-    SetUVSSCheckInfoCallback(clientCheckInfoCallback);
-
     menu();
+    SetUVSSMessageCallback(onUvssMessageCallback);
+    SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
 
     int key;
     do {
@@ -68,7 +66,7 @@ int main(int argc, char* /*argv*/[])
         }
     } while ((std::cin.good()) && (key != 9));
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 void menu()
@@ -83,21 +81,20 @@ void menu()
               "9: exit\n";
 }
 
-void clientCheckInfoCallback(int index,
-                             const char* const a1[], int sz1,
-                             const char* const a[], int sz)
+void onUvssCheckInfoCallback(int connectionId,
+                             const char* const filePaths[], int filePathsSize,
+                             const char* const strings[], int stringsSize)
 {
-    printf("\ncallback:\n%d\n", index);
-    for (int i = 0; i != sz1; ++i) {
-        std::cout << a1[i] << std::endl;
+    std::cout << "\ncallback:\n" << connectionId << std::endl;
+    for (int i = 0; i != filePathsSize; ++i) {
+        std::cout << filePaths[i] << std::endl;
     }
-    for (int i = 0; i != sz; ++i) {
-        std::cout << a[i] << std::endl;
+    for (int i = 0; i != stringsSize; ++i) {
+        std::cout << strings[i] << std::endl;
     }
 }
 
-void clientConnectionInfoCallback(int index, int type,
-                                  const char* connectionInfo)
+void onUvssMessageCallback(int connectionId, int type, const char* message)
 {
-    printf("\ncallback:\n%d, %d, %s\n", index, type, connectionInfo);
+    std::cout << "\ncallback:\n" << connectionId << ", " << type << ", " << message << std::endl;
 }
