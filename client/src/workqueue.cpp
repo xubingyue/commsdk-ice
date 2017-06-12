@@ -58,9 +58,9 @@ void WorkQueue::run()
 
             int& connectionId = std::get<3>(entry);
 
-            g_checkInfoCallback(connectionId,
-                                     filePathsC, filePathsSize,
-                                     stringsC, stringsSize);
+            g_checkInfoCallbackNormal(connectionId,
+                                filePathsC, filePathsSize,
+                                stringsC, stringsSize);
 
             auto& response = std::get<4>(entry);
             response();

@@ -34,5 +34,5 @@ void CallbackSenderI::addClient(Ice::Identity ident, const Ice::Current& current
 
 bool CallbackSenderI::checkVersion(std::string version, const Ice::Current& /*current*/)
 {
-    return version == UVSS_COMM_SDK_VER;
+    return version == UVSS_VERSION;
 }

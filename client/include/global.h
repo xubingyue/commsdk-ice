@@ -5,10 +5,10 @@
 
 typedef UVSSMessageCallback InitializationCallback;
 typedef UVSSMessageCallback ConnectionCallback;
-typedef UVSSCheckInfoCallback CheckInfoCallback;
+typedef UVSSCheckInfoCallbackNormal CheckInfoCallbackNormal;
 
 extern InitializationCallback g_initializationCallback;
 extern ConnectionCallback g_connectionCallback;
-extern CheckInfoCallback g_checkInfoCallback;
+extern CheckInfoCallbackNormal g_checkInfoCallbackNormal;
 
 #endif // GLOBAL_H

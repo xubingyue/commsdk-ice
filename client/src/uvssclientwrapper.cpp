@@ -12,9 +12,9 @@ void SetUVSSMessageCallback(UVSSMessageCallback cb)
     g_connectionCallback = cb;
 }
 
-void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
+void SetUVSSCheckInfoCallbackNormal(UVSSCheckInfoCallbackNormal checkInfoCallbackNormal)
 {
-    g_checkInfoCallback = checkInfoCallback;
+    g_checkInfoCallbackNormal = checkInfoCallbackNormal;
 }
 
 int UVSSInitialize()
@@ -27,6 +27,10 @@ void UVSSUninitialize()
 {
     clientSDK->shutdown();
     delete clientSDK;
+
+//     g_initializationCallback = 0;
+//     g_connectionCallback = 0;
+//     g_checkInfoCallback = 0;
 }
 
 int UVSSConnect(const char* iPAddress, int port)
@@ -41,5 +45,5 @@ int UVSSDisconnect(int index)
 
 const char* GetUVSSVersion()
 {
-    return UVSS_COMM_SDK_VER;
+    return UVSS_VERSION;
 }

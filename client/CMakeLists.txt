@@ -11,7 +11,7 @@ IF (WIN32)
 set(CMAKE_CXX_STANDARD 11)
 
 add_compile_options(-DICE_CPP11_MAPPING -DUVSS_COMM_EXPORTS)
-set(UVSS_COMM_SDK_VER "test")
+set(UVSS_VERSION "test")
 configure_file(
         "${PROJECT_SOURCE_DIR}/version.h.in"
         "${PROJECT_BINARY_DIR}/version.h")
@@ -42,7 +42,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_COMPILER g++)
 add_compile_options(-DICE_CPP11_MAPPING)
 
-set(UVSS_COMM_SDK_VER "test")
+set(UVSS_VERSION "test")
 configure_file(
         "${PROJECT_SOURCE_DIR}/version.h.in"
         "${PROJECT_BINARY_DIR}/version.h")

@@ -74,7 +74,7 @@ int UvssClient::connect(const std::string& ipAddress, int port)
 //         192.168.1.9:20145
 
 //         保留检查对端版本的功能
-        if (!server->checkVersion(UVSS_COMM_SDK_VER)) {
+        if (!server->checkVersion(UVSS_VERSION)) {
             return -3;
         }
 

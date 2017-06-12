@@ -26,6 +26,8 @@ void UninitUVSSServer()
 {
     uvssServer->shutdown();
     delete uvssServer;
+
+//     g_connectionCallback = 0;
 }
 
 // void SendUVSSCheckInfo(const char* const strings[], int stringsSize,
@@ -36,27 +38,36 @@ void UninitUVSSServer()
 //     uvssServer->sendCheckInfo(stringsVec, filePathsVec);
 // }
 
-void SendUVSSCheckInfo(const char* const strings[],
-                       const char* const filePaths[])
+void SendUVSSCheckInfo(const char* uvssImagePath, const char* plateImagePath,
+        const char* channel, const char* plateNumber, const char* direction,
+        const char* time, const char* extension)
+{
+    const char* const filePaths[] = { uvssImagePath, plateImagePath, NULL };
+    const char* const strings[] = { channel, plateNumber, direction, time, extension, NULL };
+    SendUVSSCheckInfoNormal(filePaths, strings);
+}
+
+void SendUVSSCheckInfoNormal(const char* const filePaths[],
+                       const char* const strings[])
 {
     int i = 0;
-    for (; strings[i] != NULL; ++i) {
+    for (; filePaths[i] != NULL; ++i) {
         
     }
-    int stringsSize = i;
-    std::vector<std::string> stringsVec(strings, strings + stringsSize);
-    
-    int j = 0;
-    for (; filePaths[j] != NULL; ++j) {
-        
-    }
-    int filePathsSize = j;
+    int filePathsSize = i;
     std::vector<std::string> filePathsVec(filePaths, filePaths + filePathsSize);
-    
+
+    int j = 0;
+    for (; strings[j] != NULL; ++j) {
+        
+    }
+    int stringsSize = j;
+    std::vector<std::string> stringsVec(strings, strings + stringsSize);
+
     uvssServer->sendCheckInfo(stringsVec, filePathsVec);
 }
 
 const char* GetUVSSServerVersion()
 {
-    return UVSS_COMM_SDK_VER;
+    return UVSS_VERSION;
 }

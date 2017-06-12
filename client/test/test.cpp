@@ -5,7 +5,7 @@
 
 void menu();
 void onUvssMessageCallback(int, int, const char*);
-void onUvssCheckInfoCallback(int, const char* const [], int,
+void onUvssCheckInfoCallbackNormal(int, const char* const [], int,
                              const char* const [], int);
 
 int main(int argc, char* argv[])
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
     menu();
     SetUVSSMessageCallback(onUvssMessageCallback);
-    SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
+    SetUVSSCheckInfoCallbackNormal(onUvssCheckInfoCallbackNormal);
 
     int key;
     do {
@@ -81,11 +81,14 @@ void menu()
               "9: exit\n";
 }
 
-void onUvssCheckInfoCallback(int connectionId,
+void onUvssCheckInfoCallbackNormal(int connectionId,
                              const char* const filePaths[], int filePathsSize,
                              const char* const strings[], int stringsSize)
 {
     std::cout << "\ncallback:\n" << connectionId << std::endl;
+    std::cout << "filePathsSize: " << filePathsSize << std::endl;
+    std::cout << "stringsSize: " << stringsSize << std::endl;
+    
     for (int i = 0; i != filePathsSize; ++i) {
         std::cout << filePaths[i] << std::endl;
     }
