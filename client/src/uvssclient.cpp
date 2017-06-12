@@ -137,9 +137,9 @@ void UvssClient::setConnectionCallback(ConnectionCallback connectionCallback)
     connectionCallback_ = connectionCallback;
 }
 
-void UvssClient::setHeartbeatCallback(HeartbeatCallback heartbeatCallback)
+void UvssClient::setHeartbeatCallback(ConnectionCallback heartbeatCallback)
 {
-    PeerProxies::setHeartbeatCallback(heartbeatCallback);
+    PeerProxies::setConnectionCallback(heartbeatCallback);
 }
 
 void UvssClient::setCheckInfoCallback(CheckInfoCallback checkInfoCallback)

@@ -27,7 +27,7 @@ public:
     static void setInitializationCallback(InitializationCallback);
     static void setConnectionCallback(ConnectionCallback);
 
-    static void setHeartbeatCallback(HeartbeatCallback);
+    static void setHeartbeatCallback(ConnectionCallback);
     static void setCheckInfoCallback(CheckInfoCallback);
 
 private:

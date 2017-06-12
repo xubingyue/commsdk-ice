@@ -9,7 +9,7 @@
 #include <callback.h>
 #include <uvssclientwrapper.h>
 
-typedef UVSSMessageCallback HeartbeatCallback;
+typedef UVSSMessageCallback ConnectionCallback;
 
 class PeerProxies
 {
@@ -25,7 +25,7 @@ public:
     void destroy();
     void join();
 
-    static void setHeartbeatCallback(HeartbeatCallback);
+    static void setConnectionCallback(ConnectionCallback);
 
 private:
     std::map<std::shared_ptr<Uvss::CallbackSenderPrx>, std::string> serverEndpointMap_;
@@ -37,7 +37,7 @@ private:
     std::condition_variable cv_;
     std::thread senderThread_;
 
-    static HeartbeatCallback heartbeatCallback_;
+    static ConnectionCallback connectionCallback_;
 };
 
 #endif // PEERPROXIES_H

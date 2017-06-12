@@ -17,7 +17,7 @@ public:
     PeerProxies();
     void run();
     void start();
-    void add(const Ice::Identity&, const Ice::Current&);
+    void add(const std::shared_ptr<Uvss::CallbackReceiverPrx>&, const std::string&);
     void sendCheckInfo(const std::vector<std::string>&,
                        const std::vector<std::string>&,
                        const std::vector<std::vector<unsigned char>>&);

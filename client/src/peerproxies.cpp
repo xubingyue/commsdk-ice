@@ -3,7 +3,7 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-HeartbeatCallback PeerProxies::heartbeatCallback_ = 0;
+ConnectionCallback PeerProxies::connectionCallback_ = 0;
 
 PeerProxies::PeerProxies() : connectionId_(0), destroy_(false)
 {
@@ -65,7 +65,7 @@ void PeerProxies::run()
                     std::unique_lock<std::mutex> lock(mutex_);
                     serverEndpointMap_.erase(server);
                     endpointConnectionIdMap_.erase(endpoint);
-                    heartbeatCallback_(connectionId, -3, message.c_str());
+                    connectionCallback_(connectionId, -3, message.c_str());
                 }
             }
         }
@@ -146,8 +146,8 @@ void PeerProxies::join()
     }
 }
 
-void PeerProxies::setHeartbeatCallback(
-    HeartbeatCallback connectionCallback)
+void PeerProxies::setConnectionCallback(
+    ConnectionCallback connectionCallback)
 {
-    heartbeatCallback_ = connectionCallback;
+    connectionCallback_ = connectionCallback;
 }
