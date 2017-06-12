@@ -9,8 +9,6 @@
 #include <callback.h>
 #include <uvssserverwrapper.h>
 
-typedef UVSSServerCallback ConnectionCallback;
-
 class PeerProxies
 {
 public:
@@ -24,8 +22,6 @@ public:
     void destroy();
     void join();
 
-    static void setConnectionCallback(ConnectionCallback);
-
 private:
     std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>, std::string> clientEndpointMap_;
     bool destroy_;
@@ -33,8 +29,6 @@ private:
     std::mutex mutex_;
     std::condition_variable cv_;
     std::thread senderThread_;
-
-    static ConnectionCallback connectionCallback_;
 };
 
 #endif // PEERPROXIES_H

@@ -3,7 +3,9 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-UVSSServerCallback PeerProxies::connectionCallback_ = 0;
+#include <global.h>
+
+// UVSSServerCallback PeerProxies::connectionCallback_ = 0;
 
 PeerProxies::PeerProxies() : destroy_(false)
 {
@@ -54,7 +56,7 @@ void PeerProxies::run()
 
                     std::unique_lock<std::mutex> lock(mutex_); // 保证删除和回调通知一致
                     clientEndpointMap_.erase(client);
-                    connectionCallback_(-1, message.c_str());
+                    g_connectionCallback(-1, message.c_str());
                 }
             }
         }
@@ -77,7 +79,7 @@ void PeerProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& client, 
 
     clientEndpointMap_[client] = endpoint;
     std::string message("客户端 " + endpoint + ": 已连接");
-    connectionCallback_(0, message.c_str());
+    g_connectionCallback(0, message.c_str());
 }
 
 void PeerProxies::sendCheckInfo(
@@ -124,9 +126,4 @@ void PeerProxies::join()
     if(senderThread_.joinable()) {
         senderThread_.join();
     }
-}
-
-void PeerProxies::setConnectionCallback(ConnectionCallback connectionCallback)
-{
-    connectionCallback_ = connectionCallback;
 }

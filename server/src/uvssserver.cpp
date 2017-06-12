@@ -114,11 +114,6 @@ void UvssServer::shutdown()
     ic_->shutdown();
 }
 
-void UvssServer::setConnectionCallback(ConnectionCallback connectionCallback)
-{
-    PeerProxies::setConnectionCallback(connectionCallback);
-}
-
 void UvssServer::setPort(int port)
 {
     port_ = port;

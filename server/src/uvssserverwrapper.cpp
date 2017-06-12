@@ -2,12 +2,13 @@
 
 #include <uvssserver.h>
 #include <version.h>
+#include <global.h>
 
 UvssServer* uvssServer;
 
 void SetUVSSServerCallback(UVSSServerCallback connectionCallback)
 {
-    uvssServer->setConnectionCallback(connectionCallback);
+    g_connectionCallback = connectionCallback;
 }
 
 void SetUVSSServerPort(int port)

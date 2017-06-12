@@ -20,7 +20,6 @@ public:
 
     void shutdown(); // destroy?
 
-    static void setConnectionCallback(ConnectionCallback);
     static void setPort(int);
 
 private:
