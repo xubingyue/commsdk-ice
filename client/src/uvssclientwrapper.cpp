@@ -12,8 +12,15 @@ void SetUVSSMessageCallback(UVSSMessageCallback cb)
     g_connectionCallback = cb;
 }
 
+void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
+{
+    g_type = 0;
+    g_checkInfoCallback = checkInfoCallback;
+}
+
 void SetUVSSCheckInfoCallbackNormal(UVSSCheckInfoCallbackNormal checkInfoCallbackNormal)
 {
+    g_type = 1;
     g_checkInfoCallbackNormal = checkInfoCallbackNormal;
 }
 
