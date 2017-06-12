@@ -2,19 +2,19 @@
 
 #include <uvssclient.h>
 #include <version.h>
+#include <global.h>
 
 UvssClient* clientSDK;
 
 void SetUVSSMessageCallback(UVSSMessageCallback cb)
 {
-    UvssClient::setInitializationCallback(cb);
-    UvssClient::setConnectionCallback(cb);
-    clientSDK->setHeartbeatCallback(cb);
+    g_initializationCallback = cb;
+    g_connectionCallback = cb;
 }
 
 void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
 {
-    clientSDK->setCheckInfoCallback(checkInfoCallback);
+    g_checkInfoCallback = checkInfoCallback;
 }
 
 int UVSSInitialize()

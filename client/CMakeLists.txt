@@ -55,7 +55,7 @@ add_custom_command(
         COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../callback.ice
         DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
 
-set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp ${PROJECT_SOURCE_DIR}/src/callbackreceiveri.cpp ${PROJECT_SOURCE_DIR}/src/uvssclient.cpp ${PROJECT_SOURCE_DIR}/src/uvssclientwrapper.cpp ${PROJECT_SOURCE_DIR}/src/workqueue.cpp ${PROJECT_SOURCE_DIR}/src/peerproxies.cpp)
+set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp ${PROJECT_SOURCE_DIR}/src/callbackreceiveri.cpp ${PROJECT_SOURCE_DIR}/src/uvssclient.cpp ${PROJECT_SOURCE_DIR}/src/uvssclientwrapper.cpp ${PROJECT_SOURCE_DIR}/src/workqueue.cpp ${PROJECT_SOURCE_DIR}/src/peerproxies.cpp ${PROJECT_SOURCE_DIR}/src/global.cpp)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSSDK SHARED ${SOURCES})

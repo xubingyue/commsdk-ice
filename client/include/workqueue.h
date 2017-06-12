@@ -9,8 +9,6 @@
 #include <callback.h>
 #include <uvssclientwrapper.h>
 
-typedef UVSSCheckInfoCallback CheckInfoCallback;
-
 class WorkQueue {
 public:
     WorkQueue();
@@ -29,8 +27,6 @@ public:
     void destroy();
     void join();
 
-    static void setCheckInfoCallback(CheckInfoCallback);
-
 private:
     using CallbackEntry = std::tuple<
                           std::vector<std::string>,
@@ -46,8 +42,6 @@ private:
     std::mutex mutex_;
     std::condition_variable condition_;
     std::thread thread_;
-
-    static CheckInfoCallback checkInfoCallback_;
 };
 
 #endif

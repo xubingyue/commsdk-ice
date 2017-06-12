@@ -8,10 +8,6 @@
 #include <callbackreceiveri.h>
 #include <uvssclientwrapper.h>
 
-typedef UVSSMessageCallback InitializationCallback;
-typedef UVSSMessageCallback ConnectionCallback;
-typedef UVSSCheckInfoCallback CheckInfoCallback;
-
 class UvssClient {
 public:
     UvssClient();
@@ -24,12 +20,6 @@ public:
 
     void shutdown();
 
-    static void setInitializationCallback(InitializationCallback);
-    static void setConnectionCallback(ConnectionCallback);
-
-    static void setHeartbeatCallback(ConnectionCallback);
-    static void setCheckInfoCallback(CheckInfoCallback);
-
 private:
     Ice::CommunicatorPtr ic_;
     Ice::ObjectAdapterPtr adapter_;
@@ -38,9 +28,6 @@ private:
     std::shared_ptr<PeerProxies> peerProxies_;
     std::shared_ptr<WorkQueue> workQueue_;
     std::shared_ptr<CallbackReceiverI> client_;
-
-    static InitializationCallback initializationCallback_;
-    static ConnectionCallback connectionCallback_;
 };
 
 #endif

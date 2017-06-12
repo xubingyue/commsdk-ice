@@ -2,7 +2,7 @@
 
 #include <boost/filesystem.hpp>
 
-CheckInfoCallback WorkQueue::checkInfoCallback_ = 0;
+#include <global.h>
 
 WorkQueue::WorkQueue() : done_(false)
 {
@@ -58,7 +58,7 @@ void WorkQueue::run()
 
             int& connectionId = std::get<3>(entry);
 
-            this->checkInfoCallback_(connectionId,
+            g_checkInfoCallback(connectionId,
                                      filePathsC, filePathsSize,
                                      stringsC, stringsSize);
 
@@ -160,9 +160,4 @@ void WorkQueue::join()
     if (thread_.joinable()) {
         thread_.join();
     }
-}
-
-void WorkQueue::setCheckInfoCallback(CheckInfoCallback checkInfoCallback)
-{
-    WorkQueue::checkInfoCallback_ = checkInfoCallback;
 }

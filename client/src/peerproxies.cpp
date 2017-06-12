@@ -3,7 +3,7 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-ConnectionCallback PeerProxies::connectionCallback_ = 0;
+#include <global.h>
 
 PeerProxies::PeerProxies() : connectionId_(0), destroy_(false)
 {
@@ -65,7 +65,7 @@ void PeerProxies::run()
                     std::unique_lock<std::mutex> lock(mutex_);
                     serverEndpointMap_.erase(server);
                     endpointConnectionIdMap_.erase(endpoint);
-                    connectionCallback_(connectionId, -3, message.c_str());
+                    g_connectionCallback(connectionId, -3, message.c_str());
                 }
             }
         }
@@ -144,10 +144,4 @@ void PeerProxies::join()
     if (senderThread_.joinable()) {
         senderThread_.join();
     }
-}
-
-void PeerProxies::setConnectionCallback(
-    ConnectionCallback connectionCallback)
-{
-    connectionCallback_ = connectionCallback;
 }

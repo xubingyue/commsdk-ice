@@ -8,9 +8,7 @@
 
 #include <callbackreceiveri.h>
 #include <version.h>
-
-InitializationCallback UvssClient::initializationCallback_ = 0;
-ConnectionCallback UvssClient::connectionCallback_ = 0;
+#include <global.h>
 
 UvssClient::UvssClient() :
     peerProxies_(std::make_shared<PeerProxies>()),
@@ -48,7 +46,7 @@ int UvssClient::start()
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
-        initializationCallback_(-1, -1, "初始化失败");
+        g_initializationCallback(-1, -1, "初始化失败");
         return -1;
     }
 
@@ -86,13 +84,13 @@ int UvssClient::connect(const std::string& ipAddress, int port)
         int connectionId = peerProxies_->add(server, endpoint);
 
         std::string message("服务器端 " + endpoint + ": " + "已连接 | 连接标识: " + boost::lexical_cast<std::string>(connectionId));
-        connectionCallback_(connectionId, 1, message.c_str());
+        g_connectionCallback(connectionId, 1, message.c_str());
 
         return connectionId;
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
-        connectionCallback_(-1, -2, "连接失败");
+        g_connectionCallback(-1, -2, "连接失败");
 
         return -1;
     }
@@ -108,7 +106,7 @@ int UvssClient::disconnect(int index)
 //         所以只能在此处通知，不能依靠心跳线程，这里断开通知仅和移除有关
         std::string message("服务器端 " + endpoint + ": " +
                             "已断开 | 连接标识: " + boost::lexical_cast<std::string>(index));
-        connectionCallback_(index, -3, message.c_str());
+        g_connectionCallback(index, -3, message.c_str());
 
 //         使server端到client的心跳失败，发生回调通知
         server->ice_getConnection()->close(Ice::ConnectionClose::Gracefully);
@@ -125,24 +123,4 @@ void UvssClient::shutdown()
     peerProxies_->destroy();
     workQueue_->destroy();
     ic_->shutdown();
-}
-
-void UvssClient::setInitializationCallback(InitializationCallback initializationCallback)
-{
-    initializationCallback_ = initializationCallback;
-}
-
-void UvssClient::setConnectionCallback(ConnectionCallback connectionCallback)
-{
-    connectionCallback_ = connectionCallback;
-}
-
-void UvssClient::setHeartbeatCallback(ConnectionCallback heartbeatCallback)
-{
-    PeerProxies::setConnectionCallback(heartbeatCallback);
-}
-
-void UvssClient::setCheckInfoCallback(CheckInfoCallback checkInfoCallback)
-{
-    WorkQueue::setCheckInfoCallback(checkInfoCallback);
 }
