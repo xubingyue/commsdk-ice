@@ -1,6 +1,8 @@
 #include <workqueue.h>
 
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 #include <global.h>
 
@@ -70,12 +72,7 @@ void WorkQueue::run()
                 g_checkInfoCallbackNormal(connectionId, filePathsC, stringsC);
             }
             else {
-                std::string filePathsDst;
-                for (std::vector<std::string>::const_iterator it = filePaths.begin();
-                        it != filePaths.end() - 1; ++it) {
-                    filePathsDst += *it + "#";
-                }
-                filePathsDst += filePaths[filePaths.size() - 1];
+                std::string filePathsDst = boost::algorithm::join(filePaths, "#");
                 g_checkInfoCallbackNew(connectionId, filePathsDst.c_str(), stringsC[0]);
             }
 

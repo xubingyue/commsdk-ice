@@ -66,6 +66,7 @@ void SendUVSSCheckInfoNew(const char* filePathsSrc, const char* stringsSrc)
 {
     std::vector<std::string> filePathsVec;
     boost::split(filePathsVec, filePathsSrc, boost::is_any_of("#"), boost::token_compress_on);
+
     std::vector<std::string> stringsVec;
     stringsVec.push_back(stringsSrc);
 

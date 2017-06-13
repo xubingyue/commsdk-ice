@@ -58,6 +58,8 @@ int main(int argc, char* argv[])
                 const char* filePathsSrc = "1.jpg#2.jpg";
                 const char* stringsSrc = "Channel 1#ABC1234#In#2016/1/1 13:01:02#extend information#test1#test2";
                 SendUVSSCheckInfoNew(filePathsSrc, stringsSrc);
+                SendUVSSCheckInfoNew(filePathsSrc, stringsSrc);
+                SendUVSSCheckInfoNew(filePathsSrc, stringsSrc);
 #endif
                 }
                 break;
