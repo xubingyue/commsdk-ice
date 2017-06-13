@@ -37,8 +37,7 @@ typedef void(*UVSSCheckInfoCallback)(int handle,
                                      const char *Channel, const char *PlateNumber, const char *Direction,
                                      const char *CheckDateTime, const char *Extension);
 typedef void(*UVSSCheckInfoCallbackNormal)(int connectionId,
-                                     const char* const filePaths[], int filePathsSize,
-                                     const char* const strings[], int stringsSize);
+                                     const char* const filePaths[], const char* const strings[]);
 
 typedef void(*UVSSCheckInfoCallbackNew)(int connectionId, const char* filePathsDst, const char* stringsDst);
 

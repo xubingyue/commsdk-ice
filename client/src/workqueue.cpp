@@ -39,23 +39,24 @@ void WorkQueue::run()
                 }
             }
 
-            // 考虑是否保存为char*[N+1]
-            char** filePathsC = new char* [filePathsSize];
+            char** filePathsC = new char* [filePathsSize + 1];
             for (int i = 0; i != filePathsSize; ++i) {
                 int szi = filePaths[i].size();
                 filePathsC[i] = new char[szi + 1];
                 strcpy(filePathsC[i], filePaths[i].c_str());
             }
+            filePathsC[filePathsSize] = NULL;
 
             auto& strings = std::get<0>(entry);
             int stringsSize = strings.size();
 
-            char** stringsC = new char*[stringsSize];
+            char** stringsC = new char*[stringsSize + 1];
             for (int i = 0; i != stringsSize; ++i) {
                 int szi = strings[i].size();
                 stringsC[i] = new char[szi + 1];
                 strcpy(stringsC[i], strings[i].c_str());
             }
+            stringsC[stringsSize] = NULL;
 
             int& connectionId = std::get<3>(entry);
 
@@ -66,9 +67,7 @@ void WorkQueue::run()
                 );
             }
             else if (g_type == 1) {
-                g_checkInfoCallbackNormal(connectionId,
-                                filePathsC, filePathsSize,
-                                stringsC, stringsSize);
+                g_checkInfoCallbackNormal(connectionId, filePathsC, stringsC);
             }
             else {
                 std::string filePathsDst;
@@ -84,14 +83,14 @@ void WorkQueue::run()
             response();
             callbacks_.pop_front();
 
-            for (int i = 0; i != filePathsSize; ++i) {
+            for (int i = 0; i != filePathsSize + 1; ++i) {
                 delete[] filePathsC[i];
                 filePathsC[i] = 0;
             }
             delete[] filePathsC;
             filePathsC = 0;
 
-            for (int i = 0; i != stringsSize; ++i) {
+            for (int i = 0; i != stringsSize + 1; ++i) {
                 delete[] stringsC[i];
                 stringsC[i] = 0;
             }

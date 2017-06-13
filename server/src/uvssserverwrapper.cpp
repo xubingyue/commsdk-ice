@@ -33,14 +33,6 @@ void UninitUVSSServer()
 //     g_connectionCallback = 0;
 }
 
-// void SendUVSSCheckInfo(const char* const strings[], int stringsSize,
-//                        const char* const filePaths[], int filePathsSize)
-// {
-//     std::vector<std::string> stringsVec(strings, strings + stringsSize);
-//     std::vector<std::string> filePathsVec(filePaths, filePaths + filePathsSize);
-//     uvssServer->sendCheckInfo(stringsVec, filePathsVec);
-// }
-
 void SendUVSSCheckInfo(const char* uvssImagePath, const char* plateImagePath,
         const char* channel, const char* plateNumber, const char* direction,
         const char* time, const char* extension)

@@ -6,8 +6,7 @@
 void menu();
 void onUvssMessageCallback(int, int, const char*);
 void onUvssCheckInfoCallback(int, const char*, const char*, const char*, const char*, const char*, const char*, const char*);
-void onUvssCheckInfoCallbackNormal(int, const char* const [], int,
-                             const char* const [], int);
+void onUvssCheckInfoCallbackNormal(int, const char* const [], const char* const []);
 void onUvssCheckInfoCallbackNew(int, const char*, const char*);
 
 int main(int argc, char* argv[])
@@ -109,17 +108,15 @@ void onUvssCheckInfoCallback(int index,
 }
 
 void onUvssCheckInfoCallbackNormal(int connectionId,
-                             const char* const filePaths[], int filePathsSize,
-                             const char* const strings[], int stringsSize)
+                             const char* const filePaths[],
+                             const char* const strings[])
 {
     std::cout << "\ncallback:\n" << connectionId << std::endl;
-    std::cout << "filePathsSize: " << filePathsSize << std::endl;
-    std::cout << "stringsSize: " << stringsSize << std::endl;
-    
-    for (int i = 0; i != filePathsSize; ++i) {
+
+    for (int i = 0; filePaths[i] != NULL; ++i) {
         std::cout << filePaths[i] << std::endl;
     }
-    for (int i = 0; i != stringsSize; ++i) {
+    for (int i = 0; strings[i] != NULL; ++i) {
         std::cout << strings[i] << std::endl;
     }
 }

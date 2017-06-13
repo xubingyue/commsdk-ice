@@ -5,8 +5,6 @@
 
 #include <global.h>
 
-// UVSSServerCallback PeerProxies::connectionCallback_ = 0;
-
 PeerProxies::PeerProxies() : destroy_(false)
 {
 }

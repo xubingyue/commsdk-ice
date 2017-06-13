@@ -42,9 +42,6 @@ int main(int argc, char* argv[])
                 break;
             case 3:
                 {
-//                     const char* const strings[7] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2" };
-//                     const char* const filePaths[2] = { "1.jpg", "2.jpg" };
-//                     SendUVSSCheckInfo(strings, 7, filePaths, 2);
 #if 0
                     SendUVSSCheckInfo(
                         "1.jpg", "2.jpg",
@@ -56,6 +53,7 @@ int main(int argc, char* argv[])
                     const char* const strings[] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2", NULL };
                     SendUVSSCheckInfoNormal(filePaths, strings);
 #endif
+
 #if 1
                 const char* filePathsSrc = "1.jpg#2.jpg";
                 const char* stringsSrc = "Channel 1#ABC1234#In#2016/1/1 13:01:02#extend information#test1#test2";
