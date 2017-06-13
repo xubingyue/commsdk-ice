@@ -57,11 +57,9 @@ int main(int argc, char* argv[])
                     SendUVSSCheckInfoNormal(filePaths, strings);
 #endif
 #if 1
-                const char* filePathsSrc = "1.jpg@2.jpg";
-                const char* delimiters1 = "@";
+                const char* filePathsSrc = "1.jpg#2.jpg";
                 const char* stringsSrc = "Channel 1#ABC1234#In#2016/1/1 13:01:02#extend information#test1#test2";
-                const char* delimiters2 = "#";
-                SendUVSSCheckInfoNew(filePathsSrc, delimiters1, stringsSrc, delimiters2);
+                SendUVSSCheckInfoNew(filePathsSrc, stringsSrc);
 #endif
                 }
                 break;

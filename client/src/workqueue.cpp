@@ -70,6 +70,15 @@ void WorkQueue::run()
                                 filePathsC, filePathsSize,
                                 stringsC, stringsSize);
             }
+            else {
+                std::string filePathsDst;
+                for (std::vector<std::string>::const_iterator it = filePaths.begin();
+                        it != filePaths.end() - 1; ++it) {
+                    filePathsDst += *it + "#";
+                }
+                filePathsDst += filePaths[filePaths.size() - 1];
+                g_checkInfoCallbackNew(connectionId, filePathsDst.c_str(), stringsC[0]);
+            }
 
             auto& response = std::get<4>(entry);
             response();

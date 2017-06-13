@@ -70,13 +70,12 @@ void SendUVSSCheckInfoNormal(const char* const filePaths[],
     uvssServer->sendCheckInfo(stringsVec, filePathsVec);
 }
 
-void SendUVSSCheckInfoNew(const char* filePathsSrc, const char* delimiters1, const char* stringsSrc,
-                          const char* delimiters2)
+void SendUVSSCheckInfoNew(const char* filePathsSrc, const char* stringsSrc)
 {
     std::vector<std::string> filePathsVec;
-    boost::split(filePathsVec, filePathsSrc, boost::is_any_of(delimiters1), boost::token_compress_on);
+    boost::split(filePathsVec, filePathsSrc, boost::is_any_of("#"), boost::token_compress_on);
     std::vector<std::string> stringsVec;
-    boost::split(stringsVec, stringsSrc, boost::is_any_of(delimiters2), boost::token_compress_on);
+    stringsVec.push_back(stringsSrc);
 
     uvssServer->sendCheckInfo(stringsVec, filePathsVec);
 }

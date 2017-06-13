@@ -8,6 +8,7 @@ void onUvssMessageCallback(int, int, const char*);
 void onUvssCheckInfoCallback(int, const char*, const char*, const char*, const char*, const char*, const char*, const char*);
 void onUvssCheckInfoCallbackNormal(int, const char* const [], int,
                              const char* const [], int);
+void onUvssCheckInfoCallbackNew(int, const char*, const char*);
 
 int main(int argc, char* argv[])
 {
@@ -19,7 +20,7 @@ int main(int argc, char* argv[])
 
     menu();
     SetUVSSMessageCallback(onUvssMessageCallback);
-#if 1
+#if 0
     SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
 #endif
 
@@ -27,6 +28,10 @@ int main(int argc, char* argv[])
     SetUVSSCheckInfoCallbackNormal(onUvssCheckInfoCallbackNormal);
 #endif
 
+#if 1
+    SetUVSSCheckInfoCallbackNew(onUvssCheckInfoCallbackNew);
+#endif
+    
     int key;
     do {
         try {
@@ -119,3 +124,7 @@ void onUvssCheckInfoCallbackNormal(int connectionId,
     }
 }
 
+void onUvssCheckInfoCallbackNew(int connectionId, const char* filePathsDst, const char* stringsDst)
+{
+    printf("\ncallback:\n%d\n%s\n%s\n", connectionId, filePathsDst, stringsDst);
+}

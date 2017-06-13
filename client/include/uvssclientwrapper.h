@@ -40,6 +40,8 @@ typedef void(*UVSSCheckInfoCallbackNormal)(int connectionId,
                                      const char* const filePaths[], int filePathsSize,
                                      const char* const strings[], int stringsSize);
 
+typedef void(*UVSSCheckInfoCallbackNew)(int connectionId, const char* filePathsDst, const char* stringsDst);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,6 +52,7 @@ UVSS_API void SetUVSSMessageCallback(UVSSMessageCallback);
 // SetUVSSCheckInfoCallback: 设置车辆检测信息回调函数
 UVSS_API void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback);
 UVSS_API void SetUVSSCheckInfoCallbackNormal(UVSSCheckInfoCallbackNormal);
+UVSS_API void SetUVSSCheckInfoCallbackNew(UVSSCheckInfoCallbackNew);
 
 // UVSSInitialize: 初始化SDK (仅需调用一次)
 // 返回值: 1: 初始化成功 -1: 出错

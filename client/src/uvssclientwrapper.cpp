@@ -24,6 +24,12 @@ void SetUVSSCheckInfoCallbackNormal(UVSSCheckInfoCallbackNormal checkInfoCallbac
     g_checkInfoCallbackNormal = checkInfoCallbackNormal;
 }
 
+void SetUVSSCheckInfoCallbackNew(UVSSCheckInfoCallbackNew checkInfoCallbackNew)
+{
+    g_type = 2;
+    g_checkInfoCallbackNew = checkInfoCallbackNew;
+}
+
 int UVSSInitialize()
 {
     clientSDK = new UvssClient;
