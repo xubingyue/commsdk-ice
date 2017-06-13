@@ -39,6 +39,7 @@ void WorkQueue::run()
                 }
             }
 
+            // 考虑是否保存为char*[N+1]
             char** filePathsC = new char* [filePathsSize];
             for (int i = 0; i != filePathsSize; ++i) {
                 int szi = filePaths[i].size();

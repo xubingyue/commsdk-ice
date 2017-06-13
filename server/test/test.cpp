@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 //                     const char* const strings[7] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2" };
 //                     const char* const filePaths[2] = { "1.jpg", "2.jpg" };
 //                     SendUVSSCheckInfo(strings, 7, filePaths, 2);
-#if 1
+#if 0
                     SendUVSSCheckInfo(
                         "1.jpg", "2.jpg",
                         "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information");
@@ -55,6 +55,13 @@ int main(int argc, char* argv[])
                     const char* const filePaths[] = { "1.jpg", "2.jpg", NULL };
                     const char* const strings[] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2", NULL };
                     SendUVSSCheckInfoNormal(filePaths, strings);
+#endif
+#if 1
+                const char* filePathsSrc = "1.jpg@2.jpg";
+                const char* delimiters1 = "@";
+                const char* stringsSrc = "Channel 1#ABC1234#In#2016/1/1 13:01:02#extend information#test1#test2";
+                const char* delimiters2 = "#";
+                SendUVSSCheckInfoNew(filePathsSrc, delimiters1, stringsSrc, delimiters2);
 #endif
                 }
                 break;
@@ -86,3 +93,4 @@ void onUvssServerCallback(int type, const char* message)
 {
     std::cout << "callback\n" << type << ", " << message << std::endl;
 }
+

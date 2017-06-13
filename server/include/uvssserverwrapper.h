@@ -31,6 +31,7 @@ UVSS_API void SendUVSSCheckInfo(const char *UVSSImagePath, const char *PlateImag
 // UVSS_API void SendUVSSCheckInfo(const char* const [], int, const char* const [], int);
 UVSS_API void SendUVSSCheckInfoNormal(const char* const filePaths[], const char* const strings[]);
 
+UVSS_API void SendUVSSCheckInfoNew(const char* filePathsSrc, const char* delimiters1, const char* stringsSrc, const char* delimiters2);
 
 
 UVSS_API void UninitUVSSServer();

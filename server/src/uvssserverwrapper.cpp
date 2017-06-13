@@ -1,5 +1,8 @@
 #include <uvssserverwrapper.h>
 
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+
 #include <uvssserver.h>
 #include <version.h>
 #include <global.h>
@@ -63,6 +66,17 @@ void SendUVSSCheckInfoNormal(const char* const filePaths[],
     }
     int stringsSize = j;
     std::vector<std::string> stringsVec(strings, strings + stringsSize);
+
+    uvssServer->sendCheckInfo(stringsVec, filePathsVec);
+}
+
+void SendUVSSCheckInfoNew(const char* filePathsSrc, const char* delimiters1, const char* stringsSrc,
+                          const char* delimiters2)
+{
+    std::vector<std::string> filePathsVec;
+    boost::split(filePathsVec, filePathsSrc, boost::is_any_of(delimiters1), boost::token_compress_on);
+    std::vector<std::string> stringsVec;
+    boost::split(stringsVec, stringsSrc, boost::is_any_of(delimiters2), boost::token_compress_on);
 
     uvssServer->sendCheckInfo(stringsVec, filePathsVec);
 }
