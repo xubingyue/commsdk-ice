@@ -1,7 +1,6 @@
 #include <uvssclientwrapper.h>
 
 #include <uvssclient.h>
-#include <version.h>
 #include <global.h>
 
 UvssClient* clientSDK;
@@ -58,5 +57,5 @@ int UVSSDisconnect(int index)
 
 const char* GetUVSSVersion()
 {
-    return UVSS_VERSION;
+    return Uvss::version.c_str();
 }

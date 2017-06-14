@@ -16,9 +16,8 @@ public:
     void filePathToFile(const std::string&, std::vector<unsigned char>&);
     void sendCheckInfo(const std::vector<std::string>&,
                        const std::vector<std::string>&);
-    const std::string getVersion() const;
-    
-    void shutdown(); // destroy?
+
+    void shutdown();
 
     static void setPort(int);
 
@@ -30,8 +29,7 @@ private:
     std::shared_ptr<PeerProxies> peerProxies_;
     std::shared_ptr<CallbackSenderI> sender_;
 
-    static int port_; // 为兼容旧接口
-    const std::string version_;
+    static int port_; // 为兼容旧C接口，设为static
 };
 
 #endif

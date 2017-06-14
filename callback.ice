@@ -7,6 +7,8 @@ sequence<string> StringSeq;
 sequence<byte> ByteSeq;
 sequence<ByteSeq> ByteSeqSeq;
 
+const string version = "1.0";
+
 exception RequestCanceledException {
 }
 

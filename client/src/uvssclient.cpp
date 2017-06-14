@@ -7,7 +7,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include <callbackreceiveri.h>
-#include <version.h>
 #include <global.h>
 
 UvssClient::UvssClient() :
@@ -74,7 +73,7 @@ int UvssClient::connect(const std::string& ipAddress, int port)
 //         192.168.1.9:20145
 
 //         保留检查对端版本的功能
-        if (!server->checkVersion(UVSS_VERSION)) {
+        if (!server->checkVersion(Uvss::version)) {
             return -3;
         }
 

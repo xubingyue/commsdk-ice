@@ -9,14 +9,12 @@
 #include <boost/lexical_cast.hpp>
 
 #include <callbacksenderi.h>
-#include <version.h>
 
 int UvssServer::port_ = 20145;
 
 UvssServer::UvssServer() :
     peerProxies_(std::make_shared<PeerProxies>()),
-    sender_(std::make_shared<CallbackSenderI>(peerProxies_)),
-        version_(UVSS_VERSION)
+    sender_(std::make_shared<CallbackSenderI>(peerProxies_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -89,11 +87,6 @@ void UvssServer::sendCheckInfo(const std::vector<std::string>& strings,
     }
 
     peerProxies_->sendCheckInfo(strings, fileNames, files);
-}
-
-const std::string UvssServer::getVersion() const
-{
-    return version_;
 }
 
 // 使用时，没有warning?

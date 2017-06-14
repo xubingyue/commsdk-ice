@@ -4,7 +4,6 @@
 #include <boost/algorithm/string/classification.hpp>
 
 #include <uvssserver.h>
-#include <version.h>
 #include <global.h>
 
 UvssServer* uvssServer;
@@ -75,5 +74,5 @@ void SendUVSSCheckInfoEx(const char* stringsSrc, const char* filePathsSrc)
 
 const char* GetUVSSServerVersion()
 {
-    return UVSS_VERSION;
+    return Uvss::version.c_str();
 }
