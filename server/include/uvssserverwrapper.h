@@ -25,8 +25,8 @@ UVSS_API int InitUVSSServer();
 UVSS_API void SendUVSSCheckInfo(const char *UVSSImagePath, const char *PlateImagePath,
         const char *Channel, const char *PlateNumber, const char *Direction,
         const char *CheckDateTime, const char *Extension);
-UVSS_API void SendUVSSCheckInfoNormal(const char* const filePaths[], const char* const strings[]);
-UVSS_API void SendUVSSCheckInfoNew(const char* filePathsSrc, const char* stringsSrc);
+UVSS_API void SendUVSSCheckInfoNormal(const char* const strings[], const char* const filePaths[]);
+UVSS_API void SendUVSSCheckInfoEx(const char* stringsSrc, const char* filePathsSrc);
 
 UVSS_API void UninitUVSSServer();
 

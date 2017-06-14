@@ -48,18 +48,18 @@ int main(int argc, char* argv[])
                         "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information");
 #endif
 
-#if 0
-                    const char* const filePaths[] = { "1.jpg", "2.jpg", NULL };
+#if 1
                     const char* const strings[] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2", NULL };
-                    SendUVSSCheckInfoNormal(filePaths, strings);
+                    const char* const filePaths[] = { "1.jpg", "2.jpg", NULL };
+                    SendUVSSCheckInfoNormal(strings, filePaths);
 #endif
 
-#if 1
-                const char* filePathsSrc = "1.jpg#2.jpg";
-                const char* stringsSrc = "Channel 1#ABC1234#In#2016/1/1 13:01:02#extend information#test1#test2";
-                SendUVSSCheckInfoNew(filePathsSrc, stringsSrc);
-                SendUVSSCheckInfoNew(filePathsSrc, stringsSrc);
-                SendUVSSCheckInfoNew(filePathsSrc, stringsSrc);
+#if 0
+                const char* stringsSrc = "Channel 1|ABC1234|In|2016/1/1 13:01:02|extend information|test1|test2";
+                const char* filePathsSrc = "1.jpg|2.jpg";
+                SendUVSSCheckInfoEx(stringsSrc, filePathsSrc);
+                SendUVSSCheckInfoEx(stringsSrc, filePathsSrc);
+                SendUVSSCheckInfoEx(stringsSrc, filePathsSrc);
 #endif
                 }
                 break;

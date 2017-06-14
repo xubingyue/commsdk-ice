@@ -42,33 +42,33 @@ void SendUVSSCheckInfo(const char* uvssImagePath, const char* plateImagePath,
     SendUVSSCheckInfoNormal(filePaths, strings);
 }
 
-void SendUVSSCheckInfoNormal(const char* const filePaths[],
-                       const char* const strings[])
+void SendUVSSCheckInfoNormal(const char* const strings[],
+                       const char* const filePaths[])
 {
     int i = 0;
-    for (; filePaths[i] != NULL; ++i) {
+    for (; strings[i] != NULL; ++i) {
         
     }
-    int filePathsSize = i;
-    std::vector<std::string> filePathsVec(filePaths, filePaths + filePathsSize);
-
-    int j = 0;
-    for (; strings[j] != NULL; ++j) {
-        
-    }
-    int stringsSize = j;
+    int stringsSize = i;
     std::vector<std::string> stringsVec(strings, strings + stringsSize);
+    
+    int j = 0;
+    for (; filePaths[j] != NULL; ++j) {
+        
+    }
+    int filePathsSize = j;
+    std::vector<std::string> filePathsVec(filePaths, filePaths + filePathsSize);
 
     uvssServer->sendCheckInfo(stringsVec, filePathsVec);
 }
 
-void SendUVSSCheckInfoNew(const char* filePathsSrc, const char* stringsSrc)
+void SendUVSSCheckInfoEx(const char* stringsSrc, const char* filePathsSrc)
 {
-    std::vector<std::string> filePathsVec;
-    boost::split(filePathsVec, filePathsSrc, boost::is_any_of("#"), boost::token_compress_on);
-
     std::vector<std::string> stringsVec;
     stringsVec.push_back(stringsSrc);
+
+    std::vector<std::string> filePathsVec;
+    boost::split(filePathsVec, filePathsSrc, boost::is_any_of("|"), boost::token_compress_on);
 
     uvssServer->sendCheckInfo(stringsVec, filePathsVec);
 }

@@ -69,11 +69,11 @@ void WorkQueue::run()
                 );
             }
             else if (g_type == 1) {
-                g_checkInfoCallbackNormal(connectionId, filePathsC, stringsC);
+                g_checkInfoCallbackNormal(connectionId, stringsC, filePathsC);
             }
             else {
-                std::string filePathsDst = boost::algorithm::join(filePaths, "#");
-                g_checkInfoCallbackNew(connectionId, filePathsDst.c_str(), stringsC[0]);
+                std::string filePathsDst = boost::algorithm::join(filePaths, "|");
+                g_checkInfoCallbackEx(connectionId, stringsC[0], filePathsDst.c_str());
             }
 
             auto& response = std::get<4>(entry);

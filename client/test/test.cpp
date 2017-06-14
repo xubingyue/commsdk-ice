@@ -7,7 +7,7 @@ void menu();
 void onUvssMessageCallback(int, int, const char*);
 void onUvssCheckInfoCallback(int, const char*, const char*, const char*, const char*, const char*, const char*, const char*);
 void onUvssCheckInfoCallbackNormal(int, const char* const [], const char* const []);
-void onUvssCheckInfoCallbackNew(int, const char*, const char*);
+void onUvssCheckInfoCallbackEx(int, const char*, const char*);
 
 int main(int argc, char* argv[])
 {
@@ -23,12 +23,12 @@ int main(int argc, char* argv[])
     SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
 #endif
 
-#if 0
+#if 1
     SetUVSSCheckInfoCallbackNormal(onUvssCheckInfoCallbackNormal);
 #endif
 
-#if 1
-    SetUVSSCheckInfoCallbackNew(onUvssCheckInfoCallbackNew);
+#if 0
+    SetUVSSCheckInfoCallbackEx(onUvssCheckInfoCallbackEx);
 #endif
     
     int key;
@@ -108,20 +108,21 @@ void onUvssCheckInfoCallback(int index,
 }
 
 void onUvssCheckInfoCallbackNormal(int connectionId,
-                             const char* const filePaths[],
-                             const char* const strings[])
+                             const char* const strings[],
+                             const char* const filePaths[])
 {
     std::cout << "\ncallback:\n" << connectionId << std::endl;
 
-    for (int i = 0; filePaths[i] != NULL; ++i) {
-        std::cout << filePaths[i] << std::endl;
-    }
     for (int i = 0; strings[i] != NULL; ++i) {
         std::cout << strings[i] << std::endl;
     }
+    
+    for (int i = 0; filePaths[i] != NULL; ++i) {
+        std::cout << filePaths[i] << std::endl;
+    }
 }
 
-void onUvssCheckInfoCallbackNew(int connectionId, const char* filePathsDst, const char* stringsDst)
+void onUvssCheckInfoCallbackEx(int connectionId, const char* stringsDst, const char* filePathsDst)
 {
-    printf("\ncallback:\n%d\n%s\n%s\n", connectionId, filePathsDst, stringsDst);
+    printf("\ncallback:\n%d\n%s\n%s\n", connectionId, stringsDst, filePathsDst);
 }

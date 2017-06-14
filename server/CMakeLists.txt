@@ -59,10 +59,10 @@ set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp ${PROJECT_SOURCE_DIR}/src/c
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSServer SHARED ${SOURCES})
-target_link_libraries(UVSSServer Ice++11 pthread boost_filesystem)
+target_link_libraries(UVSSServer Ice++11 pthread boost_filesystem boost_date_time)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 add_executable(server ${PROJECT_SOURCE_DIR}/test/test.cpp)
-target_link_libraries(server UVSSServer Ice++11 pthread boost_filesystem)
+target_link_libraries(server UVSSServer Ice++11 pthread boost_filesystem boost_date_time)
 
 ENDIF ()

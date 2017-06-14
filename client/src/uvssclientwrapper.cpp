@@ -24,10 +24,10 @@ void SetUVSSCheckInfoCallbackNormal(UVSSCheckInfoCallbackNormal checkInfoCallbac
     g_checkInfoCallbackNormal = checkInfoCallbackNormal;
 }
 
-void SetUVSSCheckInfoCallbackNew(UVSSCheckInfoCallbackNew checkInfoCallbackNew)
+void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx checkInfoCallbackEx)
 {
     g_type = 2;
-    g_checkInfoCallbackNew = checkInfoCallbackNew;
+    g_checkInfoCallbackEx = checkInfoCallbackEx;
 }
 
 int UVSSInitialize()

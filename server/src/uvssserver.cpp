@@ -4,16 +4,19 @@
 #include <ctime>
 #include <iomanip>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <callbacksenderi.h>
+#include <version.h>
 
 int UvssServer::port_ = 20145;
 
 UvssServer::UvssServer() :
     peerProxies_(std::make_shared<PeerProxies>()),
-    sender_(std::make_shared<CallbackSenderI>(peerProxies_))
+    sender_(std::make_shared<CallbackSenderI>(peerProxies_)),
+        version_(UVSS_VERSION)
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -63,30 +66,11 @@ void UvssServer::filePathToFile(const std::string& filePath,
     ifs.read((char*)&file[0], fileSize);
 }
 
-const std::string UvssServer::createCurrentTime()
-{
-    auto now = std::chrono::system_clock::now();
-
-    std::time_t timer = std::chrono::system_clock::to_time_t(now);
-    std::tm timeInfo = *std::localtime(&timer);
-
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-                  now.time_since_epoch());
-    auto s = std::chrono::duration_cast<std::chrono::seconds>(
-                 now.time_since_epoch());
-    auto msPart = ms - s;
-
-    std::stringstream currentTime;
-    currentTime << std::put_time(&timeInfo, "%Y%m%d%H%M%S")
-                << std::setw(3) << std::setfill('0') << msPart.count();
-
-    return currentTime.str();
-}
-
 void UvssServer::sendCheckInfo(const std::vector<std::string>& strings,
                                const std::vector<std::string>& filePaths)
 {
-    std::string time = createCurrentTime();
+    std::string time = boost::posix_time::to_iso_string(
+        boost::posix_time::microsec_clock::local_time());
 
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char>> files;
@@ -105,6 +89,11 @@ void UvssServer::sendCheckInfo(const std::vector<std::string>& strings,
     }
 
     peerProxies_->sendCheckInfo(strings, fileNames, files);
+}
+
+const std::string UvssServer::getVersion() const
+{
+    return version_;
 }
 
 // 使用时，没有warning?
