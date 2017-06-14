@@ -24,15 +24,14 @@ UvssServer::UvssServer() :
     Ice::InitializationData initData;
     initData.properties = props;
 
-    ic_ = Ice::initialize(initData);
-    adapter_ = ic_->createObjectAdapterWithEndpoints("UvssServerAdapter",
+    ich_ = Ice::initialize(initData);
+    adapter_ = ich_->createObjectAdapterWithEndpoints("UvssServerAdapter",
         "tcp -p " + boost::lexical_cast<std::string>(port_));
     ident_ = Ice::stringToIdentity("UvssServer");
 }
 
 UvssServer::~UvssServer()
 {
-    ic_->destroy();
     peerProxies_->join();
 }
 
@@ -93,7 +92,7 @@ void UvssServer::sendCheckInfo(const std::vector<std::string>& strings,
 void UvssServer::shutdown()
 {
     peerProxies_->destroy();
-    ic_->shutdown();
+    ich_->shutdown();
 }
 
 void UvssServer::setPort(int port)

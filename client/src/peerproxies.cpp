@@ -59,8 +59,8 @@ void PeerProxies::run()
                     auto server = p.first;
                     std::string endpoint = p.second;
                     int connectionId = endpointConnectionIdMap_[endpoint];
-                    std::string message("服务器端 " + endpoint + ": " +
-                                        "已断开 | 连接标识: " + boost::lexical_cast<std::string>(connectionId));
+                    std::string message("Server " + endpoint + ": " +
+                                        "Disconnected | Connection Id: " + boost::lexical_cast<std::string>(connectionId));
 
                     std::unique_lock<std::mutex> lock(mutex_);
                     serverEndpointMap_.erase(server);

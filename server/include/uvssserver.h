@@ -22,7 +22,7 @@ public:
     static void setPort(int);
 
 private:
-    Ice::CommunicatorPtr ic_; // Ice::CommunicatorHolder ic_;
+    Ice::CommunicatorHolder ich_;
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 

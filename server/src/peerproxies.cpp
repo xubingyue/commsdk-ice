@@ -50,7 +50,7 @@ void PeerProxies::run()
 //                     正确做法
                     auto client = p.first;
                     std::string endpoint = p.second;
-                    std::string message("客户端 " + endpoint + ": 已断开");
+                    std::string message("Client " + endpoint + ": Disconnected");
 
                     std::unique_lock<std::mutex> lock(mutex_); // 保证删除和回调通知一致
                     clientEndpointMap_.erase(client);
@@ -76,7 +76,7 @@ void PeerProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& client, 
     std::unique_lock<std::mutex> lock(mutex_);
 
     clientEndpointMap_[client] = endpoint;
-    std::string message("客户端 " + endpoint + ": 已连接");
+    std::string message("Client " + endpoint + ": Connected");
     g_connectionCallback(0, message.c_str());
 }
 

@@ -21,7 +21,7 @@ public:
     void shutdown();
 
 private:
-    Ice::CommunicatorPtr ic_;
+    Ice::CommunicatorHolder ich_;
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
