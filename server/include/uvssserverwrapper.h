@@ -3,30 +3,29 @@
 
 #ifdef _WIN32
 #   ifdef UVSS_EXPORTS
-#       define UVSS_API _declspec(dllexport)
+#      define UVSS_API _declspec(dllexport)
 #   else
-#       define UVSS_API _declspec(dllimport)
+#      define UVSS_API _declspec(dllimport)
 #   endif
 #else
 #   define UVSS_API
 #endif
 
-typedef void(*UVSSServerCallback)(int messageType, const char* message);
+typedef void(*UVSSServerCallback)(int, const char*);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+UVSS_API const char* GetUVSSServerVersion();
 UVSS_API void SetUVSSServerCallback(UVSSServerCallback);
 UVSS_API void SetUVSSServerPort(int);
-UVSS_API const char* GetUVSSServerVersion();
+
 UVSS_API int InitUVSSServer();
 
-UVSS_API void SendUVSSCheckInfo(const char *UVSSImagePath, const char *PlateImagePath,
-        const char *Channel, const char *PlateNumber, const char *Direction,
-        const char *CheckDateTime, const char *Extension);
-UVSS_API void SendUVSSCheckInfoNormal(const char* const strings[], const char* const filePaths[]);
-UVSS_API void SendUVSSCheckInfoEx(const char* stringsSrc, const char* filePathsSrc);
+UVSS_API void SendUVSSCheckInfo(const char*, const char*, const char*, const char*, const char*, const char*, const char*);
+UVSS_API void SendUVSSCheckInfoCore(const char* const*, const char* const*);
+UVSS_API void SendUVSSCheckInfoEx(const char*, const char*);
 
 UVSS_API void UninitUVSSServer();
 

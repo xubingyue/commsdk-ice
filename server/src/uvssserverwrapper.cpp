@@ -1,21 +1,26 @@
 #include <uvssserverwrapper.h>
 
-#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 
-#include <uvssserver.h>
 #include <global.h>
+#include <uvssserver.h>
 
 UvssServer* uvssServer;
 
-void SetUVSSServerCallback(UVSSServerCallback connectionCallback)
+const char* GetUVSSServerVersion()
 {
-    g_connectionCallback = connectionCallback;
+    return Uvss::version.c_str();
+}
+
+void SetUVSSServerCallback(UVSSServerCallback uvssServerCallback)
+{
+    g_connectionCallback = uvssServerCallback;
 }
 
 void SetUVSSServerPort(int port)
 {
-    uvssServer->setPort(port);
+    UvssServer::setPort(port);
 }
 
 int InitUVSSServer()
@@ -24,55 +29,50 @@ int InitUVSSServer()
     return uvssServer->start();
 }
 
+void SendUVSSCheckInfo(const char* uvssImagePathC, const char* plateImagePathC,
+                       const char* channelC, const char* plateNumberC,
+                       const char* directionC, const char* dateTimeC,
+                       const char* extensionC)
+{
+    const char* const stringsC[] = { channelC, plateNumberC, directionC,
+        dateTimeC, extensionC, NULL };
+    const char* const filePathsC[] = { uvssImagePathC, plateImagePathC, NULL };
+    SendUVSSCheckInfoCore(stringsC, filePathsC);
+}
+
+void SendUVSSCheckInfoCore(const char* const* stringsC,
+                           const char* const* filePathsC)
+{
+    int i = 0;
+    for (; stringsC[i] != NULL; ++i) {
+    }
+    int stringsSize = i;
+    std::vector<std::string> strings(stringsC, stringsC + stringsSize);
+
+    int j = 0;
+    for (; filePathsC[j] != NULL; ++j) {
+    }
+    int filePathsSize = j;
+    std::vector<std::string> filePaths(filePathsC, filePathsC + filePathsSize);
+
+    uvssServer->sendCheckInfo(strings, filePaths);
+}
+
+void SendUVSSCheckInfoEx(const char* concatedStringC,
+                         const char* concatedFilePathC)
+{
+    std::vector<std::string> strings;
+    strings.push_back(std::string(concatedStringC));
+
+    std::vector<std::string> filePaths;
+    boost::split(filePaths, concatedFilePathC, boost::is_any_of("|"),
+                 boost::token_compress_on);
+
+    uvssServer->sendCheckInfo(strings, filePaths);
+}
+
 void UninitUVSSServer()
 {
     uvssServer->shutdown();
     delete uvssServer;
-
-//     g_connectionCallback = 0;
-}
-
-void SendUVSSCheckInfo(const char* uvssImagePath, const char* plateImagePath,
-        const char* channel, const char* plateNumber, const char* direction,
-        const char* time, const char* extension)
-{
-    const char* const filePaths[] = { uvssImagePath, plateImagePath, NULL };
-    const char* const strings[] = { channel, plateNumber, direction, time, extension, NULL };
-    SendUVSSCheckInfoNormal(filePaths, strings);
-}
-
-void SendUVSSCheckInfoNormal(const char* const strings[],
-                       const char* const filePaths[])
-{
-    int i = 0;
-    for (; strings[i] != NULL; ++i) {
-        
-    }
-    int stringsSize = i;
-    std::vector<std::string> stringsVec(strings, strings + stringsSize);
-    
-    int j = 0;
-    for (; filePaths[j] != NULL; ++j) {
-        
-    }
-    int filePathsSize = j;
-    std::vector<std::string> filePathsVec(filePaths, filePaths + filePathsSize);
-
-    uvssServer->sendCheckInfo(stringsVec, filePathsVec);
-}
-
-void SendUVSSCheckInfoEx(const char* stringsSrc, const char* filePathsSrc)
-{
-    std::vector<std::string> stringsVec;
-    stringsVec.push_back(stringsSrc);
-
-    std::vector<std::string> filePathsVec;
-    boost::split(filePathsVec, filePathsSrc, boost::is_any_of("|"), boost::token_compress_on);
-
-    uvssServer->sendCheckInfo(stringsVec, filePathsVec);
-}
-
-const char* GetUVSSServerVersion()
-{
-    return Uvss::version.c_str();
 }

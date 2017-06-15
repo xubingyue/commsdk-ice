@@ -41,27 +41,27 @@ int main(int argc, char* argv[])
                 UninitUVSSServer();
                 break;
             case 3:
+#if 0
+                SendUVSSCheckInfo("1.jpg", "2.jpg", "Channel 1", "ABC1234",
+                                  "In", "2016/1/1 13:01:02", "old");
+#endif
+#if 0
                 {
-#if 0
-                    SendUVSSCheckInfo(
-                        "1.jpg", "2.jpg",
-                        "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information");
-#endif
-
-#if 1
-                    const char* const strings[] = { "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "extend information", "test1", "test2", NULL };
-                    const char* const filePaths[] = { "1.jpg", "2.jpg", NULL };
-                    SendUVSSCheckInfoNormal(strings, filePaths);
-#endif
-
-#if 0
-                const char* stringsSrc = "Channel 1|ABC1234|In|2016/1/1 13:01:02|extend information|test1|test2";
-                const char* filePathsSrc = "1.jpg|2.jpg";
-                SendUVSSCheckInfoEx(stringsSrc, filePathsSrc);
-                SendUVSSCheckInfoEx(stringsSrc, filePathsSrc);
-                SendUVSSCheckInfoEx(stringsSrc, filePathsSrc);
-#endif
+                    const char* const stringsC[] = { "Channel 1", "ABC1234",
+                                                        "In", "2016/1/1 13:01:02", "core", NULL
+                                                    };
+                    const char* const filePathsC[] = { "1.jpg", "2.jpg", NULL };
+                    SendUVSSCheckInfoCore(stringsC, filePathsC);
                 }
+#endif
+#if 1
+                {
+                    const char* concatedStringC = "Channel 1|ABC1234|In|2016/1/"
+                                                "1 13:01:02|ex";
+                    const char* concatedFilePathC = "1.jpg|2.jpg";
+                    SendUVSSCheckInfoEx(concatedStringC, concatedFilePathC);
+                }
+#endif
                 break;
             case 9:
                 break;
@@ -77,18 +77,19 @@ int main(int argc, char* argv[])
 
 void menu()
 {
-    std::cout << "Server Version: " << GetUVSSServerVersion() << std::endl;
-    std::cout << "Usage:\n"
-                "0: help\n"
-                "1: set port\n"
-                "2: init\n"
-                "-2: uninit\n"
-                "3: send CheckInfo\n"
-                "9: exit\n";
+    std::cout << "Server Version: " << GetUVSSServerVersion() << "\n"
+                 "Usage:\n"
+                 "0:help\n"
+                 "1: set port\n"
+                 "2: init\n"
+                 "-2: uninit\n"
+                 "3: send checkinfo\n"
+                 "9: exit\n";
 }
 
-void onUvssServerCallback(int type, const char* message)
+void onUvssServerCallback(int code, const char* message)
 {
-    std::cout << "callback\n" << type << ", " << message << std::endl;
+    std::cout << "\nCallback:\n"
+                 "code: " << code << "\n"
+                 "message: " << message << "\n";
 }
-

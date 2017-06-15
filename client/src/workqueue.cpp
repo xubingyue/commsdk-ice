@@ -69,7 +69,7 @@ void WorkQueue::run()
                 );
             }
             else if (g_type == 1) {
-                g_checkInfoCallbackNormal(connectionId, stringsC, filePathsC);
+                g_checkInfoCallbackCore(connectionId, stringsC, filePathsC);
             }
             else {
                 std::string filePathsDst = boost::algorithm::join(filePaths, "|");

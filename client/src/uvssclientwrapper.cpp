@@ -5,28 +5,33 @@
 
 UvssClient* clientSDK;
 
-void SetUVSSMessageCallback(UVSSMessageCallback cb)
+const char* GetUVSSVersion()
 {
-    g_initializationCallback = cb;
-    g_connectionCallback = cb;
+    return Uvss::version.c_str();
 }
 
-void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback checkInfoCallback)
+void SetUVSSMessageCallback(UVSSMessageCallback uvssMessageCallback)
+{
+    g_initializationCallback = uvssMessageCallback;
+    g_connectionCallback = uvssMessageCallback;
+}
+
+void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback uvssCheckInfoCallback)
 {
     g_type = 0;
-    g_checkInfoCallback = checkInfoCallback;
+    g_checkInfoCallback = uvssCheckInfoCallback;
 }
 
-void SetUVSSCheckInfoCallbackNormal(UVSSCheckInfoCallbackNormal checkInfoCallbackNormal)
+void SetUVSSCheckInfoCallbackCore(UVSSCheckInfoCallbackCore uvssCheckInfoCallbackCore)
 {
     g_type = 1;
-    g_checkInfoCallbackNormal = checkInfoCallbackNormal;
+    g_checkInfoCallbackCore = uvssCheckInfoCallbackCore;
 }
 
-void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx checkInfoCallbackEx)
+void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx uvssCheckInfoCallbackEx)
 {
     g_type = 2;
-    g_checkInfoCallbackEx = checkInfoCallbackEx;
+    g_checkInfoCallbackEx = uvssCheckInfoCallbackEx;
 }
 
 int UVSSInitialize()
@@ -35,27 +40,18 @@ int UVSSInitialize()
     return clientSDK->start();
 }
 
+int UVSSConnect(const char* ipAddress, int port)
+{
+    return clientSDK->connect(ipAddress, port);
+}
+
+int UVSSDisconnect(int connectionId)
+{
+    return clientSDK->disconnect(connectionId);
+}
+
 void UVSSUninitialize()
 {
     clientSDK->shutdown();
     delete clientSDK;
-
-//     g_initializationCallback = 0;
-//     g_connectionCallback = 0;
-//     g_checkInfoCallback = 0;
-}
-
-int UVSSConnect(const char* iPAddress, int port)
-{
-    return clientSDK->connect(iPAddress, port);
-}
-
-int UVSSDisconnect(int index)
-{
-    return clientSDK->disconnect(index);
-}
-
-const char* GetUVSSVersion()
-{
-    return Uvss::version.c_str();
 }

@@ -10,7 +10,7 @@ IF (WIN32)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_compile_options(-DICE_CPP11_MAPPING -DUVSS_COMM_EXPORTS)
+add_compile_options(-DICE_CPP11_MAPPING -DUVSS_EXPORTS)
 
 include_directories("${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}" "D:\\Ice-3.7b0\\ice\\cpp\\include" "D:\\Ice-3.7b0\\ice\\cpp\\include\\generated\\cpp11\\x64\\Debug"
 "C:\\local\\boost_1_63_0")
