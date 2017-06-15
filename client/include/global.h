@@ -13,7 +13,6 @@ typedef UVSSCheckInfoCallbackEx CheckInfoCallbackEx;
 extern InitializationCallback g_initializationCallback;
 extern ConnectionCallback g_connectionCallback;
 
-extern int g_type;
 extern CheckInfoCallback g_checkInfoCallback;
 extern CheckInfoCallbackCore g_checkInfoCallbackCore;
 extern CheckInfoCallbackEx g_checkInfoCallbackEx;

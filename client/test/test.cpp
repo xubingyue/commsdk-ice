@@ -21,10 +21,10 @@ int main(int argc, char* argv[])
 
     menu();
     SetUVSSMessageCallback(onUvssMessageCallback);
-#if 0
+#if 1
     SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
 #endif
-#if 0
+#if 1
     SetUVSSCheckInfoCallbackCore(onUvssCheckInfoCallbackCore);
 #endif
 #if 1

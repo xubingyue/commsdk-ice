@@ -18,19 +18,16 @@ void SetUVSSMessageCallback(UVSSMessageCallback uvssMessageCallback)
 
 void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback uvssCheckInfoCallback)
 {
-    g_type = 0;
     g_checkInfoCallback = uvssCheckInfoCallback;
 }
 
 void SetUVSSCheckInfoCallbackCore(UVSSCheckInfoCallbackCore uvssCheckInfoCallbackCore)
 {
-    g_type = 1;
     g_checkInfoCallbackCore = uvssCheckInfoCallbackCore;
 }
 
 void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx uvssCheckInfoCallbackEx)
 {
-    g_type = 2;
     g_checkInfoCallbackEx = uvssCheckInfoCallbackEx;
 }
 

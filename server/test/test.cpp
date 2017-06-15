@@ -41,15 +41,14 @@ int main(int argc, char* argv[])
                 UninitUVSSServer();
                 break;
             case 3:
-#if 0
+#if 1
                 SendUVSSCheckInfo("1.jpg", "2.jpg", "Channel 1", "ABC1234",
                                   "In", "2016/1/1 13:01:02", "old");
 #endif
-#if 0
+#if 1
                 {
                     const char* const stringsC[] = { "Channel 1", "ABC1234",
-                                                        "In", "2016/1/1 13:01:02", "core", NULL
-                                                    };
+                        "In", "2016/1/1 13:01:02", "core", "", NULL};
                     const char* const filePathsC[] = { "1.jpg", "2.jpg", NULL };
                     SendUVSSCheckInfoCore(stringsC, filePathsC);
                 }
