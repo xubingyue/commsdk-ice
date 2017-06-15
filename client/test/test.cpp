@@ -8,7 +8,6 @@ void onUvssMessageCallback(int, int, const char*);
 void onUvssCheckInfoCallback(int, const char*, const char*, const char*,
                              const char*, const char*, const char*,
                              const char*);
-void onUvssCheckInfoCallbackCore(int, const char* const*, const char* const*);
 void onUvssCheckInfoCallbackEx(int, const char*, const char*);
 
 int main(int argc, char* argv[])
@@ -23,9 +22,6 @@ int main(int argc, char* argv[])
     SetUVSSMessageCallback(onUvssMessageCallback);
 #if 1
     SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
-#endif
-#if 1
-    SetUVSSCheckInfoCallbackCore(onUvssCheckInfoCallbackCore);
 #endif
 #if 1
     SetUVSSCheckInfoCallbackEx(onUvssCheckInfoCallbackEx);
@@ -114,21 +110,6 @@ void onUvssCheckInfoCallback(int connectionId, const char* uvssImagePath,
                  "direction: " << direction << "\n"
                  "dateTime: " << dateTime << "\n"
                  "extension: " << extension << "\n";
-}
-
-void onUvssCheckInfoCallbackCore(int connectionId, const char* const* strings,
-                                 const char* const* filePaths)
-{
-    std::cout << "\nCallback:\n"
-                 "connectionId: " << connectionId << "\n";
-
-    for (int i = 0; strings[i] != NULL; ++i) {
-        std::cout << "strings[" << i << "]: " << strings[i] << "\n";
-    }
-
-    for (int i = 0; filePaths[i] != NULL; ++i) {
-        std::cout << "filePaths[" << i << "]: " << filePaths[i] << "\n";
-    }
 }
 
 void onUvssCheckInfoCallbackEx(int connectionId, const char* concatedString, const char* concatedFilePath)

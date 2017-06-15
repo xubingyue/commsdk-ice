@@ -62,7 +62,7 @@ void WorkQueue::run()
 
             int& connectionId = std::get<3>(entry);
 
-            if (stringsSize == 5) {
+            if (stringsSize == 5 && filePathsSize == 2) {
                 g_checkInfoCallback(connectionId,
                     filePathsC[0], filePathsC[1],
                     stringsC[0], stringsC[1], stringsC[2], stringsC[3], stringsC[4]
@@ -72,8 +72,7 @@ void WorkQueue::run()
                 std::string filePathsDst = boost::algorithm::join(filePaths, "|");
                 g_checkInfoCallbackEx(connectionId, stringsC[0], filePathsDst.c_str());
             }
-            else { // wrong!
-                g_checkInfoCallbackCore(connectionId, stringsC, filePathsC);
+            else {
             }
 
             auto& response = std::get<4>(entry);

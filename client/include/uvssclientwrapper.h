@@ -41,10 +41,6 @@ typedef void(*UVSSCheckInfoCallback)(int connectionId,
                                      const char* dateTime,
                                      const char* extension);
 
-typedef void(*UVSSCheckInfoCallbackCore)(int connectionId,
-                                           const char* const* strings,
-                                           const char* const* filePaths);
-
 typedef void(*UVSSCheckInfoCallbackEx)(int connectionId,
                                        const char* concatedString,
                                        const char* concatedFilePath);
@@ -63,8 +59,7 @@ UVSS_API void SetUVSSMessageCallback(UVSSMessageCallback uvssMessageCallback);
 // SetUVSSCheckInfoCallback: 设置车辆检测信息回调函数
 UVSS_API void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback
                                        uvssCheckInfoCallback);
-UVSS_API void SetUVSSCheckInfoCallbackCore(UVSSCheckInfoCallbackCore
-                                           uvssCheckInfoCallbackCore);
+
 UVSS_API void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx
                                          uvssCheckInfoCallbackEx);
 

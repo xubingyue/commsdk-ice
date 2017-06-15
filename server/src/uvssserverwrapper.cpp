@@ -29,31 +29,21 @@ int InitUVSSServer()
     return uvssServer->start();
 }
 
-void SendUVSSCheckInfo(const char* uvssImagePathC, const char* plateImagePathC,
-                       const char* channelC, const char* plateNumberC,
-                       const char* directionC, const char* dateTimeC,
-                       const char* extensionC)
+void SendUVSSCheckInfo(const char* uvssImagePath, const char* plateImagePath,
+                       const char* channel, const char* plateNumber,
+                       const char* direction, const char* dateTime,
+                       const char* extension)
 {
-    const char* const stringsC[] = { channelC, plateNumberC, directionC,
-        dateTimeC, extensionC, NULL };
-    const char* const filePathsC[] = { uvssImagePathC, plateImagePathC, NULL };
-    SendUVSSCheckInfoCore(stringsC, filePathsC);
-}
+    std::vector<std::string> strings;
+    strings.push_back(channel);
+    strings.push_back(plateNumber);
+    strings.push_back(direction);
+    strings.push_back(dateTime);
+    strings.push_back(extension);
 
-void SendUVSSCheckInfoCore(const char* const* stringsC,
-                           const char* const* filePathsC)
-{
-    int i = 0;
-    for (; stringsC[i] != NULL; ++i) {
-    }
-    int stringsSize = i;
-    std::vector<std::string> strings(stringsC, stringsC + stringsSize);
-
-    int j = 0;
-    for (; filePathsC[j] != NULL; ++j) {
-    }
-    int filePathsSize = j;
-    std::vector<std::string> filePaths(filePathsC, filePathsC + filePathsSize);
+    std::vector<std::string> filePaths;
+    filePaths.push_back(uvssImagePath);
+    filePaths.push_back(plateImagePath);
 
     uvssServer->sendCheckInfo(strings, filePaths);
 }

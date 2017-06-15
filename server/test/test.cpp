@@ -47,14 +47,6 @@ int main(int argc, char* argv[])
 #endif
 #if 1
                 {
-                    const char* const stringsC[] = { "Channel 1", "ABC1234",
-                        "In", "2016/1/1 13:01:02", "core", "", NULL};
-                    const char* const filePathsC[] = { "1.jpg", "2.jpg", NULL };
-                    SendUVSSCheckInfoCore(stringsC, filePathsC);
-                }
-#endif
-#if 1
-                {
                     const char* concatedStringC = "Channel 1|ABC1234|In|2016/1/"
                                                 "1 13:01:02|ex";
                     const char* concatedFilePathC = "1.jpg|2.jpg";

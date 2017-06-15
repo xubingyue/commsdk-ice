@@ -21,11 +21,6 @@ void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback uvssCheckInfoCallback)
     g_checkInfoCallback = uvssCheckInfoCallback;
 }
 
-void SetUVSSCheckInfoCallbackCore(UVSSCheckInfoCallbackCore uvssCheckInfoCallbackCore)
-{
-    g_checkInfoCallbackCore = uvssCheckInfoCallbackCore;
-}
-
 void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx uvssCheckInfoCallbackEx)
 {
     g_checkInfoCallbackEx = uvssCheckInfoCallbackEx;
