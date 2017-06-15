@@ -1,8 +1,5 @@
 #include <uvssserverwrapper.h>
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-
 #include <global.h>
 #include <uvssserver.h>
 
@@ -34,31 +31,17 @@ void SendUVSSCheckInfo(const char* uvssImagePath, const char* plateImagePath,
                        const char* direction, const char* dateTime,
                        const char* extension)
 {
-    std::vector<std::string> strings;
-    strings.push_back(channel);
-    strings.push_back(plateNumber);
-    strings.push_back(direction);
-    strings.push_back(dateTime);
-    strings.push_back(extension);
-
-    std::vector<std::string> filePaths;
-    filePaths.push_back(uvssImagePath);
-    filePaths.push_back(plateImagePath);
-
-    uvssServer->sendCheckInfo(strings, filePaths);
+    uvssServer->sendCheckInfo(std::string(uvssImagePath),
+                              std::string(plateImagePath), std::string(channel),
+                              std::string(plateNumber), std::string(direction),
+                              std::string(dateTime), std::string(extension));
 }
 
-void SendUVSSCheckInfoEx(const char* concatedStringC,
-                         const char* concatedFilePathC)
+void SendUVSSCheckInfoEx(const char* concatedString,
+                         const char* concatedFilePath)
 {
-    std::vector<std::string> strings;
-    strings.push_back(std::string(concatedStringC));
-
-    std::vector<std::string> filePaths;
-    boost::split(filePaths, concatedFilePathC, boost::is_any_of("|"),
-                 boost::token_compress_on);
-
-    uvssServer->sendCheckInfo(strings, filePaths);
+    uvssServer->sendCheckInfo(std::string(concatedString),
+                              std::string(concatedFilePath));
 }
 
 void UninitUVSSServer()

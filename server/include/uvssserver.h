@@ -13,9 +13,11 @@ public:
 
     int start();
 
-    void filePathToFile(const std::string&, std::vector<unsigned char>&);
-    void sendCheckInfo(const std::vector<std::string>&,
-                       const std::vector<std::string>&);
+    void sendCheckInfo(const std::string&, const std::string&,
+                       const std::string&, const std::string&,
+                       const std::string&, const std::string&,
+                       const std::string&);
+    void sendCheckInfo(const std::string&, const std::string&);
 
     void shutdown();
 
@@ -30,6 +32,8 @@ private:
     std::shared_ptr<CallbackSenderI> sender_;
 
     static int port_; // 为兼容旧C接口，设为static
+
+    void filePathToFile(const std::string&, std::vector<unsigned char>&);
 };
 
 #endif

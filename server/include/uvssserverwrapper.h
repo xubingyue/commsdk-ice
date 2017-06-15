@@ -23,7 +23,9 @@ UVSS_API void SetUVSSServerPort(int);
 
 UVSS_API int InitUVSSServer();
 
-UVSS_API void SendUVSSCheckInfo(const char*, const char*, const char*, const char*, const char*, const char*, const char*);
+UVSS_API void SendUVSSCheckInfo(const char*, const char*, const char*,
+                                const char*, const char*, const char*,
+                                const char*);
 UVSS_API void SendUVSSCheckInfoEx(const char*, const char*);
 
 UVSS_API void UninitUVSSServer();
