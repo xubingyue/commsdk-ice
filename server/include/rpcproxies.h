@@ -7,28 +7,31 @@
 #include <thread>
 
 #include <callback.h>
-#include <uvssserverwrapper.h>
 
-class RpcProxies
-{
+class RpcProxies {
 public:
     RpcProxies();
+
     void run();
     void start();
-    void add(const std::shared_ptr<Uvss::CallbackReceiverPrx>&, const std::string&);
+
+    void add(const std::shared_ptr<Uvss::CallbackReceiverPrx>&,
+             const std::string&);
     void sendCheckInfo(const std::vector<std::string>&,
                        const std::vector<std::string>&,
                        const std::vector<std::vector<unsigned char>>&);
+
     void destroy();
     void join();
 
 private:
-    std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>, std::string> clientEndpointMap_;
+    std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>, std::string>
+        proxyEndpointMap_;
     bool destroy_;
 
     std::mutex mutex_;
     std::condition_variable cv_;
-    std::thread senderThread_;
+    std::thread heartbeatThread_;
 };
 
 #endif // RPCPROXIES_H

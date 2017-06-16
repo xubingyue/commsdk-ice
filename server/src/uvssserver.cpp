@@ -1,22 +1,25 @@
 #include <uvssserver.h>
 
-#include <chrono>
-#include <ctime>
-#include <iomanip>
-
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include <Ice/Ice.h>
 
+#include <rpcproxies.h>
 #include <callbacksenderi.h>
 
 int UvssServer::port_ = 20145;
 
+void UvssServer::setPort(int port)
+{
+    port_ = port;
+}
+
 UvssServer::UvssServer() :
-    rpcProxies_(std::make_shared<RpcProxies>()),
-    sender_(std::make_shared<CallbackSenderI>(rpcProxies_))
+    proxies_(std::make_shared<RpcProxies>()),
+    servant_(std::make_shared<CallbackSenderI>(proxies_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -32,17 +35,12 @@ UvssServer::UvssServer() :
     ident_ = Ice::stringToIdentity("UvssServer");
 }
 
-UvssServer::~UvssServer()
-{
-    rpcProxies_->join();
-}
-
 int UvssServer::start()
 {
     try {
-        adapter_->add(sender_, ident_);
+        adapter_->add(servant_, ident_);
         adapter_->activate();
-        rpcProxies_->start(); // 启动心跳线程
+        proxies_->start(); // 启动心跳线程
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -50,19 +48,6 @@ int UvssServer::start()
     }
 
     return 0;
-}
-
-void UvssServer::filePathToFile(const std::string& filePath,
-                                std::vector<unsigned char>& file)
-{
-    std::ifstream ifs(filePath, std::ios::binary);
-
-    ifs.seekg(0, std::ios::end);
-    std::streampos fileSize = ifs.tellg();
-    file.resize(fileSize);
-
-    ifs.seekg(0, std::ios::beg);
-    ifs.read((char*)&file[0], fileSize);
 }
 
 void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
@@ -81,7 +66,7 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
     strings.push_back(extension);
 
     std::string time = boost::posix_time::to_iso_string(
-                           boost::posix_time::microsec_clock::local_time());
+        boost::posix_time::microsec_clock::local_time());
 
     std::string uvssImageName;
     std::vector<unsigned char> uvssImage;
@@ -101,56 +86,76 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
 
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char>> files;
-
     fileNames.push_back(uvssImageName);
     fileNames.push_back(plateImageName);
     files.push_back(uvssImage);
     files.push_back(plateImage);
 
-    rpcProxies_->sendCheckInfo(strings, fileNames, files);
+    proxies_->sendCheckInfo(strings, fileNames, files);
 }
 
 void UvssServer::sendCheckInfo(const std::string& concatedString,
                                const std::string& concatedFilePath)
 {
     std::vector<std::string> strings;
-    strings.push_back(std::string(concatedString));
+    strings.push_back(concatedString);
 
     std::vector<std::string> filePaths;
     const char* concatedFilePathC = concatedFilePath.c_str();
     boost::split(filePaths, concatedFilePathC, boost::is_any_of("|"),
                  boost::token_compress_on);
 
-    std::string time = boost::posix_time::to_iso_string(
-        boost::posix_time::microsec_clock::local_time());
-
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char>> files;
+    filePathsToFileNamesAndFiles(filePaths, fileNames, files);
+
+    proxies_->sendCheckInfo(strings, fileNames, files);
+}
+
+// 使用时，没有warning?
+void UvssServer::shutdown()
+{
+    proxies_->destroy();
+    ich_->shutdown();
+}
+
+UvssServer::~UvssServer()
+{
+    proxies_->join();
+}
+
+void UvssServer::filePathToFile(const std::string& filePath,
+                                std::vector<unsigned char>& file)
+{
+    std::ifstream ifs(filePath, std::ios::binary);
+
+    ifs.seekg(0, std::ios::end);
+    std::streampos fileSize = ifs.tellg();
+    file.resize(fileSize);
+
+    ifs.seekg(0, std::ios::beg);
+    ifs.read((char*)&file[0], fileSize);
+}
+
+void UvssServer::filePathsToFileNamesAndFiles(
+    const std::vector<std::string>& filePaths,
+    std::vector<std::string>& fileNames,
+    std::vector<std::vector<unsigned char>>& files)
+{
+    std::string time = boost::posix_time::to_iso_string(
+                           boost::posix_time::microsec_clock::local_time());
+
     for (int i = 0; i != filePaths.size(); ++i) {
         std::string fileName;
         std::vector<unsigned char> file;
-
         boost::filesystem::path filePath(filePaths[i]);
         if (boost::filesystem::exists(filePath)) {
-            fileName = time + "[" + boost::lexical_cast<std::string>(i) + "]_" + filePath.filename().string();
+            fileName = time + "[" + boost::lexical_cast<std::string>(i) + "]_" +
+                       filePath.filename().string();
             filePathToFile(filePaths[i], file);
         }
 
         fileNames.push_back(fileName);
         files.push_back(file);
     }
-
-    rpcProxies_->sendCheckInfo(strings, fileNames, files);
-}
-
-// 使用时，没有warning?
-void UvssServer::shutdown()
-{
-    rpcProxies_->destroy();
-    ich_->shutdown();
-}
-
-void UvssServer::setPort(int port)
-{
-    port_ = port;
 }

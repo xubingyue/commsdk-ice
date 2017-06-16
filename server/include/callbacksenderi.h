@@ -12,7 +12,7 @@ public:
     virtual bool checkVersion(std::string, const Ice::Current&) override;
 
 private:
-    std::shared_ptr<RpcProxies> rpcProxies_;
+    std::shared_ptr<RpcProxies> proxies_;
 };
 
 #endif

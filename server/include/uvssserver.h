@@ -8,9 +8,9 @@
 
 class UvssServer {
 public:
-    UvssServer();
-    ~UvssServer();
+    static void setPort(int);
 
+    UvssServer();
     int start();
 
     void sendCheckInfo(const std::string&, const std::string&,
@@ -20,20 +20,23 @@ public:
     void sendCheckInfo(const std::string&, const std::string&);
 
     void shutdown();
-
-    static void setPort(int);
+    ~UvssServer();
 
 private:
     Ice::CommunicatorHolder ich_;
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
-    std::shared_ptr<RpcProxies> rpcProxies_;
-    std::shared_ptr<CallbackSenderI> sender_;
+    // 为兼容旧C接口（init函数中调用C++构造函数和start，init前可以setPort），此处port设为static（比设为全局变量好点）
+    static int port_;
 
-    static int port_; // 为兼容旧C接口，设为static
+    std::shared_ptr<RpcProxies> proxies_;
+    std::shared_ptr<CallbackSenderI> servant_;
 
     void filePathToFile(const std::string&, std::vector<unsigned char>&);
+    void filePathsToFileNamesAndFiles(const std::vector<std::string>&,
+                                      std::vector<std::string>&,
+                                      std::vector<std::vector<unsigned char>>&);
 };
 
 #endif

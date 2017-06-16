@@ -9,8 +9,7 @@
 #include <callback.h>
 #include <uvssclientwrapper.h>
 
-class RpcProxies
-{
+class RpcProxies {
 public:
     RpcProxies();
     void run();
