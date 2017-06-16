@@ -3,7 +3,7 @@
 
 #include <Ice/Ice.h>
 
-#include <peerproxies.h>
+#include <rpcproxies.h>
 #include <workqueue.h>
 #include <callbackreceiveri.h>
 #include <uvssclientwrapper.h>
@@ -25,7 +25,7 @@ private:
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
-    std::shared_ptr<PeerProxies> peerProxies_;
+    std::shared_ptr<RpcProxies> rpcProxies_;
     std::shared_ptr<WorkQueue> workQueue_;
     std::shared_ptr<CallbackReceiverI> client_;
 };

@@ -1,15 +1,15 @@
-#include <peerproxies.h>
+#include <rpcproxies.h>
 
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
 #include <global.h>
 
-PeerProxies::PeerProxies() : destroy_(false)
+RpcProxies::RpcProxies() : destroy_(false)
 {
 }
 
-void PeerProxies::run()
+void RpcProxies::run()
 {
     while (true) {
         std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>, std::string> clientEndpointMap;
@@ -61,7 +61,7 @@ void PeerProxies::run()
     }
 }
 
-void PeerProxies::start()
+void RpcProxies::start()
 {
     std::thread t([this]()
     {
@@ -70,8 +70,8 @@ void PeerProxies::start()
     senderThread_ = std::move(t);
 }
 
-// void PeerProxies::add(const Ice::Identity& ident, const Ice::Current& current)
-void PeerProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& client, const std::string& endpoint)
+// void RpcProxies::add(const Ice::Identity& ident, const Ice::Current& current)
+void RpcProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& client, const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -80,7 +80,7 @@ void PeerProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& client, 
     g_connectionCallback(0, message.c_str());
 }
 
-void PeerProxies::sendCheckInfo(
+void RpcProxies::sendCheckInfo(
     const std::vector<std::string>& strings,
     const std::vector<std::string>& fileNames,
     const std::vector<std::vector<unsigned char>>& files)
@@ -112,14 +112,14 @@ void PeerProxies::sendCheckInfo(
     }
 }
 
-void PeerProxies::destroy()
+void RpcProxies::destroy()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     destroy_ = true;
     cv_.notify_one();
 }
 
-void PeerProxies::join()
+void RpcProxies::join()
 {
     if(senderThread_.joinable()) {
         senderThread_.join();

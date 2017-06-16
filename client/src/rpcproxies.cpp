@@ -1,15 +1,15 @@
-#include <peerproxies.h>
+#include <rpcproxies.h>
 
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
 #include <global.h>
 
-PeerProxies::PeerProxies() : connectionId_(0), destroy_(false)
+RpcProxies::RpcProxies() : connectionId_(0), destroy_(false)
 {
 }
 
-void PeerProxies::run()
+void RpcProxies::run()
 {
     while (true) {
         std::map<std::shared_ptr<Uvss::CallbackSenderPrx>, std::string> serverEndpointMap;
@@ -72,7 +72,7 @@ void PeerProxies::run()
     }
 }
 
-void PeerProxies::start()
+void RpcProxies::start()
 {
     std::thread t([this]() 
     {
@@ -82,7 +82,7 @@ void PeerProxies::start()
 }
 
 // 连接成功后 add!
-int PeerProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& server, const std::string& endpoint)
+int RpcProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& server, const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -93,7 +93,7 @@ int PeerProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& server, con
 }
 
 // 断开连接后 findAndRemove!
-bool PeerProxies::findAndRemove(int connectionId, std::string& endpoint, std::shared_ptr<Uvss::CallbackSenderPrx>& server)
+bool RpcProxies::findAndRemove(int connectionId, std::string& endpoint, std::shared_ptr<Uvss::CallbackSenderPrx>& server)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -115,7 +115,7 @@ bool PeerProxies::findAndRemove(int connectionId, std::string& endpoint, std::sh
     return false; // 没有此连接
 }
 
-bool PeerProxies::isRepeated(const std::string& endpoint)
+bool RpcProxies::isRepeated(const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     for (auto p : serverEndpointMap_) {
@@ -126,20 +126,20 @@ bool PeerProxies::isRepeated(const std::string& endpoint)
     return false;
 }
 
-int PeerProxies::serverConnectionId(const std::string& endpoint)
+int RpcProxies::serverConnectionId(const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     return endpointConnectionIdMap_[endpoint];
 }
 
-void PeerProxies::destroy()
+void RpcProxies::destroy()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     destroy_ = true;
     cv_.notify_one();
 }
 
-void PeerProxies::join()
+void RpcProxies::join()
 {
     if (senderThread_.joinable()) {
         senderThread_.join();

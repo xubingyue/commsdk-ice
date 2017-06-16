@@ -2,12 +2,12 @@
 #define CALLBACKRECEIVERI_H
 
 #include <callback.h>
-#include <peerproxies.h>
+#include <rpcproxies.h>
 #include <workqueue.h>
 
 class CallbackReceiverI : public virtual Uvss::CallbackReceiver {
 public:
-    CallbackReceiverI(const std::shared_ptr<PeerProxies>&, const std::shared_ptr<WorkQueue>&);
+    CallbackReceiverI(const std::shared_ptr<RpcProxies>&, const std::shared_ptr<WorkQueue>&);
 
     virtual void sendDataAsync(
         std::vector<std::string>,
@@ -18,7 +18,7 @@ public:
         const Ice::Current&) override;
 
 private:
-    std::shared_ptr<PeerProxies> peerProxies_;
+    std::shared_ptr<RpcProxies> rpcProxies_;
     std::shared_ptr<WorkQueue> workQueue_;
 };
 

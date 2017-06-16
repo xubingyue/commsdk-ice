@@ -3,9 +3,9 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-CallbackReceiverI::CallbackReceiverI(const std::shared_ptr<PeerProxies>& peerProxies,
+CallbackReceiverI::CallbackReceiverI(const std::shared_ptr<RpcProxies>& rpcProxies,
                                      const std::shared_ptr<WorkQueue>& workQueue) :
-    peerProxies_(peerProxies), workQueue_(workQueue)
+    rpcProxies_(rpcProxies), workQueue_(workQueue)
 {
 }
 
@@ -24,7 +24,7 @@ void CallbackReceiverI::sendDataAsync(
     Ice::TCPConnectionInfoPtr tcpInfo = std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
     std::string endpoint = tcpInfo->remoteAddress + ":" + boost::lexical_cast<std::string>(tcpInfo->remotePort);
 //             std::cout << endpoint << std::endl;
-    int connectionId = peerProxies_->serverConnectionId(endpoint);
+    int connectionId = rpcProxies_->serverConnectionId(endpoint);
 
     workQueue_->add(strings, fileNames, files, connectionId,
                     std::move(response), std::move(error));

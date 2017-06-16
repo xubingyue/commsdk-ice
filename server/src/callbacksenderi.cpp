@@ -3,8 +3,8 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-CallbackSenderI::CallbackSenderI(const std::shared_ptr<PeerProxies>& peerProxies) :
-    peerProxies_(peerProxies)
+CallbackSenderI::CallbackSenderI(const std::shared_ptr<RpcProxies>& rpcProxies) :
+    rpcProxies_(rpcProxies)
 {
 }
 
@@ -27,7 +27,7 @@ void CallbackSenderI::addClient(Ice::Identity ident, const Ice::Current& current
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
                            boost::lexical_cast<std::string>(tcpInfo->remotePort); // 去掉开头的::ffff:
 
-    peerProxies_->add(client, endpoint);
+    rpcProxies_->add(client, endpoint);
 }
 
 bool CallbackSenderI::checkVersion(std::string version, const Ice::Current& /*current*/)

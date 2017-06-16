@@ -10,9 +10,9 @@
 #include <global.h>
 
 UvssClient::UvssClient() :
-    peerProxies_(std::make_shared<PeerProxies>()),
+    rpcProxies_(std::make_shared<RpcProxies>()),
     workQueue_(std::make_shared<WorkQueue>()),
-    client_(std::make_shared<CallbackReceiverI>(peerProxies_, workQueue_))
+    client_(std::make_shared<CallbackReceiverI>(rpcProxies_, workQueue_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -30,7 +30,7 @@ UvssClient::UvssClient() :
 
 UvssClient::~UvssClient()
 {
-    peerProxies_->join();
+    rpcProxies_->join();
     workQueue_->join();
 }
 
@@ -39,7 +39,7 @@ int UvssClient::start()
     try {
         adapter_->add(client_, ident_);
         adapter_->activate();
-        peerProxies_->start(); // 启动心跳线程
+        rpcProxies_->start(); // 启动心跳线程
         workQueue_->start(); // AMD
     }
     catch (const std::exception& e) {
@@ -55,7 +55,7 @@ int UvssClient::connect(const std::string& ipAddress, int port)
 {
     try {
         std::string endpoint(ipAddress + ":" + boost::lexical_cast<std::string>(port));
-        if (peerProxies_->isRepeated(endpoint)) {
+        if (rpcProxies_->isRepeated(endpoint)) {
             return -2;
         }
 
@@ -79,7 +79,7 @@ int UvssClient::connect(const std::string& ipAddress, int port)
         server->ice_getConnection()->setAdapter(adapter_);
         server->addClient(ident_);
 
-        int connectionId = peerProxies_->add(server, endpoint);
+        int connectionId = rpcProxies_->add(server, endpoint);
 
         std::string message("Server " + endpoint + ": " + "Connected | Connection Id: " + boost::lexical_cast<std::string>(connectionId));
         g_connectionCallback(connectionId, 1, message.c_str());
@@ -98,7 +98,7 @@ int UvssClient::disconnect(int connectionId)
 {
     std::string endpoint;
     std::shared_ptr<Uvss::CallbackSenderPrx> server;
-    bool ok = peerProxies_->findAndRemove(connectionId, endpoint, server);
+    bool ok = rpcProxies_->findAndRemove(connectionId, endpoint, server);
     if (ok) {
 //         移除要断开的server代理，无论发生在心跳线程中的servers副本拷贝前或后，心跳都不会检测到连接错误，不会有server断开的通知
 //         所以只能在此处通知，不能依靠心跳线程，这里断开通知仅和移除有关
@@ -118,7 +118,7 @@ int UvssClient::disconnect(int connectionId)
 
 void UvssClient::shutdown()
 {
-    peerProxies_->destroy();
+    rpcProxies_->destroy();
     workQueue_->destroy();
     ich_->shutdown();
 }

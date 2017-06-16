@@ -3,7 +3,7 @@
 
 #include <Ice/Ice.h>
 
-#include <peerproxies.h>
+#include <rpcproxies.h>
 #include <callbacksenderi.h>
 
 class UvssServer {
@@ -28,7 +28,7 @@ private:
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
-    std::shared_ptr<PeerProxies> peerProxies_;
+    std::shared_ptr<RpcProxies> rpcProxies_;
     std::shared_ptr<CallbackSenderI> sender_;
 
     static int port_; // 为兼容旧C接口，设为static

@@ -1,5 +1,5 @@
-#ifndef PEERPROXIES_H
-#define PEERPROXIES_H
+#ifndef RPCPROXIES_H
+#define RPCPROXIES_H
 
 #include <condition_variable>
 #include <map>
@@ -9,10 +9,10 @@
 #include <callback.h>
 #include <uvssclientwrapper.h>
 
-class PeerProxies
+class RpcProxies
 {
 public:
-    PeerProxies();
+    RpcProxies();
     void run();
     void start();
     int add(const std::shared_ptr<Uvss::CallbackSenderPrx>&, const std::string&);
@@ -34,4 +34,4 @@ private:
     std::thread senderThread_;
 };
 
-#endif // PEERPROXIES_H
+#endif // RPCPROXIES_H

@@ -15,8 +15,8 @@
 int UvssServer::port_ = 20145;
 
 UvssServer::UvssServer() :
-    peerProxies_(std::make_shared<PeerProxies>()),
-    sender_(std::make_shared<CallbackSenderI>(peerProxies_))
+    rpcProxies_(std::make_shared<RpcProxies>()),
+    sender_(std::make_shared<CallbackSenderI>(rpcProxies_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -34,7 +34,7 @@ UvssServer::UvssServer() :
 
 UvssServer::~UvssServer()
 {
-    peerProxies_->join();
+    rpcProxies_->join();
 }
 
 int UvssServer::start()
@@ -42,7 +42,7 @@ int UvssServer::start()
     try {
         adapter_->add(sender_, ident_);
         adapter_->activate();
-        peerProxies_->start(); // 启动心跳线程
+        rpcProxies_->start(); // 启动心跳线程
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -107,7 +107,7 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
     files.push_back(uvssImage);
     files.push_back(plateImage);
 
-    peerProxies_->sendCheckInfo(strings, fileNames, files);
+    rpcProxies_->sendCheckInfo(strings, fileNames, files);
 }
 
 void UvssServer::sendCheckInfo(const std::string& concatedString,
@@ -140,13 +140,13 @@ void UvssServer::sendCheckInfo(const std::string& concatedString,
         files.push_back(file);
     }
 
-    peerProxies_->sendCheckInfo(strings, fileNames, files);
+    rpcProxies_->sendCheckInfo(strings, fileNames, files);
 }
 
 // 使用时，没有warning?
 void UvssServer::shutdown()
 {
-    peerProxies_->destroy();
+    rpcProxies_->destroy();
     ich_->shutdown();
 }
 
