@@ -12,8 +12,8 @@ class RpcProxies {
 public:
     RpcProxies();
 
-    void run();
-    void start();
+    void runHeartbeat();
+    void startHeartbeat();
 
     void add(const std::shared_ptr<Uvss::CallbackReceiverPrx>&,
              const std::string&);
@@ -21,8 +21,8 @@ public:
                        const std::vector<std::string>&,
                        const std::vector<std::vector<unsigned char>>&);
 
-    void destroy();
-    void join();
+    void destroyHeartbeat();
+    void joinHeartbeat();
 
 private:
     std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>, std::string>

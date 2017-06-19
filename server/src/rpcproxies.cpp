@@ -8,7 +8,7 @@ RpcProxies::RpcProxies() : destroy_(false)
 {
 }
 
-void RpcProxies::run()
+void RpcProxies::runHeartbeat()
 {
     while (true) {
         std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>,
@@ -66,11 +66,11 @@ void RpcProxies::run()
     }
 }
 
-void RpcProxies::start()
+void RpcProxies::startHeartbeat()
 {
     std::thread t([this]()
     {
-        run();
+        runHeartbeat();
     });
     heartbeatThread_ = std::move(t);
 }
@@ -119,14 +119,14 @@ void RpcProxies::sendCheckInfo(
     }
 }
 
-void RpcProxies::destroy()
+void RpcProxies::destroyHeartbeat()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     destroy_ = true;
     condition_.notify_one();
 }
 
-void RpcProxies::join()
+void RpcProxies::joinHeartbeat()
 {
     if(heartbeatThread_.joinable()) {
         heartbeatThread_.join();

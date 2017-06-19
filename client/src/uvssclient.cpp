@@ -28,7 +28,7 @@ int UvssClient::start()
     try {
         adapter_->add(servant_, ident_);
         adapter_->activate();
-        proxies_->start(); // 启动心跳线程
+        proxies_->startHeartbeat();
         workQueue_->start(); // AMD
     }
     catch (const std::exception& e) {
@@ -112,13 +112,13 @@ int UvssClient::disconnect(int connectionId)
 
 void UvssClient::shutdown()
 {
-    proxies_->destroy();
+    proxies_->destroyHeartbeat();
     workQueue_->destroy();
     ich_->shutdown();
 }
 
 UvssClient::~UvssClient()
 {
-    proxies_->join();
+    proxies_->joinHeartbeat();
     workQueue_->join();
 }

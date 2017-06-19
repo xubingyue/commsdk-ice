@@ -12,16 +12,16 @@ class RpcProxies {
 public:
     RpcProxies();
 
-    void run();
-    void start();
+    void runHeartbeat();
+    void startHeartbeat();
 
     int add(const std::shared_ptr<Uvss::CallbackSenderPrx>&, const std::string&);
     bool remove(int, std::string&, std::shared_ptr<Uvss::CallbackSenderPrx>&);
     bool has(const std::string&);
     int connectionId(const std::string&);
 
-    void destroy();
-    void join();
+    void destroyHeartbeat();
+    void joinHeartbeat();
 
 private:
     std::map<std::shared_ptr<Uvss::CallbackSenderPrx>, std::string>

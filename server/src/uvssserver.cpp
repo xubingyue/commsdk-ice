@@ -37,7 +37,7 @@ int UvssServer::start()
     try {
         adapter_->add(servant_, ident_);
         adapter_->activate();
-        proxies_->start(); // 启动心跳线程
+        proxies_->startHeartbeat(); // 启动心跳线程
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -112,13 +112,13 @@ void UvssServer::sendCheckInfo(const std::string& concatedString,
 // 使用时，没有warning?
 void UvssServer::shutdown()
 {
-    proxies_->destroy();
+    proxies_->destroyHeartbeat();
     ich_->shutdown();
 }
 
 UvssServer::~UvssServer()
 {
-    proxies_->join();
+    proxies_->joinHeartbeat();
 }
 
 void UvssServer::filePathToFile(const std::string& filePath,
