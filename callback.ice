@@ -21,6 +21,6 @@ interface CallbackReceiver {
 
 interface CallbackSender {
     bool checkVersion(string version);
-    void addClient(Ice::Identity ident);
+    void addProxy(Ice::Identity ident);
 }
 }

@@ -8,7 +8,7 @@ CallbackSenderI::CallbackSenderI(const std::shared_ptr<RpcProxies>& proxies) :
 {
 }
 
-void CallbackSenderI::addClient(Ice::Identity ident,
+void CallbackSenderI::addProxy(Ice::Identity ident,
                                 const Ice::Current& current)
 {
     auto proxy = Ice::uncheckedCast<Uvss::CallbackReceiverPrx>(

@@ -1,7 +1,7 @@
 #include <uvssclientwrapper.h>
 
-#include <uvssclient.h>
 #include <global.h>
+#include <uvssclient.h>
 
 UvssClient* clientSDK;
 

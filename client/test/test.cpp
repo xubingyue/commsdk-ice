@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
                 break;
             case 2:
                 {
-                    std::cout << "server IP:" << std::endl;
+                    std::cout << "server ip:" << std::endl;
                     std::string ip;
                     std::cin >> ip;
 
@@ -78,8 +78,8 @@ int main(int argc, char* argv[])
 
 void menu()
 {
-    std::cout << "Client Version: " << GetUVSSVersion() << "\n"
-                 "Usage:\n"
+    std::cout << "client version: " << GetUVSSVersion() << "\n"
+                 "usage:\n"
                  "0: help\n"
                  "1: init\n"
                  "-1: uninit\n"
@@ -90,7 +90,7 @@ void menu()
 
 void onUvssMessageCallback(int connectionId, int code, const char* message)
 {
-    std::cout << "\nCallback:\n"
+    std::cout << "\ncallback:\n"
                  "connectionId: " << connectionId << "\n"
                  "code: " << code << "\n"
                  "message: " << message << "\n";
@@ -101,7 +101,7 @@ void onUvssCheckInfoCallback(int connectionId, const char* uvssImagePath,
                              const char* plateNumber, const char* direction,
                              const char* dateTime, const char* extension)
 {
-    std::cout << "\nCallback:\n"
+    std::cout << "\ncallback:\n"
                  "connectionId: " << connectionId << "\n"
                  "uvssImagePath: " << uvssImagePath << "\n"
                  "plateImagePath: " << plateImagePath << "\n"
@@ -114,7 +114,7 @@ void onUvssCheckInfoCallback(int connectionId, const char* uvssImagePath,
 
 void onUvssCheckInfoCallbackEx(int connectionId, const char* concatedString, const char* concatedFilePath)
 {
-    std::cout << "\nCallback:\n"
+    std::cout << "\ncallback:\n"
                  "connectionId: " << connectionId << "\n"
                  "concatedString: " << concatedString << "\n"
                  "concatedFilePath: " << concatedFilePath << "\n";

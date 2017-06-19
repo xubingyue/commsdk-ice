@@ -10,6 +10,7 @@ int main(int argc, char* argv[])
 {
     if (argc > 1) {
         std::cerr << argv[0] << ": too many arguments" << std::endl;
+
         return EXIT_FAILURE;
     }
 
@@ -47,10 +48,10 @@ int main(int argc, char* argv[])
 #endif
 #if 1
                 {
-                    const char* concatedStringC = "Channel 1|ABC1234|In|2016/1/"
-                                                "1 13:01:02|ex";
-                    const char* concatedFilePathC = "1.jpg|2.jpg";
-                    SendUVSSCheckInfoEx(concatedStringC, concatedFilePathC);
+                    const char* concatedString =
+                        "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
+                    const char* concatedFilePath = "1.jpg|2.jpg";
+                    SendUVSSCheckInfoEx(concatedString, concatedFilePath);
                 }
 #endif
                 break;
@@ -68,19 +69,19 @@ int main(int argc, char* argv[])
 
 void menu()
 {
-    std::cout << "Server Version: " << GetUVSSServerVersion() << "\n"
-                 "Usage:\n"
+    std::cout << "server version: " << GetUVSSServerVersion() << "\n"
+                 "usage:\n"
                  "0:help\n"
                  "1: set port\n"
                  "2: init\n"
                  "-2: uninit\n"
-                 "3: send checkinfo\n"
+                 "3: send checkInfo\n"
                  "9: exit\n";
 }
 
 void onUvssServerCallback(int code, const char* message)
 {
-    std::cout << "\nCallback:\n"
+    std::cout << "\ncallback:\n"
                  "code: " << code << "\n"
                  "message: " << message << "\n";
 }

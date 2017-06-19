@@ -7,9 +7,6 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-#include <rpcproxies.h>
-#include <callbacksenderi.h>
-
 int UvssServer::port_ = 20145;
 
 void UvssServer::setPort(int port)

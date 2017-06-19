@@ -1,12 +1,12 @@
 #include <workqueue.h>
 
-#include <boost/filesystem.hpp>
-#include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/filesystem.hpp>
 
 #include <global.h>
 
-WorkQueue::WorkQueue() : done_(false)
+WorkQueue::WorkQueue() : destroy_(false)
 {
 }
 
@@ -14,63 +14,39 @@ void WorkQueue::run()
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
-    while (!done_) {
+    while (!destroy_) {
         if (callbacks_.empty()) {
 //             可能被add或destroy处唤醒
-//             被唤醒后，进入下一轮while循环，
-//             如果是被destroy唤醒的，done_== true，while条件不成立，跳出循环
+//             被唤醒后，进入下一轮while循环
+//             如果是被destroy唤醒的，destroy_ == true，while条件不成立，跳出循环
 //             如果是被add唤醒的，callbacks_.empty() == false，if条件不成立，进入else分支
             condition_.wait(lock);
         }
         else {
-            CallbackEntry& entry = callbacks_.front(); // &?
+            CallbackEntry& entry = callbacks_.front();
 
-            createFileDirectory("UVSS");
-            boost::filesystem::path currentPath = boost::filesystem::current_path();
-            std::string imagePath = currentPath.string() + "/UVSS/";
+            auto& connectionId = std::get<0>(entry);
+            auto& strings = std::get<1>(entry);
+            auto& fileNames = std::get<2>(entry);
+            auto& files = std::get<3>(entry);
 
-            auto& filePaths = std::get<1>(entry);
-            auto& files = std::get<2>(entry);
-            int filePathsSize = filePaths.size();
+            auto& filePaths = fileNames;
+            fileNamesAndFilesTofilePaths(fileNames, files, "UVSS", filePaths);
 
-            for (int i = 0; i != filePathsSize; ++i) {
-                if (!filePaths[i].empty()) {
-                    filePaths[i] = imagePath + filePaths[i];
-                    std::ofstream ofs(filePaths[i], std::ios::binary);
-                    ofs.write((char*)&files[i][0], files[i].size());
-                }
+            if (strings.size() == 5 && filePaths.size() == 2) {
+                g_checkInfoCallback(
+                    connectionId,
+                    filePaths[0].c_str(), filePaths[1].c_str(),
+                    strings[0].c_str(), strings[1].c_str(), strings[2].c_str(),
+                    strings[3].c_str(), strings[4].c_str());
             }
-
-            char** filePathsC = new char* [filePathsSize + 1];
-            for (int i = 0; i != filePathsSize; ++i) {
-                int szi = filePaths[i].size();
-                filePathsC[i] = new char[szi + 1];
-                strcpy(filePathsC[i], filePaths[i].c_str());
-            }
-            filePathsC[filePathsSize] = NULL;
-
-            auto& strings = std::get<0>(entry);
-            int stringsSize = strings.size();
-
-            char** stringsC = new char*[stringsSize + 1];
-            for (int i = 0; i != stringsSize; ++i) {
-                int szi = strings[i].size();
-                stringsC[i] = new char[szi + 1];
-                strcpy(stringsC[i], strings[i].c_str());
-            }
-            stringsC[stringsSize] = NULL;
-
-            int& connectionId = std::get<3>(entry);
-
-            if (stringsSize == 5 && filePathsSize == 2) {
-                g_checkInfoCallback(connectionId,
-                    filePathsC[0], filePathsC[1],
-                    stringsC[0], stringsC[1], stringsC[2], stringsC[3], stringsC[4]
-                );
-            }
-            else if (stringsSize == 1){
-                std::string filePathsDst = boost::algorithm::join(filePaths, "|");
-                g_checkInfoCallbackEx(connectionId, stringsC[0], filePathsDst.c_str());
+            else if (strings.size() == 1){
+                std::string concatedFilePath =
+                    boost::algorithm::join(filePaths, "|");
+                g_checkInfoCallbackEx(
+                    connectionId,
+                    strings[0].c_str(),
+                    concatedFilePath.c_str());
             }
             else {
             }
@@ -78,20 +54,6 @@ void WorkQueue::run()
             auto& response = std::get<4>(entry);
             response();
             callbacks_.pop_front();
-
-            for (int i = 0; i != filePathsSize + 1; ++i) {
-                delete[] filePathsC[i];
-                filePathsC[i] = 0;
-            }
-            delete[] filePathsC;
-            filePathsC = 0;
-
-            for (int i = 0; i != stringsSize + 1; ++i) {
-                delete[] stringsC[i];
-                stringsC[i] = 0;
-            }
-            delete[] stringsC;
-            stringsC = 0;
         }
     }
 
@@ -112,29 +74,26 @@ void WorkQueue::start()
     {
         run();
     });
-    thread_ = std::move(t);
+    workthread_ = std::move(t);
 }
 
 void WorkQueue::add(
+    int index,
     const std::vector<std::string>& strings,
     const std::vector<std::string>& fileNames,
     const std::vector<std::vector<unsigned char>>& files,
-    int index,
     std::function<void ()> response,
     std::function<void (std::exception_ptr)> error)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
-//     destroy后仍然有可能执行add
-//     所以要判断if _done
-    if (!done_) {
+    if (!destroy_) { // destroy后仍然有可能执行add 所以要判断if destroy_
         if (callbacks_.size() == 0) {
             condition_.notify_one();
         }
-        callbacks_.push_back(make_tuple(std::move(strings),
+        callbacks_.push_back(make_tuple(index,std::move(strings),
                                         std::move(fileNames),
                                         std::move(files),
-                                        index,
                                         std::move(response),
                                         std::move(error)));
     }
@@ -148,29 +107,44 @@ void WorkQueue::add(
     }
 }
 
-void WorkQueue::createFileDirectory(const std::string& fileDirectory)
-{
-    boost::filesystem::path dir(fileDirectory);
-
-    if (boost::filesystem::exists(dir)) {
-        return;
-    }
-    else {
-        boost::filesystem::create_directory(dir);
-    }
-}
-
 void WorkQueue::destroy()
 {
     std::unique_lock<std::mutex> lock(mutex_);
-
-    done_ = true;
+    destroy_ = true;
     condition_.notify_one();
 }
 
 void WorkQueue::join()
 {
-    if (thread_.joinable()) {
-        thread_.join();
+    if (workthread_.joinable()) {
+        workthread_.join();
+    }
+}
+
+std::string WorkQueue::fileDirectory(const std::string& folder)
+{
+    boost::filesystem::path dir(folder);
+    if (!boost::filesystem::exists(dir)) {
+        boost::filesystem::create_directory(dir);
+    }
+    boost::filesystem::path currentPath = boost::filesystem::current_path();
+    std::string fileDir = currentPath.string() + "/" + folder;
+    return fileDir;
+}
+
+void WorkQueue::fileNamesAndFilesTofilePaths(
+    std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char>>& files,
+    const std::string& folder,
+    std::vector<std::string>& filePaths)
+{
+    std::string fileDir = fileDirectory(folder);
+
+    for (int i = 0; i != fileNames.size(); ++i) {
+        if (!fileNames[i].empty()) {
+            filePaths[i] = fileDir + "/" + fileNames[i];
+            std::ofstream ofs(filePaths[i], std::ios::binary);
+            ofs.write((char*)&files[i][0], files[i].size());
+        }
     }
 }

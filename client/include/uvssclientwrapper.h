@@ -12,8 +12,8 @@
 #endif
 
 // UVSSMessageCallback: 调试信息回调函数定义
-// connectionId: 连接标识 (由Connect返回, 用来对于服务器建立的连接进行标识)
-// 注: 在没有对应连接时 (如SDK初始化失败或连接UVSS服务器失败时), 值为-1
+// connectionId: 连接标识 (由UVSSConnect返回, 用来标识与服务器建立的连接)
+// 注: 在没有对应连接时 (SDK初始化失败或连接UVSS服务器失败), 值为-1
 // code: 信息编号
 // 1: 连接成功 (UVSSConnect)
 // -1: 初始化错误 (UVSSInitialize)
@@ -24,7 +24,7 @@ typedef void(*UVSSMessageCallback)(int connectionId, int code,
                                    const char* message);
 
 // UVSSCheckInfoCallback: 车辆检查信息回调函数定义
-// connectionId: 连接标识 (由Connect返回, 用来对于服务器建立的连接进行标识)
+// connectionId: 连接标识 (由UVSSConnect返回, 用来标识与服务器建立的连接)
 // uvssImagePath: 车底图像路径
 // plateImagePath: 车牌图像路径
 // channel: 车检通道信息
@@ -41,6 +41,10 @@ typedef void(*UVSSCheckInfoCallback)(int connectionId,
                                      const char* dateTime,
                                      const char* extension);
 
+// UVSSCheckInfoCallbackEx: 车辆检查信息回调Ex函数定义
+// connectionId: 连接标识 (由UVSSConnect返回, 用来标识与服务器建立的连接)
+// concatedString: 任意字符串
+// concatedFilePath: 任意数量的文件路径连接成的字符串，各个路径间用“|”分隔
 typedef void(*UVSSCheckInfoCallbackEx)(int connectionId,
                                        const char* concatedString,
                                        const char* concatedFilePath);
@@ -56,10 +60,11 @@ UVSS_API const char* GetUVSSVersion();
 // SetUVSSMessageCallback: 设置调试信息回调函数
 UVSS_API void SetUVSSMessageCallback(UVSSMessageCallback uvssMessageCallback);
 
-// SetUVSSCheckInfoCallback: 设置车辆检测信息回调函数
+// SetUVSSCheckInfoCallback: 设置车辆检查信息回调函数
 UVSS_API void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback
                                        uvssCheckInfoCallback);
 
+// SetUVSSCheckInfoCallback: 设置车辆检查信息回调Ex函数
 UVSS_API void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx
                                          uvssCheckInfoCallbackEx);
 
@@ -77,8 +82,8 @@ UVSS_API int UVSSInitialize();
 // 与服务器版本号不一致: -3 (不进行连接)
 UVSS_API int UVSSConnect(const char* ipAddress, int port);
 
-// UVSSDisconnect: 与服务器断开连接
-// connectionId: 连接标识 (由Connect返回, 用来对于服务器建立的连接进行标识)
+// UVSSDisconnect: 与UVSS服务器断开连接
+// connectionId: 连接标识 (由UVSSConnect返回, 用来标识与服务器建立的连接)
 // 返回值: 1: 成功, -1: 无指定connectionId对应的连接
 UVSS_API int UVSSDisconnect(int connectionId);
 

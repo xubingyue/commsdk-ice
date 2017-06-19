@@ -11,10 +11,11 @@ RpcProxies::RpcProxies() : destroy_(false)
 void RpcProxies::run()
 {
     while (true) {
-        std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>, std::string> proxyEndpointMap;
+        std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>,
+            std::string> proxyEndpointMap;
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            cv_.wait_for(lock, std::chrono::seconds(2));
+            condition_.wait_for(lock, std::chrono::seconds(2));
 
             if (destroy_) {
                 return;
@@ -51,7 +52,8 @@ void RpcProxies::run()
 //                     正确做法
                     auto proxy = p.first;
                     std::string endpoint = p.second;
-                    std::string message("Client " + endpoint + ": Disconnected");
+                    std::string message("Client " + endpoint +
+                        ": Disconnected");
 
                     std::unique_lock<std::mutex> lock(mutex_); // 保证删除和回调通知一致
                     proxyEndpointMap_.erase(proxy);
@@ -101,7 +103,8 @@ void RpcProxies::sendCheckInfo(
                     std::rethrow_exception(e);
                 }
                 catch (const std::exception& ex) {
-                    std::cerr << "sayHello AMI call failed:\n" << ex.what() << std::endl;
+                    std::cerr << "sayHello AMI call failed:\n" <<
+                        ex.what() << std::endl;
                 }
             });
         }
@@ -120,7 +123,7 @@ void RpcProxies::destroy()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     destroy_ = true;
-    cv_.notify_one();
+    condition_.notify_one();
 }
 
 void RpcProxies::join()

@@ -3,9 +3,10 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
-CallbackReceiverI::CallbackReceiverI(const std::shared_ptr<RpcProxies>& rpcProxies,
-                                     const std::shared_ptr<WorkQueue>& workQueue) :
-    rpcProxies_(rpcProxies), workQueue_(workQueue)
+CallbackReceiverI::CallbackReceiverI(
+    const std::shared_ptr<RpcProxies>& proxies,
+    const std::shared_ptr<WorkQueue>& workQueue) :
+    proxies_(proxies), workQueue_(workQueue)
 {
 }
 
@@ -17,15 +18,17 @@ void CallbackReceiverI::sendDataAsync(
     std::function<void(std::exception_ptr)> error,
     const Ice::Current& current)
 {
-//             简化endpoint形式？使用正则表达式？
-//             std::cout << current.con->getEndpoint()->toString() << std::endl;
-//             tcp -h 127.0.0.1 -p 20145 -t 60000
+//     简化endpoint形式？使用正则表达式？
+//     std::cout << current.con->getEndpoint()->toString() << std::endl;
+//     tcp -h 127.0.0.1 -p 20145 -t 60000
     Ice::ConnectionInfoPtr info = current.con->getInfo();
-    Ice::TCPConnectionInfoPtr tcpInfo = std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
-    std::string endpoint = tcpInfo->remoteAddress + ":" + boost::lexical_cast<std::string>(tcpInfo->remotePort);
-//             std::cout << endpoint << std::endl;
-    int connectionId = rpcProxies_->serverConnectionId(endpoint);
+    Ice::TCPConnectionInfoPtr tcpInfo =
+        std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
+    std::string endpoint = tcpInfo->remoteAddress + ":" +
+        boost::lexical_cast<std::string>(tcpInfo->remotePort);
+//     std::cout << endpoint << std::endl;
+    int connectionId = proxies_->connectionId(endpoint);
 
-    workQueue_->add(strings, fileNames, files, connectionId,
+    workQueue_->add(connectionId, strings, fileNames, files,
                     std::move(response), std::move(error));
 }

@@ -30,7 +30,7 @@ private:
     bool destroy_;
 
     std::mutex mutex_;
-    std::condition_variable cv_;
+    std::condition_variable condition_;
     std::thread heartbeatThread_;
 };
 
