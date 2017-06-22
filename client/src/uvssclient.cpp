@@ -101,7 +101,7 @@ int UvssClient::disconnect(int connectionId)
         g_connectionCallback(connectionId, -3, message.c_str());
 
 //         使server端到client的心跳失败，在server端回调通知
-        proxy->ice_getConnection()->close(Ice::ConnectionClose::Gracefully);
+        proxy->ice_getConnection()->close(Ice::ConnectionClose::GracefullyWithWait);
 
         return 1;
     }
