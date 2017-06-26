@@ -12,7 +12,6 @@ add_custom_command(
 
 set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbacksenderi.cpp uvssserver.cpp uvssserverwrapper.cpp rpcproxies.cpp global.cpp)
 
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSServer SHARED ${SOURCES})
 target_link_libraries(UVSSServer Ice++11 pthread boost_filesystem boost_date_time)
 
@@ -30,8 +29,7 @@ add_custom_command(
 
 set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbacksenderi.cpp uvssserver.cpp uvssserverwrapper.cpp rpcproxies.cpp global.cpp)
 
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-add_library(UVSSServer SHARED ${SOURCES})
-target_link_libraries(UVSSServer ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_62.lib boost_date_time-vc140-mt-gd-1_62.lib)
+add_library(UVSSServerd SHARED ${SOURCES})
+target_link_libraries(UVSSServerd ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_62.lib boost_date_time-vc140-mt-gd-1_62.lib)
 
 ENDIF ()

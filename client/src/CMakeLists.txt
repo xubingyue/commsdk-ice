@@ -12,7 +12,6 @@ add_custom_command(
 
 set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbackreceiveri.cpp uvssclient.cpp uvssclientwrapper.cpp workqueue.cpp rpcproxies.cpp global.cpp)
 
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSSDK SHARED ${SOURCES})
 target_link_libraries(UVSSSDK Ice++11 pthread boost_filesystem)
 
@@ -30,8 +29,7 @@ add_custom_command(
 
 set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbackreceiveri.cpp uvssclient.cpp uvssclientwrapper.cpp WorkQueue.cpp rpcproxies.cpp global.cpp)
 
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-add_library(UVSSSDK SHARED ${SOURCES})
-target_link_libraries(UVSSSDK ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_62.lib)
+add_library(UVSSSDKd SHARED ${SOURCES})
+target_link_libraries(UVSSSDKd ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_62.lib)
 
 ENDIF ()
