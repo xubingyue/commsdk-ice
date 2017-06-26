@@ -20,18 +20,18 @@ ELSEIF (WIN32)
 
 add_compile_options(-DUVSS_EXPORTS)
 
-include_directories("D:\\Ice-3.7b0\\ice\\cpp\\include" "D:\\Ice-3.7b0\\ice\\cpp\\include\\generated\\cpp11\\x64\\Debug" "C:\\local\\boost_1_63_0" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
-link_directories("D:\\Ice-3.7b0\\ice\\cpp\\lib\\x64\\Debug" "C:\\local\\boost_1_63_0\\lib64-msvc-14.0")
+include_directories("C:\\local\\zeroc.ice.v140.3.7.0-beta0\\build\\native\\include" "C:\\local\\boost_1_62_0-msvc-14.0-64" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
+link_directories("C:\\local\\zeroc.ice.v140.3.7.0-beta0\\build\\native\\lib\\x64\\Debug" "C:\\local\\boost_1_62_0-msvc-14.0-64\\lib64-msvc-14.0")
 
 add_custom_command(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/callback.h ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp
-        COMMAND COMMAND D:\\Ice-3.7b0\\ice\\cpp\\bin\\x64\\Debug\\slice2cpp -ID:\\Ice-3.7b0\\ice\\slice ${PROJECT_SOURCE_DIR}/../callback.ice
+        COMMAND COMMAND C:\\local\\zeroc.ice.v140.3.7.0-beta0\\tools\\slice2cpp -IC:\\local\\zeroc.ice.v140.3.7.0-beta0\\slice ${PROJECT_SOURCE_DIR}/../callback.ice
         DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
 
-set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbacksenderi.cpp uvssserver.cpp uvssserverwrapper.cpp rpcproxies.cpp)
+set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbacksenderi.cpp uvssserver.cpp uvssserverwrapper.cpp rpcproxies.cpp global.cpp)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_library(UVSSServer SHARED ${SOURCES})
-target_link_libraries(UVSSServer ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_63.lib)
+target_link_libraries(UVSSServer ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_62.lib boost_date_time-vc140-mt-gd-1_62.lib)
 
 ENDIF ()
