@@ -47,7 +47,7 @@ void CallbackReceiverI::sendData_async(
     const Uvss::AMD_CallbackReceiver_sendDataPtr& cb,
     const std::vector<std::string>& strings,
     const std::vector<std::string>& fileNames,
-    const std::vector<std::vector<unsigned char>>& files,
+    const std::vector<std::vector<unsigned char> >& files,
     const Ice::Current& current)
 {
 //     简化endpoint形式？使用正则表达式？

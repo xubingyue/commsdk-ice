@@ -1,10 +1,17 @@
 #ifndef WORKQUEUE_H
 #define WORKQUEUE_H
 
-#include <condition_variable>
 #include <list>
+
+#ifdef ICE_CPP11_MAPPING
 #include <mutex>
+#include <condition_variable>
 #include <thread>
+#else
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread.hpp>
+#endif
 
 #include <callback.h>
 
@@ -60,7 +67,7 @@ public:
              int,
              const std::vector<std::string>&,
              const std::vector<std::string>&,
-             const std::vector<std::vector<unsigned char>>&);
+             const std::vector<std::vector<unsigned char> >&);
 
     void destroy();
     void join();
@@ -71,19 +78,19 @@ private:
         int index;
         std::vector<std::string> strings;
         std::vector<std::string> fileNames;
-        std::vector<std::vector<unsigned char>> files;
+        std::vector<std::vector<unsigned char> > files;
     };
     std::list<CallbackEntry> callbacks_;
     bool destroy_;
 
-    std::mutex mutex_;
-    std::condition_variable condition_;
-    std::thread workthread_;
+    boost::mutex mutex_;
+    boost::condition_variable condition_;
+    boost::thread workthread_;
 
     std::string fileDirectory(const std::string&);
     void fileNamesAndFilesTofilePaths(
         std::vector<std::string>&,
-        const std::vector<std::vector<unsigned char>>&,
+        const std::vector<std::vector<unsigned char> >&,
         const std::string&,
         std::vector<std::string>&);
 };

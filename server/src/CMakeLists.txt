@@ -2,6 +2,7 @@ if (UNIX)
 
 if (EVO)
     add_compile_options(-DICE_CPP11_MAPPING)
+
     include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
     link_directories("/usr/lib/x86_64-linux-gnu")
 

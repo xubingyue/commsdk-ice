@@ -62,6 +62,7 @@ int UvssClient::start()
     return 1;
 }
 
+#ifdef ICE_CPP11_MAPPING
 int UvssClient::connect(const std::string& ipAddress, int port)
 {
     try {
@@ -107,6 +108,53 @@ int UvssClient::connect(const std::string& ipAddress, int port)
         return -1;
     }
 }
+#else
+int UvssClient::connect(const std::string& ipAddress, int port)
+{
+    try {
+        std::string endpoint(ipAddress + ":" +
+            boost::lexical_cast<std::string>(port));
+        if (proxies_->has(endpoint)) {
+            return -2;
+        }
+
+        Ice::ObjectPrx base = ic_->stringToProxy("UvssServer:tcp -h " +
+            ipAddress + " -p " + boost::lexical_cast<std::string>(port));
+        Uvss::CallbackSenderPrx proxy = Ice::checkedCast<Uvss::CallbackSenderPrx>(base);
+        if (!proxy) {
+            throw std::runtime_error("Invalid proxy");
+        }
+
+//         std::cout << proxy->ice_getConnection()->getEndpoint()->toString() << std::endl;
+//         std::cout << endpoint << std::endl;
+//         tcp -h 192.168.1.9 -p 20145 -t 60000
+//         192.168.1.9:20145
+
+//         保留检查对端版本的功能
+        if (!proxy->checkVersion(Uvss::version)) {
+            return -3;
+        }
+
+        proxy->ice_getConnection()->setAdapter(adapter_);
+        proxy->addProxy(ident_);
+
+        int connectionId = proxies_->add(proxy, endpoint);
+
+        std::string message("Server " + endpoint + ": " +
+            "Connected | Connection Id: " +
+            boost::lexical_cast<std::string>(connectionId));
+        g_connectionCallback(connectionId, 1, message.c_str());
+
+        return connectionId;
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        g_connectionCallback(-1, -2, "Connection Failed");
+
+        return -1;
+    }
+}
+#endif
 
 #ifdef ICE_CPP11_MAPPING
 int UvssClient::disconnect(int connectionId)
@@ -146,7 +194,7 @@ int UvssClient::disconnect(int connectionId)
         g_connectionCallback(connectionId, -3, message.c_str());
 
 //         使server端到client的心跳失败，在server端回调通知
-        proxy->ice_getConnection()->close(Ice::ConnectionClose::ConnectionCloseGracefullyWithWait);
+        proxy->ice_getConnection()->close(Ice::ConnectionCloseGracefullyWithWait);
 
         return 1;
     }

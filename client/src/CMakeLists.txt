@@ -1,28 +1,39 @@
-IF (UNIX)
+if (UNIX)
 
 if (EVO)
     add_compile_options(-DICE_CPP11_MAPPING)
-endif(EVO)
 
-include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
-link_directories("/usr/lib/x86_64-linux-gnu")
+    include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
+    link_directories("/usr/lib/x86_64-linux-gnu")
 
-add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/callback.h ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp
-        COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../callback.ice
-        DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
+    add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/callback.h ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp
+            COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../callback.ice
+            DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
 
-set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbackreceiveri.cpp uvssclient.cpp uvssclientwrapper.cpp workqueue.cpp rpcproxies.cpp global.cpp)
+    set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbackreceiveri.cpp uvssclient.cpp uvssclientwrapper.cpp workqueue.cpp rpcproxies.cpp global.cpp)
 
-add_library(UVSSSDK SHARED ${SOURCES})
-
-if (EVO)
+    add_library(UVSSSDK SHARED ${SOURCES})
     target_link_libraries(UVSSSDK Ice++11 pthread boost_filesystem)
 else(EVO)
-    target_link_libraries(UVSSSDK Ice pthread boost_filesystem)
+    set(CMAKE_CXX_STANDARD 98)
+
+    include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
+    link_directories("/usr/lib/x86_64-linux-gnu")
+
+    add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/callback.h ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp
+            COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../callback.ice
+            DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
+
+    set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbackreceiveri.cpp uvssclient.cpp uvssclientwrapper.cpp workqueue.cpp rpcproxies.cpp global.cpp)
+
+    add_library(UVSSSDK SHARED ${SOURCES})
+
+    target_link_libraries(UVSSSDK Ice pthread boost_filesystem boost_thread boost_chrono)
 endif(EVO)
 
-ELSEIF (WIN32)
+elseif (WIN32)
 
 add_compile_options(-DICE_CPP11_MAPPING)
 add_compile_options(-DUVSS_EXPORTS)
@@ -40,4 +51,4 @@ set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbackreceiveri.cpp uvssc
 add_library(UVSSSDKd SHARED ${SOURCES})
 target_link_libraries(UVSSSDKd ice37b0++11d.lib boost_filesystem-vc140-mt-gd-1_62.lib)
 
-ENDIF ()
+endif ()

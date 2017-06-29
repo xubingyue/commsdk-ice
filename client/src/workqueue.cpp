@@ -71,7 +71,7 @@ void WorkQueue::run()
 #else
 void WorkQueue::run()
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    boost::unique_lock<boost::mutex> lock(mutex_);
 
     while (!destroy_) {
         if (callbacks_.empty()) {
@@ -84,12 +84,12 @@ void WorkQueue::run()
         else {
             CallbackEntry& entry = callbacks_.front();
 
-            auto& connectionId = entry.index;
-            auto& strings = entry.strings;
-            auto& fileNames = entry.fileNames;
-            auto& files = entry.files;
+            int& connectionId = entry.index;
+            std::vector<std::string>& strings = entry.strings;
+            std::vector<std::string>& fileNames = entry.fileNames;
+            std::vector<std::vector<unsigned char> >& files = entry.files;
 
-            auto& filePaths = fileNames;
+            std::vector<std::string>& filePaths = fileNames;
             fileNamesAndFilesTofilePaths(fileNames, files, "UVSS", filePaths);
 
             if (strings.size() == 5 && filePaths.size() == 2) {
@@ -124,6 +124,7 @@ void WorkQueue::run()
 }
 #endif
 
+#ifdef ICE_CPP11_MAPPING
 void WorkQueue::start()
 {
     std::thread t([this]()
@@ -132,6 +133,14 @@ void WorkQueue::start()
     });
     workthread_ = std::move(t);
 }
+#else
+void WorkQueue::start()
+{
+    boost::function0<void> f = boost::bind(&WorkQueue::run, this);
+    boost::thread t(f);
+    workthread_ = boost::move(t);
+}
+#endif
 
 #ifdef ICE_CPP11_MAPPING
 void WorkQueue::add(
@@ -169,9 +178,9 @@ void WorkQueue::add(
     int index,
     const std::vector<std::string>& strings,
     const std::vector<std::string>& fileNames,
-    const std::vector<std::vector<unsigned char>>& files)
+    const std::vector<std::vector<unsigned char> >& files)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    boost::unique_lock<boost::mutex> lock(mutex_);
 
     if (!destroy_) { // destroy后仍然有可能执行add 所以要判断if destroy_
         CallbackEntry entry;
@@ -191,12 +200,21 @@ void WorkQueue::add(
 }
 #endif
 
+#ifdef ICE_CPP11_MAPPING
 void WorkQueue::destroy()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     destroy_ = true;
     condition_.notify_one();
 }
+#else
+void WorkQueue::destroy()
+{
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    destroy_ = true;
+    condition_.notify_one();
+}
+#endif
 
 void WorkQueue::join()
 {
@@ -216,9 +234,10 @@ std::string WorkQueue::fileDirectory(const std::string& folder)
     return fileDir;
 }
 
+#ifdef ICE_CPP11_MAPPING
 void WorkQueue::fileNamesAndFilesTofilePaths(
     std::vector<std::string>& fileNames,
-    const std::vector<std::vector<unsigned char>>& files,
+    const std::vector<std::vector<unsigned char> >& files,
     const std::string& folder,
     std::vector<std::string>& filePaths)
 {
@@ -232,3 +251,21 @@ void WorkQueue::fileNamesAndFilesTofilePaths(
         }
     }
 }
+#else
+void WorkQueue::fileNamesAndFilesTofilePaths(
+    std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char> >& files,
+    const std::string& folder,
+    std::vector<std::string>& filePaths)
+{
+    std::string fileDir = fileDirectory(folder);
+
+    for (int i = 0; i != fileNames.size(); ++i) {
+        if (!fileNames[i].empty()) {
+            filePaths[i] = fileDir + "/" + fileNames[i];
+            std::ofstream ofs(filePaths[i].c_str(), std::ios::binary);
+            ofs.write((char*)&files[i][0], files[i].size());
+        }
+    }
+}
+#endif

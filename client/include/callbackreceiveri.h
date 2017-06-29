@@ -31,7 +31,7 @@ public:
     virtual void sendData_async(const Uvss::AMD_CallbackReceiver_sendDataPtr&,
         const std::vector<std::string>&,
                                const std::vector<std::string>&,
-                               const std::vector<std::vector<unsigned char>>&,
+                               const std::vector<std::vector<unsigned char> >&,
                                const Ice::Current&);
 
 private:
