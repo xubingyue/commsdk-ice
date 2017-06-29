@@ -36,7 +36,7 @@ private:
     std::thread heartbeatThread_;
 };
 #else
-class RpcProxies {
+class RpcProxies : public virtual IceUtil::Shared {
 public:
     RpcProxies();
 

@@ -25,8 +25,8 @@ UvssClient::UvssClient() :
 }
 #else
 UvssClient::UvssClient() :
-    proxies_(std::make_shared<RpcProxies>()),
-    workQueue_(std::make_shared<WorkQueue>()),
+    proxies_(new RpcProxies()),
+    workQueue_(new WorkQueue()),
     servant_(new CallbackReceiverI(proxies_, workQueue_))
 {
 //     try...catch?

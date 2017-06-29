@@ -49,7 +49,7 @@ private:
         std::vector<std::string>&);
 };
 #else
-class WorkQueue {
+class WorkQueue : public virtual IceUtil::Shared {
 public:
     WorkQueue();
 

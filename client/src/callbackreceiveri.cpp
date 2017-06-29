@@ -3,12 +3,21 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
+#ifdef ICE_CPP11_MAPPING
 CallbackReceiverI::CallbackReceiverI(
     const std::shared_ptr<RpcProxies>& proxies,
     const std::shared_ptr<WorkQueue>& workQueue) :
     proxies_(proxies), workQueue_(workQueue)
 {
 }
+#else
+CallbackReceiverI::CallbackReceiverI(
+    const IceUtil::Handle<RpcProxies>& proxies,
+    const IceUtil::Handle<WorkQueue>& workQueue) :
+    proxies_(proxies), workQueue_(workQueue)
+{
+}
+#endif
 
 #ifdef ICE_CPP11_MAPPING
 void CallbackReceiverI::sendDataAsync(
