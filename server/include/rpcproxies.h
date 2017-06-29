@@ -35,7 +35,7 @@ private:
     std::thread heartbeatThread_;
 };
 #else
-class RpcProxies {
+class RpcProxies : public virtual IceUtil::Shared {
 public:
     RpcProxies();
 
@@ -53,26 +53,23 @@ public:
 
 private:
     std::map<Uvss::CallbackReceiverPrx, std::string>
-        proxyEndpointMap_;
+    proxyEndpointMap_;
     bool destroy_;
 
     std::mutex mutex_;
     std::condition_variable condition_;
     std::thread heartbeatThread_;
-};
+    class Callback : public IceUtil::Shared {
+    public:
+        void response()
+        {
+        }
 
-class Callback : public IceUtil::Shared
-{
-public:
-
-    void response()
-    {
-    }
-
-    void exception(const Ice::Exception& ex)
-    {
-        std::cerr << "sayHello AMI call failed:\n" << ex << std::endl;
-    }
+        void exception(const Ice::Exception& ex)
+        {
+            std::cerr << "sayHello AMI call failed:\n" << ex << std::endl;
+        }
+    };
 };
 #endif
 

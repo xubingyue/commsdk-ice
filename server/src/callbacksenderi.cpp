@@ -3,10 +3,17 @@
 #include <boost/lexical_cast.hpp>
 #include <Ice/Ice.h>
 
+#ifdef ICE_CPP11_MAPPING
 CallbackSenderI::CallbackSenderI(const std::shared_ptr<RpcProxies>& proxies) :
     proxies_(proxies)
 {
 }
+#else
+CallbackSenderI::CallbackSenderI(const IceUtil::Handle<RpcProxies>& proxies) :
+    proxies_(proxies)
+{
+}
+#endif
 
 #ifdef ICE_CPP11_MAPPING
 void CallbackSenderI::addProxy(Ice::Identity ident,

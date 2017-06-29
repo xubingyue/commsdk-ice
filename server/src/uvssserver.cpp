@@ -34,7 +34,7 @@ UvssServer::UvssServer() :
 }
 #else
 UvssServer::UvssServer() :
-    proxies_(std::make_shared<RpcProxies>()),
+    proxies_(new RpcProxies),
     servant_(new CallbackSenderI(proxies_))
 {
 //     try...catch?
