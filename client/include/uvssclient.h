@@ -19,13 +19,17 @@ public:
     ~UvssClient();
 
 private:
-    Ice::CommunicatorHolder ich_;
+    Ice::CommunicatorPtr ic_;
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
     std::shared_ptr<RpcProxies> proxies_;
     std::shared_ptr<WorkQueue> workQueue_;
+#ifdef ICE_CPP11_MAPPING
     std::shared_ptr<CallbackReceiverI> servant_;
+#else
+    IceUtil::Handle<CallbackReceiverI> servant_;
+#endif
 };
 
 #endif

@@ -11,8 +11,13 @@ RpcProxies::RpcProxies() : connectionId_(0), destroy_(false)
 void RpcProxies::runHeartbeat()
 {
     while (true) {
+#ifdef ICE_CPP11_MAPPING
         std::map<std::shared_ptr<Uvss::CallbackSenderPrx>,
             std::string> proxyEndpointMap;
+#else
+        std::map<Uvss::CallbackSenderPrx,
+        std::string> proxyEndpointMap;
+#endif
         {
             std::unique_lock<std::mutex> lock(mutex_);
             condition_.wait_for(lock, std::chrono::seconds(2));
@@ -87,6 +92,7 @@ void RpcProxies::startHeartbeat()
 }
 
 // connect后 add
+#ifdef ICE_CPP11_MAPPING
 int RpcProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& proxy,
                     const std::string& endpoint)
 {
@@ -97,8 +103,21 @@ int RpcProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& proxy,
     endpointConnectionIdMap_[endpoint] = connectionId_;
     return connectionId_;
 }
+#else
+int RpcProxies::add(const Uvss::CallbackSenderPrx& proxy,
+                    const std::string& endpoint)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    proxyEndpointMap_[proxy] = endpoint;
+    ++connectionId_;
+    endpointConnectionIdMap_[endpoint] = connectionId_;
+    return connectionId_;
+}
+#endif
 
 // disconnect后 remove
+#ifdef ICE_CPP11_MAPPING
 bool RpcProxies::remove(int connectionId, std::string& endpoint,
                                std::shared_ptr<Uvss::CallbackSenderPrx>& proxy)
 {
@@ -122,6 +141,31 @@ bool RpcProxies::remove(int connectionId, std::string& endpoint,
 
     return false;
 }
+#else
+bool RpcProxies::remove(int connectionId, std::string& endpoint,
+                               Uvss::CallbackSenderPrx& proxy)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    for (auto x : endpointConnectionIdMap_) {
+        if (x.second == connectionId) {
+            endpoint = x.first;
+            endpointConnectionIdMap_.erase(endpoint);
+            for (auto y : proxyEndpointMap_) {
+                if (y.second == endpoint) {
+                    proxy = y.first;
+                    proxyEndpointMap_.erase(y.first);
+
+                    return true;
+                }
+            }
+            std::cerr << "impossible?" << std::endl;
+        }
+    }
+
+    return false;
+}
+#endif
 
 bool RpcProxies::has(const std::string& endpoint)
 {

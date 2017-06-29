@@ -4,6 +4,7 @@
 
 #include <global.h>
 
+#ifdef ICE_CPP11_MAPPING
 UvssClient::UvssClient() :
     proxies_(std::make_shared<RpcProxies>()),
     workQueue_(std::make_shared<WorkQueue>()),
@@ -17,11 +18,31 @@ UvssClient::UvssClient() :
     Ice::InitializationData initData;
     initData.properties = props;
 
-    ich_ = Ice::initialize(initData);
-    adapter_ = ich_->createObjectAdapter("");
+    ic_ = Ice::initialize(initData);
+    adapter_ = ic_->createObjectAdapter("");
     ident_.name = IceUtil::generateUUID();
     ident_.category = "";
 }
+#else
+UvssClient::UvssClient() :
+    proxies_(std::make_shared<RpcProxies>()),
+    workQueue_(std::make_shared<WorkQueue>()),
+    servant_(new CallbackReceiverI(proxies_, workQueue_))
+{
+//     try...catch?
+    Ice::PropertiesPtr props = Ice::createProperties();
+    props->setProperty("Ice.Warn.Connections", "1");
+    props->setProperty("Ice.MessageSizeMax", "0");
+//     props->setProperty("Ice.ACM.Client", "0");
+    Ice::InitializationData initData;
+    initData.properties = props;
+
+    ic_ = Ice::initialize(initData);
+    adapter_ = ic_->createObjectAdapter("");
+    ident_.name = IceUtil::generateUUID();
+    ident_.category = "";
+}
+#endif
 
 int UvssClient::start()
 {
@@ -50,7 +71,7 @@ int UvssClient::connect(const std::string& ipAddress, int port)
             return -2;
         }
 
-        auto base = ich_->stringToProxy("UvssServer:tcp -h " +
+        auto base = ic_->stringToProxy("UvssServer:tcp -h " +
             ipAddress + " -p " + boost::lexical_cast<std::string>(port));
         auto proxy = Ice::checkedCast<Uvss::CallbackSenderPrx>(base);
         if (!proxy) {
@@ -87,6 +108,7 @@ int UvssClient::connect(const std::string& ipAddress, int port)
     }
 }
 
+#ifdef ICE_CPP11_MAPPING
 int UvssClient::disconnect(int connectionId)
 {
     std::string endpoint;
@@ -109,16 +131,41 @@ int UvssClient::disconnect(int connectionId)
         return -1;
     }
 }
+#else
+int UvssClient::disconnect(int connectionId)
+{
+    std::string endpoint;
+    Uvss::CallbackSenderPrx proxy;
+    bool ok = proxies_->remove(connectionId, endpoint, proxy);
+    if (ok) {
+//         移除要断开的proxy，无论发生在心跳线程中的proxy副本拷贝前或后，心跳都不会检测到连接错误，不会有proxy断开的通知
+//         所以只能在此处通知，不能依靠心跳线程，这里断开通知仅和移除有关
+        std::string message("Server " + endpoint + ": " +
+            "Disconnected | Connection Id: " +
+            boost::lexical_cast<std::string>(connectionId));
+        g_connectionCallback(connectionId, -3, message.c_str());
+
+//         使server端到client的心跳失败，在server端回调通知
+        proxy->ice_getConnection()->close(Ice::ConnectionClose::ConnectionCloseGracefullyWithWait);
+
+        return 1;
+    }
+    else {
+        return -1;
+    }
+}
+#endif
 
 void UvssClient::shutdown()
 {
     proxies_->destroyHeartbeat();
     workQueue_->destroy();
-    ich_->shutdown();
+    ic_->shutdown();
 }
 
 UvssClient::~UvssClient()
 {
     proxies_->joinHeartbeat();
     workQueue_->join();
+    ic_->destroy();
 }

@@ -11,8 +11,13 @@ RpcProxies::RpcProxies() : destroy_(false)
 void RpcProxies::runHeartbeat()
 {
     while (true) {
+#ifdef ICE_CPP11_MAPPING
         std::map<std::shared_ptr<Uvss::CallbackReceiverPrx>,
             std::string> proxyEndpointMap;
+#else
+            std::map<Uvss::CallbackReceiverPrx,
+            std::string> proxyEndpointMap;
+#endif
         {
             std::unique_lock<std::mutex> lock(mutex_);
             condition_.wait_for(lock, std::chrono::seconds(2));
@@ -75,6 +80,7 @@ void RpcProxies::startHeartbeat()
     heartbeatThread_ = std::move(t);
 }
 
+#ifdef ICE_CPP11_MAPPING
 void RpcProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& proxy,
                      const std::string& endpoint)
 {
@@ -85,6 +91,18 @@ void RpcProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& proxy,
 
     g_connectionCallback(0, message.c_str());
 }
+#else
+void RpcProxies::add(const Uvss::CallbackReceiverPrx& proxy,
+                     const std::string& endpoint)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    proxyEndpointMap_[proxy] = endpoint;
+    std::string message("Client " + endpoint + ": Connected");
+    lock.unlock();
+
+    g_connectionCallback(0, message.c_str());
+}
+#endif
 
 void RpcProxies::sendCheckInfo(
     const std::vector<std::string>& strings,
@@ -95,6 +113,7 @@ void RpcProxies::sendCheckInfo(
 
     for (auto p : proxyEndpointMap_) {
         try {
+#ifdef ICE_CPP11_MAPPING
             p.first->sendDataAsync(strings, fileNames, files,
                 nullptr,
                 [](std::exception_ptr e)
@@ -107,6 +126,10 @@ void RpcProxies::sendCheckInfo(
                         ex.what() << std::endl;
                 }
             });
+#else
+            IceUtil::Handle<Callback> cb = new Callback();
+            p.first->begin_sendData(strings, fileNames, files, Uvss::newCallback_CallbackReceiver_sendData(cb, &Callback::response, &Callback::exception));
+#endif
         }
         catch (const Ice::Exception& ex) {
             std::cerr << "sendCheckInfo:\n" << ex << std::endl;

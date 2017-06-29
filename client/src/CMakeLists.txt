@@ -1,6 +1,8 @@
-add_compile_options(-DICE_CPP11_MAPPING)
-
 IF (UNIX)
+
+if (EVO)
+    add_compile_options(-DICE_CPP11_MAPPING)
+endif(EVO)
 
 include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
 link_directories("/usr/lib/x86_64-linux-gnu")
@@ -13,10 +15,16 @@ add_custom_command(
 set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbackreceiveri.cpp uvssclient.cpp uvssclientwrapper.cpp workqueue.cpp rpcproxies.cpp global.cpp)
 
 add_library(UVSSSDK SHARED ${SOURCES})
-target_link_libraries(UVSSSDK Ice++11 pthread boost_filesystem)
+
+if (EVO)
+    target_link_libraries(UVSSSDK Ice++11 pthread boost_filesystem)
+else(EVO)
+    target_link_libraries(UVSSSDK Ice pthread boost_filesystem)
+endif(EVO)
 
 ELSEIF (WIN32)
 
+add_compile_options(-DICE_CPP11_MAPPING)
 add_compile_options(-DUVSS_EXPORTS)
 
 include_directories("C:\\local\\zeroc.ice.v140.3.7.0-beta0\\build\\native\\include" "C:\\local\\boost_1_62_0-msvc-14.0-64" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")

@@ -23,7 +23,7 @@ public:
     ~UvssServer();
 
 private:
-    Ice::CommunicatorHolder ich_;
+    Ice::CommunicatorPtr ic_;
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
@@ -31,7 +31,11 @@ private:
     static int port_;
 
     std::shared_ptr<RpcProxies> proxies_;
+#ifdef ICE_CPP11_MAPPING
     std::shared_ptr<CallbackSenderI> servant_;
+#else
+    IceUtil::Handle<CallbackSenderI> servant_;
+#endif
 
     void filePathToFile(const std::string&, std::vector<unsigned char>&);
     void filePathsToFileNamesAndFiles(const std::vector<std::string>&,

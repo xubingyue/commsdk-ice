@@ -14,6 +14,7 @@ void UvssServer::setPort(int port)
     port_ = port;
 }
 
+#ifdef ICE_CPP11_MAPPING
 UvssServer::UvssServer() :
     proxies_(std::make_shared<RpcProxies>()),
     servant_(std::make_shared<CallbackSenderI>(proxies_))
@@ -26,11 +27,30 @@ UvssServer::UvssServer() :
     Ice::InitializationData initData;
     initData.properties = props;
 
-    ich_ = Ice::initialize(initData);
-    adapter_ = ich_->createObjectAdapterWithEndpoints("UvssServerAdapter",
+    ic_ = Ice::initialize(initData);
+    adapter_ = ic_->createObjectAdapterWithEndpoints("UvssServerAdapter",
         "tcp -p " + boost::lexical_cast<std::string>(port_));
     ident_ = Ice::stringToIdentity("UvssServer");
 }
+#else
+UvssServer::UvssServer() :
+    proxies_(std::make_shared<RpcProxies>()),
+    servant_(new CallbackSenderI(proxies_))
+{
+//     try...catch?
+    Ice::PropertiesPtr props = Ice::createProperties();
+//     props->setProperty("Ice.Default.Host", "localhost"); // 这样只能localhost
+    props->setProperty("Ice.Warn.Connections", "1");
+    props->setProperty("Ice.MessageSizeMax", "0");
+    Ice::InitializationData initData;
+    initData.properties = props;
+
+    ic_ = Ice::initialize(initData);
+    adapter_ = ic_->createObjectAdapterWithEndpoints("UvssServerAdapter",
+        "tcp -p " + boost::lexical_cast<std::string>(port_));
+    ident_ = Ice::stringToIdentity("UvssServer");
+}
+#endif
 
 int UvssServer::start()
 {
@@ -113,12 +133,13 @@ void UvssServer::sendCheckInfo(const std::string& concatedString,
 void UvssServer::shutdown()
 {
     proxies_->destroyHeartbeat();
-    ich_->shutdown();
+    ic_->shutdown();
 }
 
 UvssServer::~UvssServer()
 {
     proxies_->joinHeartbeat();
+    ic_->destroy();
 }
 
 void UvssServer::filePathToFile(const std::string& filePath,
