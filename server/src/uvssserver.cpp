@@ -1,5 +1,7 @@
 #include <uvssserver.h>
 
+#include <fstream>
+
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -102,7 +104,7 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
     }
 
     std::vector<std::string> fileNames;
-    std::vector<std::vector<unsigned char>> files;
+    std::vector<std::vector<unsigned char> > files;
     fileNames.push_back(uvssImageName);
     fileNames.push_back(plateImageName);
     files.push_back(uvssImage);
@@ -123,7 +125,7 @@ void UvssServer::sendCheckInfo(const std::string& concatedString,
                  boost::token_compress_on);
 
     std::vector<std::string> fileNames;
-    std::vector<std::vector<unsigned char>> files;
+    std::vector<std::vector<unsigned char> > files;
     filePathsToFileNamesAndFiles(filePaths, fileNames, files);
 
     proxies_->sendCheckInfo(strings, fileNames, files);
@@ -145,7 +147,7 @@ UvssServer::~UvssServer()
 void UvssServer::filePathToFile(const std::string& filePath,
                                 std::vector<unsigned char>& file)
 {
-    std::ifstream ifs(filePath, std::ios::binary);
+    std::ifstream ifs(filePath.c_str(), std::ios::binary);
 
     ifs.seekg(0, std::ios::end);
     std::streampos fileSize = ifs.tellg();
@@ -158,7 +160,7 @@ void UvssServer::filePathToFile(const std::string& filePath,
 void UvssServer::filePathsToFileNamesAndFiles(
     const std::vector<std::string>& filePaths,
     std::vector<std::string>& fileNames,
-    std::vector<std::vector<unsigned char>>& files)
+    std::vector<std::vector<unsigned char> >& files)
 {
     std::string time = boost::posix_time::to_iso_string(
                            boost::posix_time::microsec_clock::local_time());

@@ -41,7 +41,7 @@ private:
     void filePathToFile(const std::string&, std::vector<unsigned char>&);
     void filePathsToFileNamesAndFiles(const std::vector<std::string>&,
                                       std::vector<std::string>&,
-                                      std::vector<std::vector<unsigned char>>&);
+                                      std::vector<std::vector<unsigned char> >&);
 };
 
 #endif

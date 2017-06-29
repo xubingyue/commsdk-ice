@@ -2,24 +2,33 @@ if (UNIX)
 
 if (EVO)
     add_compile_options(-DICE_CPP11_MAPPING)
-endif(EVO)
+    include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
+    link_directories("/usr/lib/x86_64-linux-gnu")
 
-include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
-link_directories("/usr/lib/x86_64-linux-gnu")
+    add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/callback.h ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp
+            COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../callback.ice
+            DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
 
-add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/callback.h ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp
-        COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../callback.ice
-        DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
+    set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbacksenderi.cpp uvssserver.cpp uvssserverwrapper.cpp rpcproxies.cpp global.cpp)
 
-set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbacksenderi.cpp uvssserver.cpp uvssserverwrapper.cpp rpcproxies.cpp global.cpp)
-
-add_library(UVSSServer SHARED ${SOURCES})
-
-if (EVO)
+    add_library(UVSSServer SHARED ${SOURCES})
     target_link_libraries(UVSSServer Ice++11 pthread boost_filesystem boost_date_time)
 else(EVO)
-    target_link_libraries(UVSSServer Ice pthread boost_filesystem boost_date_time)
+    set(CMAKE_CXX_STANDARD 98)
+
+    include_directories("/usr/include" "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}")
+    link_directories("/usr/lib/x86_64-linux-gnu")
+
+    add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/callback.h ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp
+            COMMAND COMMAND /usr/bin/slice2cpp -I/usr/share/ice/slice ${PROJECT_SOURCE_DIR}/../callback.ice
+            DEPENDS ${PROJECT_SOURCE_DIR}/../callback.ice)
+
+    set(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/callback.cpp callbacksenderi.cpp uvssserver.cpp uvssserverwrapper.cpp rpcproxies.cpp global.cpp)
+
+    add_library(UVSSServer SHARED ${SOURCES})
+    target_link_libraries(UVSSServer Ice pthread boost_filesystem boost_date_time boost_thread boost_chrono)
 endif(EVO)
 
 elseif (WIN32)
