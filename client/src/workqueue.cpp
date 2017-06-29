@@ -230,7 +230,11 @@ std::string WorkQueue::fileDirectory(const std::string& folder)
         boost::filesystem::create_directory(dir);
     }
     boost::filesystem::path currentPath = boost::filesystem::current_path();
+#ifdef _WIN32
+    std::string fileDir = currentPath.string() + "\\" + folder;
+#else
     std::string fileDir = currentPath.string() + "/" + folder;
+#endif
     return fileDir;
 }
 
@@ -245,7 +249,11 @@ void WorkQueue::fileNamesAndFilesTofilePaths(
 
     for (int i = 0; i != fileNames.size(); ++i) {
         if (!fileNames[i].empty()) {
+#ifdef _WIN32
+            filePaths[i] = fileDir + "\\" + fileNames[i];
+#else
             filePaths[i] = fileDir + "/" + fileNames[i];
+#endif
             std::ofstream ofs(filePaths[i], std::ios::binary);
             ofs.write((char*)&files[i][0], files[i].size());
         }
@@ -262,7 +270,11 @@ void WorkQueue::fileNamesAndFilesTofilePaths(
 
     for (int i = 0; i != fileNames.size(); ++i) {
         if (!fileNames[i].empty()) {
+#ifdef _WIN32
+            filePaths[i] = fileDir + "\\" + fileNames[i];
+#else
             filePaths[i] = fileDir + "/" + fileNames[i];
+#endif
             std::ofstream ofs(filePaths[i].c_str(), std::ios::binary);
             ofs.write((char*)&files[i][0], files[i].size());
         }

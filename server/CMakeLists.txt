@@ -1,4 +1,4 @@
-#cmake .. -G "Visual Studio 14 2015 Win64" -DCMAKE_CONFIGURATION_TYPES:STRING=Debug
+#cmake .. -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug
 
 cmake_minimum_required(VERSION 2.6)
 message(STATUS "OS: ${CMAKE_SYSTEM}")
