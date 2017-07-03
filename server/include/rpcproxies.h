@@ -1,7 +1,6 @@
 #ifndef RPCPROXIES_H
 #define RPCPROXIES_H
 
-
 #include <map>
 
 #ifdef ICE_CPP11_MAPPING
@@ -17,6 +16,7 @@
 #include <callback.h>
 
 #ifdef ICE_CPP11_MAPPING
+
 class RpcProxies {
 public:
     RpcProxies();
@@ -42,7 +42,9 @@ private:
     std::condition_variable condition_;
     std::thread heartbeatThread_;
 };
+
 #else
+
 class RpcProxies : public virtual IceUtil::Shared {
 public:
     RpcProxies();
@@ -60,18 +62,7 @@ public:
     void joinHeartbeat();
 
 private:
-    std::map<Uvss::CallbackReceiverPrx, std::string>
-    proxyEndpointMap_;
-    bool destroy_;
-
-//     std::mutex mutex_;
-//     std::condition_variable condition_;
-//     std::thread heartbeatThread_;
-    boost::mutex mutex_;
-    boost::condition_variable condition_;
-    boost::thread heartbeatThread_;
-
-    class Callback : public IceUtil::Shared {
+    class Callback : public virtual IceUtil::Shared {
     public:
         void response()
         {
@@ -79,10 +70,17 @@ private:
 
         void exception(const Ice::Exception& ex)
         {
-            std::cerr << "sayHello AMI call failed:\n" << ex << std::endl;
+            std::cerr << "sendData AMI call failed:\n" << ex << std::endl;
         }
     };
+    std::map<Uvss::CallbackReceiverPrx, std::string> proxyEndpointMap_;
+    bool destroy_;
+
+    boost::mutex mutex_;
+    boost::condition_variable condition_;
+    boost::thread heartbeatThread_;
 };
+
 #endif
 
 #endif // RPCPROXIES_H

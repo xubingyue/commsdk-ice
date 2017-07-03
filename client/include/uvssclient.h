@@ -24,12 +24,12 @@ private:
     Ice::Identity ident_;
 
 #ifdef ICE_CPP11_MAPPING
-    std::shared_ptr<RpcProxies> proxies_;
     std::shared_ptr<WorkQueue> workQueue_;
+    std::shared_ptr<RpcProxies> proxies_;
     std::shared_ptr<CallbackReceiverI> servant_;
 #else
-    IceUtil::Handle<RpcProxies> proxies_;
     IceUtil::Handle<WorkQueue> workQueue_;
+    IceUtil::Handle<RpcProxies> proxies_;
     IceUtil::Handle<CallbackReceiverI> servant_;
 #endif
 };

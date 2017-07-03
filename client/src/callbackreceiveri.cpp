@@ -5,16 +5,16 @@
 
 #ifdef ICE_CPP11_MAPPING
 CallbackReceiverI::CallbackReceiverI(
-    const std::shared_ptr<RpcProxies>& proxies,
-    const std::shared_ptr<WorkQueue>& workQueue) :
-    proxies_(proxies), workQueue_(workQueue)
+    const std::shared_ptr<WorkQueue>& workQueue,
+    const std::shared_ptr<RpcProxies>& proxies) :
+    workQueue_(workQueue), proxies_(proxies)
 {
 }
 #else
 CallbackReceiverI::CallbackReceiverI(
-    const IceUtil::Handle<RpcProxies>& proxies,
-    const IceUtil::Handle<WorkQueue>& workQueue) :
-    proxies_(proxies), workQueue_(workQueue)
+    const IceUtil::Handle<WorkQueue>& workQueue,
+    const IceUtil::Handle<RpcProxies>& proxies) :
+    workQueue_(workQueue), proxies_(proxies)
 {
 }
 #endif

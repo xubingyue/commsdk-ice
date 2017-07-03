@@ -31,11 +31,15 @@ private:
     static int port_;
 
 #ifdef ICE_CPP11_MAPPING
+
     std::shared_ptr<RpcProxies> proxies_;
     std::shared_ptr<CallbackSenderI> servant_;
+
 #else
+
     IceUtil::Handle<RpcProxies> proxies_;
     IceUtil::Handle<CallbackSenderI> servant_;
+
 #endif
 
     void filePathToFile(const std::string&, std::vector<unsigned char>&);

@@ -191,7 +191,7 @@ void RpcProxies::sendCheckInfo(
                     std::rethrow_exception(e);
                 }
                 catch (const std::exception& ex) {
-                    std::cerr << "sayHello AMI call failed:\n" <<
+                    std::cerr << "sendData AMI call failed:\n" <<
                         ex.what() << std::endl;
                 }
             });

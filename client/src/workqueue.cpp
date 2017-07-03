@@ -186,7 +186,7 @@ void WorkQueue::add(
         CallbackEntry entry;
         entry.cb = cb;
         entry.index = index;
-        entry.strings = strings;
+        entry.strings = strings; // boost::move
         entry.fileNames = fileNames;
         entry.files = files;
         if (callbacks_.size() == 0) {

@@ -5,6 +5,7 @@
 #include <rpcproxies.h>
 
 #ifdef ICE_CPP11_MAPPING
+
 class CallbackSenderI : public virtual Uvss::CallbackSender {
 public:
     CallbackSenderI(const std::shared_ptr<RpcProxies>&);
@@ -15,7 +16,9 @@ public:
 private:
     std::shared_ptr<RpcProxies> proxies_;
 };
+
 #else
+
 class CallbackSenderI : public virtual Uvss::CallbackSender, public virtual IceUtil::Shared {
 public:
     CallbackSenderI(const IceUtil::Handle<RpcProxies>&);
@@ -26,6 +29,7 @@ public:
 private:
     IceUtil::Handle<RpcProxies> proxies_;
 };
+
 #endif
 
 #endif

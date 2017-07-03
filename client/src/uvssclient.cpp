@@ -6,9 +6,9 @@
 
 #ifdef ICE_CPP11_MAPPING
 UvssClient::UvssClient() :
-    proxies_(std::make_shared<RpcProxies>()),
     workQueue_(std::make_shared<WorkQueue>()),
-    servant_(std::make_shared<CallbackReceiverI>(proxies_, workQueue_))
+    proxies_(std::make_shared<RpcProxies>()),
+    servant_(std::make_shared<CallbackReceiverI>(workQueue_, proxies_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -20,14 +20,14 @@ UvssClient::UvssClient() :
 
     ic_ = Ice::initialize(initData);
     adapter_ = ic_->createObjectAdapter("");
-    ident_.name = IceUtil::generateUUID();
+    ident_.name = Ice::generateUUID();
     ident_.category = "";
 }
 #else
 UvssClient::UvssClient() :
-    proxies_(new RpcProxies()),
     workQueue_(new WorkQueue()),
-    servant_(new CallbackReceiverI(proxies_, workQueue_))
+    proxies_(new RpcProxies()),
+    servant_(new CallbackReceiverI(workQueue_, proxies_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -39,7 +39,7 @@ UvssClient::UvssClient() :
 
     ic_ = Ice::initialize(initData);
     adapter_ = ic_->createObjectAdapter("");
-    ident_.name = IceUtil::generateUUID();
+    ident_.name = Ice::generateUUID();
     ident_.category = "";
 }
 #endif
@@ -49,8 +49,8 @@ int UvssClient::start()
     try {
         adapter_->add(servant_, ident_);
         adapter_->activate();
-        proxies_->startHeartbeat();
         workQueue_->start(); // AMD
+        proxies_->startHeartbeat();
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
