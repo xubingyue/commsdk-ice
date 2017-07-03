@@ -15,4 +15,4 @@ extern ConnectionCallback g_connectionCallback;
 extern CheckInfoCallback g_checkInfoCallback;
 extern CheckInfoCallbackEx g_checkInfoCallbackEx;
 
-#endif // GLOBAL_H
+#endif

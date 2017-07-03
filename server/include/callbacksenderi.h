@@ -19,7 +19,8 @@ private:
 
 #else
 
-class CallbackSenderI : public virtual Uvss::CallbackSender, public virtual IceUtil::Shared {
+class CallbackSenderI : public virtual Uvss::CallbackSender,
+    public virtual IceUtil::Shared {
 public:
     CallbackSenderI(const IceUtil::Handle<RpcProxies>&);
 

@@ -7,6 +7,8 @@
 #include <workqueue.h>
 #include <callbackreceiveri.h>
 
+#ifdef ICE_CPP11_MAPPING
+
 class UvssClient {
 public:
     UvssClient();
@@ -23,15 +25,34 @@ private:
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
-#ifdef ICE_CPP11_MAPPING
-    std::shared_ptr<WorkQueue> workQueue_;
+    std::shared_ptr<WorkQueue> queue_;
     std::shared_ptr<RpcProxies> proxies_;
     std::shared_ptr<CallbackReceiverI> servant_;
+};
+
 #else
-    IceUtil::Handle<WorkQueue> workQueue_;
+
+class UvssClient {
+public:
+    UvssClient();
+    int start();
+
+    int connect(const std::string&, int);
+    int disconnect(int);
+
+    void shutdown();
+    ~UvssClient();
+
+private:
+    Ice::CommunicatorPtr ic_;
+    Ice::ObjectAdapterPtr adapter_;
+    Ice::Identity ident_;
+
+    IceUtil::Handle<WorkQueue> queue_;
     IceUtil::Handle<RpcProxies> proxies_;
     IceUtil::Handle<CallbackReceiverI> servant_;
-#endif
 };
+
+#endif
 
 #endif

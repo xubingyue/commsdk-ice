@@ -7,4 +7,4 @@ typedef UVSSServerCallback ConnectionCallback;
 
 extern ConnectionCallback g_connectionCallback;
 
-#endif // GLOBAL_H
+#endif

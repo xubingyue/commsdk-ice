@@ -11,6 +11,7 @@ WorkQueue::WorkQueue() : destroy_(false)
 }
 
 #ifdef ICE_CPP11_MAPPING
+
 void WorkQueue::run()
 {
     std::unique_lock<std::mutex> lock(mutex_);
@@ -68,7 +69,102 @@ void WorkQueue::run()
         }
     }
 }
+
+void WorkQueue::start()
+{
+    std::thread t([this]()
+    {
+        this->run();
+    });
+    workthread_ = std::move(t);
+}
+
+void WorkQueue::add(
+    int index,
+    const std::vector<std::string>& strings,
+    const std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char>>& files,
+    std::function<void ()> response,
+    std::function<void (std::exception_ptr)> error)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    if (!destroy_) { // destroy后仍然有可能执行add 所以要判断if destroy_
+        if (callbacks_.size() == 0) {
+            condition_.notify_one();
+        }
+        callbacks_.push_back(make_tuple(index,std::move(strings),
+                                        std::move(fileNames),
+                                        std::move(files),
+                                        std::move(response),
+                                        std::move(error)));
+    }
+    else {
+        try {
+            throw Uvss::RequestCanceledException();
+        }
+        catch (...) {
+            error(std::current_exception());
+        }
+    }
+}
+
+void WorkQueue::destroy()
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    destroy_ = true;
+    condition_.notify_one();
+}
+
+void WorkQueue::join()
+{
+    if (workthread_.joinable()) {
+        workthread_.join();
+    }
+}
+
+std::string WorkQueue::fileDirectory(const std::string& folder)
+{
+    boost::filesystem::path dir(folder);
+    if (!boost::filesystem::exists(dir)) {
+        boost::filesystem::create_directory(dir);
+    }
+    boost::filesystem::path currentPath = boost::filesystem::current_path();
+
+#ifdef _WIN32
+    std::string fileDir = currentPath.string() + "\\" + folder;
 #else
+    std::string fileDir = currentPath.string() + "/" + folder;
+#endif
+
+    return fileDir;
+}
+
+void WorkQueue::fileNamesAndFilesTofilePaths(
+    std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char>>& files,
+    const std::string& folder,
+    std::vector<std::string>& filePaths)
+{
+    std::string fileDir = fileDirectory(folder);
+
+    for (int i = 0; i != fileNames.size(); ++i) {
+        if (!fileNames[i].empty()) {
+
+#ifdef _WIN32
+            filePaths[i] = fileDir + "\\" + fileNames[i];
+#else
+            filePaths[i] = fileDir + "/" + fileNames[i];
+#endif
+
+            std::ofstream ofs(filePaths[i], std::ios::binary);
+            ofs.write((char*)&files[i][0], files[i].size());
+        }
+    }
+}
+
+#else
+
 void WorkQueue::run()
 {
     boost::unique_lock<boost::mutex> lock(mutex_);
@@ -111,68 +207,23 @@ void WorkQueue::run()
             }
 
             entry.cb->ice_response();
-
             callbacks_.pop_front();
         }
     }
 
-    std::list<CallbackEntry>::const_iterator p;
-    for(p = callbacks_.begin(); p != callbacks_.end(); ++p)
-    {
+    for (std::list<CallbackEntry>::const_iterator
+        p = callbacks_.begin(); p != callbacks_.end(); ++p) {
         (*p).cb->ice_exception(Uvss::RequestCanceledException());
     }
 }
-#endif
 
-#ifdef ICE_CPP11_MAPPING
-void WorkQueue::start()
-{
-    std::thread t([this]()
-    {
-        run();
-    });
-    workthread_ = std::move(t);
-}
-#else
 void WorkQueue::start()
 {
     boost::function0<void> f = boost::bind(&WorkQueue::run, this);
     boost::thread t(f);
     workthread_ = boost::move(t);
 }
-#endif
 
-#ifdef ICE_CPP11_MAPPING
-void WorkQueue::add(
-    int index,
-    const std::vector<std::string>& strings,
-    const std::vector<std::string>& fileNames,
-    const std::vector<std::vector<unsigned char>>& files,
-    std::function<void ()> response,
-    std::function<void (std::exception_ptr)> error)
-{
-    std::unique_lock<std::mutex> lock(mutex_);
-
-    if (!destroy_) { // destroy后仍然有可能执行add 所以要判断if destroy_
-        if (callbacks_.size() == 0) {
-            condition_.notify_one();
-        }
-        callbacks_.push_back(make_tuple(index,std::move(strings),
-                                        std::move(fileNames),
-                                        std::move(files),
-                                        std::move(response),
-                                        std::move(error)));
-    }
-    else {
-        try {
-            throw Uvss::RequestCanceledException();
-        }
-        catch (...) {
-            error(std::current_exception());
-        }
-    }
-}
-#else
 void WorkQueue::add(
     const Uvss::AMD_CallbackReceiver_sendDataPtr& cb,
     int index,
@@ -198,23 +249,13 @@ void WorkQueue::add(
         cb->ice_exception(Uvss::RequestCanceledException());
     }
 }
-#endif
 
-#ifdef ICE_CPP11_MAPPING
-void WorkQueue::destroy()
-{
-    std::unique_lock<std::mutex> lock(mutex_);
-    destroy_ = true;
-    condition_.notify_one();
-}
-#else
 void WorkQueue::destroy()
 {
     boost::unique_lock<boost::mutex> lock(mutex_);
     destroy_ = true;
     condition_.notify_one();
 }
-#endif
 
 void WorkQueue::join()
 {
@@ -230,15 +271,16 @@ std::string WorkQueue::fileDirectory(const std::string& folder)
         boost::filesystem::create_directory(dir);
     }
     boost::filesystem::path currentPath = boost::filesystem::current_path();
+
 #ifdef _WIN32
     std::string fileDir = currentPath.string() + "\\" + folder;
 #else
     std::string fileDir = currentPath.string() + "/" + folder;
 #endif
+
     return fileDir;
 }
 
-#ifdef ICE_CPP11_MAPPING
 void WorkQueue::fileNamesAndFilesTofilePaths(
     std::vector<std::string>& fileNames,
     const std::vector<std::vector<unsigned char> >& files,
@@ -249,35 +291,17 @@ void WorkQueue::fileNamesAndFilesTofilePaths(
 
     for (int i = 0; i != fileNames.size(); ++i) {
         if (!fileNames[i].empty()) {
-#ifdef _WIN32
-            filePaths[i] = fileDir + "\\" + fileNames[i];
-#else
-            filePaths[i] = fileDir + "/" + fileNames[i];
-#endif
-            std::ofstream ofs(filePaths[i], std::ios::binary);
-            ofs.write((char*)&files[i][0], files[i].size());
-        }
-    }
-}
-#else
-void WorkQueue::fileNamesAndFilesTofilePaths(
-    std::vector<std::string>& fileNames,
-    const std::vector<std::vector<unsigned char> >& files,
-    const std::string& folder,
-    std::vector<std::string>& filePaths)
-{
-    std::string fileDir = fileDirectory(folder);
 
-    for (int i = 0; i != fileNames.size(); ++i) {
-        if (!fileNames[i].empty()) {
 #ifdef _WIN32
             filePaths[i] = fileDir + "\\" + fileNames[i];
 #else
             filePaths[i] = fileDir + "/" + fileNames[i];
 #endif
+
             std::ofstream ofs(filePaths[i].c_str(), std::ios::binary);
             ofs.write((char*)&files[i][0], files[i].size());
         }
     }
 }
+
 #endif

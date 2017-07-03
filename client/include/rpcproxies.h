@@ -1,21 +1,14 @@
 #ifndef RPCPROXIES_H
 #define RPCPROXIES_H
 
-#include <map>
-
-#ifdef ICE_CPP11_MAPPING
-#include <mutex>
-#include <condition_variable>
-#include <thread>
-#else
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/thread.hpp>
-#endif
-
 #include <callback.h>
 
 #ifdef ICE_CPP11_MAPPING
+
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+
 class RpcProxies {
 public:
     RpcProxies();
@@ -42,7 +35,13 @@ private:
     std::condition_variable condition_;
     std::thread heartbeatThread_;
 };
+
 #else
+
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread.hpp>
+
 class RpcProxies : public virtual IceUtil::Shared {
 public:
     RpcProxies();
@@ -59,8 +58,7 @@ public:
     void joinHeartbeat();
 
 private:
-    std::map<Uvss::CallbackSenderPrx, std::string>
-        proxyEndpointMap_;
+    std::map<Uvss::CallbackSenderPrx, std::string> proxyEndpointMap_;
     std::map<std::string, int> endpointConnectionIdMap_;
     int connectionId_;
     bool destroy_;
@@ -69,6 +67,7 @@ private:
     boost::condition_variable condition_;
     boost::thread heartbeatThread_;
 };
+
 #endif
 
-#endif // RPCPROXIES_H
+#endif

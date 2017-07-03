@@ -4,22 +4,14 @@
 #include <Ice/Ice.h>
 
 #ifdef ICE_CPP11_MAPPING
-CallbackReceiverI::CallbackReceiverI(
-    const std::shared_ptr<WorkQueue>& workQueue,
-    const std::shared_ptr<RpcProxies>& proxies) :
-    workQueue_(workQueue), proxies_(proxies)
-{
-}
-#else
-CallbackReceiverI::CallbackReceiverI(
-    const IceUtil::Handle<WorkQueue>& workQueue,
-    const IceUtil::Handle<RpcProxies>& proxies) :
-    workQueue_(workQueue), proxies_(proxies)
-{
-}
-#endif
 
-#ifdef ICE_CPP11_MAPPING
+CallbackReceiverI::CallbackReceiverI(
+    const std::shared_ptr<WorkQueue>& queue,
+    const std::shared_ptr<RpcProxies>& proxies) :
+    queue_(queue), proxies_(proxies)
+{
+}
+
 void CallbackReceiverI::sendDataAsync(
     std::vector<std::string> strings,
     std::vector<std::string> fileNames,
@@ -39,10 +31,19 @@ void CallbackReceiverI::sendDataAsync(
 //     std::cout << endpoint << std::endl;
     int connectionId = proxies_->connectionId(endpoint);
 
-    workQueue_->add(connectionId, strings, fileNames, files,
-                    std::move(response), std::move(error));
+    queue_->add(connectionId, strings, fileNames, files,
+                std::move(response), std::move(error));
 }
+
 #else
+
+CallbackReceiverI::CallbackReceiverI(
+    const IceUtil::Handle<WorkQueue>& queue,
+    const IceUtil::Handle<RpcProxies>& proxies) :
+    queue_(queue), proxies_(proxies)
+{
+}
+
 void CallbackReceiverI::sendData_async(
     const Uvss::AMD_CallbackReceiver_sendDataPtr& cb,
     const std::vector<std::string>& strings,
@@ -55,12 +56,13 @@ void CallbackReceiverI::sendData_async(
 //     tcp -h 127.0.0.1 -p 20145 -t 60000
     Ice::ConnectionInfoPtr info = current.con->getInfo();
     Ice::TCPConnectionInfoPtr tcpInfo =
-            Ice::TCPConnectionInfoPtr::dynamicCast(info);
+        Ice::TCPConnectionInfoPtr::dynamicCast(info);
     std::string endpoint = tcpInfo->remoteAddress + ":" +
         boost::lexical_cast<std::string>(tcpInfo->remotePort);
 //     std::cout << endpoint << std::endl;
     int connectionId = proxies_->connectionId(endpoint);
 
-    workQueue_->add(cb, connectionId, strings, fileNames, files);
+    queue_->add(cb, connectionId, strings, fileNames, files);
 }
+
 #endif

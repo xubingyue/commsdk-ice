@@ -3,19 +3,14 @@
 
 #include <list>
 
-#ifdef ICE_CPP11_MAPPING
-#include <mutex>
-#include <condition_variable>
-#include <thread>
-#else
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/thread.hpp>
-#endif
-
 #include <callback.h>
 
 #ifdef ICE_CPP11_MAPPING
+
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+
 class WorkQueue {
 public:
     WorkQueue();
@@ -55,7 +50,13 @@ private:
         const std::string&,
         std::vector<std::string>&);
 };
+
 #else
+
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread.hpp>
+
 class WorkQueue : public virtual IceUtil::Shared {
 public:
     WorkQueue();
@@ -80,6 +81,7 @@ private:
         std::vector<std::string> fileNames;
         std::vector<std::vector<unsigned char> > files;
     };
+
     std::list<CallbackEntry> callbacks_;
     bool destroy_;
 
@@ -94,6 +96,7 @@ private:
         const std::string&,
         std::vector<std::string>&);
 };
+
 #endif
 
 #endif
