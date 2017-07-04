@@ -153,7 +153,7 @@ int UvssClient::start()
     try {
         adapter_->add(servant_, ident_);
         adapter_->activate();
-        queue_->start(); // AMD
+        queue_->start();
         proxies_->startHeartbeat();
     }
     catch (const std::exception& e) {

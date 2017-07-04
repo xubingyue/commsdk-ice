@@ -69,4 +69,4 @@ else(EVO)
     target_link_libraries(UVSSServerd ice37b0d.lib boost_filesystem-vc120-mt-gd-1_62.lib boost_date_time-vc120-mt-gd-1_62.lib libboost_thread-vc120-mt-gd-1_62.lib libboost_chrono-vc120-mt-gd-1_62.lib)
 endif(EVO)
 
-endif ()
+endif()

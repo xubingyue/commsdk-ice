@@ -130,12 +130,7 @@ std::string WorkQueue::fileDirectory(const std::string& folder)
         boost::filesystem::create_directory(dir);
     }
     boost::filesystem::path currentPath = boost::filesystem::current_path();
-
-#ifdef _WIN32
-    std::string fileDir = currentPath.string() + "\\" + folder;
-#else
-    std::string fileDir = currentPath.string() + "/" + folder;
-#endif
+    std::string fileDir = currentPath.string() + SLASH + folder;
 
     return fileDir;
 }
@@ -150,20 +145,16 @@ void WorkQueue::fileNamesAndFilesTofilePaths(
 
     for (int i = 0; i != fileNames.size(); ++i) {
         if (!fileNames[i].empty()) {
-
-#ifdef _WIN32
-            filePaths[i] = fileDir + "\\" + fileNames[i];
-#else
-            filePaths[i] = fileDir + "/" + fileNames[i];
-#endif
-
-            std::ofstream ofs(filePaths[i], std::ios::binary);
+            filePaths[i] = fileDir + SLASH + fileNames[i];
+            std::ofstream ofs(filePaths[i].c_str(), std::ios::binary);
             ofs.write((char*)&files[i][0], files[i].size());
         }
     }
 }
 
 #else
+
+#include <boost/move/utility_core.hpp>
 
 void WorkQueue::run()
 {
@@ -213,7 +204,7 @@ void WorkQueue::run()
 
     for (std::list<CallbackEntry>::const_iterator
         p = callbacks_.begin(); p != callbacks_.end(); ++p) {
-        (*p).cb->ice_exception(Uvss::RequestCanceledException());
+        p->cb->ice_exception(Uvss::RequestCanceledException());
     }
 }
 
@@ -234,15 +225,15 @@ void WorkQueue::add(
     boost::unique_lock<boost::mutex> lock(mutex_);
 
     if (!destroy_) { // destroy后仍然有可能执行add 所以要判断if destroy_
-        CallbackEntry entry;
-        entry.cb = cb;
-        entry.index = index;
-        entry.strings = strings; // boost::move
-        entry.fileNames = fileNames;
-        entry.files = files;
         if (callbacks_.size() == 0) {
             condition_.notify_one();
         }
+        CallbackEntry entry;
+        entry.cb = boost::move(cb);
+        entry.index = boost::move(index);
+        entry.strings = boost::move(strings);
+        entry.fileNames = boost::move(fileNames);
+        entry.files = boost::move(files);
         callbacks_.push_back(entry);
     }
     else {
@@ -271,12 +262,7 @@ std::string WorkQueue::fileDirectory(const std::string& folder)
         boost::filesystem::create_directory(dir);
     }
     boost::filesystem::path currentPath = boost::filesystem::current_path();
-
-#ifdef _WIN32
-    std::string fileDir = currentPath.string() + "\\" + folder;
-#else
-    std::string fileDir = currentPath.string() + "/" + folder;
-#endif
+    std::string fileDir = currentPath.string() + SLASH + folder;
 
     return fileDir;
 }
@@ -291,13 +277,7 @@ void WorkQueue::fileNamesAndFilesTofilePaths(
 
     for (int i = 0; i != fileNames.size(); ++i) {
         if (!fileNames[i].empty()) {
-
-#ifdef _WIN32
-            filePaths[i] = fileDir + "\\" + fileNames[i];
-#else
-            filePaths[i] = fileDir + "/" + fileNames[i];
-#endif
-
+            filePaths[i] = fileDir + SLASH + fileNames[i];
             std::ofstream ofs(filePaths[i].c_str(), std::ios::binary);
             ofs.write((char*)&files[i][0], files[i].size());
         }

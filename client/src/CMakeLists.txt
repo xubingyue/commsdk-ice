@@ -1,6 +1,6 @@
-if (UNIX)
+if(UNIX)
 
-if (EVO)
+if(EVO)
     set(CMAKE_CXX_STANDARD 11)
     add_compile_options(-DICE_CPP11_MAPPING)
 
@@ -34,7 +34,7 @@ else(EVO)
     target_link_libraries(UVSSSDK Ice pthread boost_filesystem boost_thread boost_chrono)
 endif(EVO)
 
-elseif (WIN32)
+elseif(WIN32)
 
 if(EVO)
 add_compile_options(-DICE_CPP11_MAPPING)
@@ -70,4 +70,4 @@ else(EVO)
     target_link_libraries(UVSSSDKd ice37b0d.lib boost_filesystem-vc120-mt-gd-1_62.lib libboost_thread-vc120-mt-gd-1_62.lib libboost_chrono-vc120-mt-gd-1_62.lib)
 endif(EVO)
 
-endif ()
+endif()

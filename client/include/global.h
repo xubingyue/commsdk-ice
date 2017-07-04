@@ -1,6 +1,12 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#ifdef _WIN32
+#   define SLASH "\\"
+#else
+#   define SLASH "/"
+#endif
+
 #include <uvssclientwrapper.h>
 
 typedef UVSSMessageCallback InitializationCallback;
