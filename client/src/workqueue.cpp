@@ -3,6 +3,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <global.h>
 
@@ -33,7 +34,7 @@ void WorkQueue::run()
             auto& files = std::get<3>(entry);
 
             auto& filePaths = fileNames;
-            fileNamesAndFilesTofilePaths(fileNames, files, "UVSS", filePaths);
+            fileNamesAndFilesTofilePaths(fileNames, files, "UVSS", connectionId, filePaths);
 
             if (strings.size() == 5 && filePaths.size() == 2) {
                 g_checkInfoCallback(
@@ -139,13 +140,14 @@ void WorkQueue::fileNamesAndFilesTofilePaths(
     std::vector<std::string>& fileNames,
     const std::vector<std::vector<unsigned char>>& files,
     const std::string& folder,
+    int connectionId,
     std::vector<std::string>& filePaths)
 {
     std::string fileDir = fileDirectory(folder);
 
     for (int i = 0; i != fileNames.size(); ++i) {
         if (!fileNames[i].empty()) {
-            filePaths[i] = fileDir + SLASH + fileNames[i];
+            filePaths[i] = fileDir + SLASH + "[" + boost::lexical_cast<std::string>(connectionId) + "]" + fileNames[i];
             std::ofstream ofs(filePaths[i].c_str(), std::ios::binary);
             ofs.write((char*)&files[i][0], files[i].size());
         }
@@ -177,7 +179,7 @@ void WorkQueue::run()
             std::vector<std::vector<unsigned char> >& files = entry.files;
 
             std::vector<std::string>& filePaths = fileNames;
-            fileNamesAndFilesTofilePaths(fileNames, files, "UVSS", filePaths);
+            fileNamesAndFilesTofilePaths(fileNames, files, "UVSS", connectionId, filePaths);
 
             if (strings.size() == 5 && filePaths.size() == 2) {
                 g_checkInfoCallback(
@@ -271,13 +273,14 @@ void WorkQueue::fileNamesAndFilesTofilePaths(
     std::vector<std::string>& fileNames,
     const std::vector<std::vector<unsigned char> >& files,
     const std::string& folder,
+    int connectionId,
     std::vector<std::string>& filePaths)
 {
     std::string fileDir = fileDirectory(folder);
 
     for (int i = 0; i != fileNames.size(); ++i) {
         if (!fileNames[i].empty()) {
-            filePaths[i] = fileDir + SLASH + fileNames[i];
+            filePaths[i] = fileDir + SLASH + "[" + boost::lexical_cast<std::string>(connectionId) + "]" + fileNames[i];
             std::ofstream ofs(filePaths[i].c_str(), std::ios::binary);
             ofs.write((char*)&files[i][0], files[i].size());
         }

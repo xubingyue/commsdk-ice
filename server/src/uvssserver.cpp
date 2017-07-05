@@ -73,7 +73,7 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
     std::vector<unsigned char> uvssImage;
     boost::filesystem::path filePath(uvssImagePath);
     if (boost::filesystem::exists(filePath)) {
-        uvssImageName = time + "_UVSS" + filePath.extension().string();
+        uvssImageName = "UVSS_" + time + filePath.extension().string();
         filePathToFile(uvssImagePath, uvssImage);
     }
 
@@ -81,7 +81,7 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
     std::vector<unsigned char> plateImage;
     boost::filesystem::path filePath1(plateImagePath);
     if (boost::filesystem::exists(filePath1)) {
-        plateImageName = time + "_ANPR" + filePath1.extension().string();
+        plateImageName = "ANPR_" + time + filePath1.extension().string();
         filePathToFile(plateImagePath, plateImage);
     }
 
@@ -152,8 +152,8 @@ void UvssServer::filePathsToFileNamesAndFiles(
         std::vector<unsigned char> file;
         boost::filesystem::path filePath(filePaths[i]);
         if (boost::filesystem::exists(filePath)) {
-            fileName = time + "[" + boost::lexical_cast<std::string>(i) + "]_" +
-                filePath.filename().string();
+            fileName = "[" + boost::lexical_cast<std::string>(i) + "]" +
+                filePath.stem().string() + "_" + time + filePath.extension().string();
             filePathToFile(filePaths[i], file);
         }
 
@@ -226,7 +226,7 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
     std::vector<unsigned char> uvssImage;
     boost::filesystem::path filePath(uvssImagePath);
     if (boost::filesystem::exists(filePath)) {
-        uvssImageName = time + "_UVSS" + filePath.extension().string();
+        uvssImageName = "UVSS_" + time + filePath.extension().string();
         filePathToFile(uvssImagePath, uvssImage);
     }
 
@@ -234,7 +234,7 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
     std::vector<unsigned char> plateImage;
     boost::filesystem::path filePath1(plateImagePath);
     if (boost::filesystem::exists(filePath1)) {
-        plateImageName = time + "_ANPR" + filePath1.extension().string();
+        plateImageName = "ANPR_" + time + filePath1.extension().string();
         filePathToFile(plateImagePath, plateImage);
     }
 
@@ -305,8 +305,8 @@ void UvssServer::filePathsToFileNamesAndFiles(
         std::vector<unsigned char> file;
         boost::filesystem::path filePath(filePaths[i]);
         if (boost::filesystem::exists(filePath)) {
-            fileName = time + "[" + boost::lexical_cast<std::string>(i) + "]_" +
-                filePath.filename().string();
+            fileName = "[" + boost::lexical_cast<std::string>(i) + "]" +
+                filePath.stem().string() + "_" + time + filePath.extension().string();
             filePathToFile(filePaths[i], file);
         }
 

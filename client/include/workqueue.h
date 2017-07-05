@@ -48,6 +48,7 @@ private:
         std::vector<std::string>&,
         const std::vector<std::vector<unsigned char>>&,
         const std::string&,
+        int,
         std::vector<std::string>&);
 };
 
@@ -94,6 +95,7 @@ private:
         std::vector<std::string>&,
         const std::vector<std::vector<unsigned char> >&,
         const std::string&,
+        int,
         std::vector<std::string>&);
 };
 
