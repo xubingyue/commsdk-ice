@@ -113,7 +113,8 @@ void onUvssCheckInfoCallback(int connectionId, const char* uvssImagePath,
                  "extension: " << extension << "\n";
 }
 
-void onUvssCheckInfoCallbackEx(int connectionId, const char* concatedString, const char* concatedFilePath)
+void onUvssCheckInfoCallbackEx(int connectionId, const char* concatedString,
+                               const char* concatedFilePath)
 {
     std::cout << "\ncallback:\n"
                  "connectionId: " << connectionId << "\n"

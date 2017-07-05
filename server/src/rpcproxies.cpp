@@ -234,7 +234,7 @@ void RpcProxies::sendCheckInfo(
     for (std::map<Uvss::CallbackReceiverPrx, std::string>::iterator
         p = proxyEndpointMap_.begin(); p != proxyEndpointMap_.end(); ++p) {
         try {
-            IceUtil::Handle<Callback> cb = new Callback();
+            IceUtil::Handle<Callback> cb = new Callback;
             p->first->begin_sendData(strings, fileNames, files,
                 Uvss::newCallback_CallbackReceiver_sendData(cb,
                 &Callback::response, &Callback::exception));

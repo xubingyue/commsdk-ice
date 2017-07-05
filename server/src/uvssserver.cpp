@@ -152,8 +152,9 @@ void UvssServer::filePathsToFileNamesAndFiles(
         std::vector<unsigned char> file;
         boost::filesystem::path filePath(filePaths[i]);
         if (boost::filesystem::exists(filePath)) {
-            fileName = "[" + boost::lexical_cast<std::string>(i) + "]" +
-                filePath.stem().string() + "_" + time + filePath.extension().string();
+            fileName = "[" + boost::lexical_cast<std::string>(i + 1) + "]" +
+                filePath.stem().string() + "_" + time +
+                filePath.extension().string();
             filePathToFile(filePaths[i], file);
         }
 
@@ -305,8 +306,9 @@ void UvssServer::filePathsToFileNamesAndFiles(
         std::vector<unsigned char> file;
         boost::filesystem::path filePath(filePaths[i]);
         if (boost::filesystem::exists(filePath)) {
-            fileName = "[" + boost::lexical_cast<std::string>(i) + "]" +
-                filePath.stem().string() + "_" + time + filePath.extension().string();
+            fileName = "[" + boost::lexical_cast<std::string>(i + 1) + "]" +
+                filePath.stem().string() + "_" + time +
+                filePath.extension().string();
             filePathToFile(filePaths[i], file);
         }
 

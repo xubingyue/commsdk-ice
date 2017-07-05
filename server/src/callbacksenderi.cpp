@@ -47,7 +47,8 @@ CallbackSenderI::CallbackSenderI(const IceUtil::Handle<RpcProxies>& proxies) :
 void CallbackSenderI::addProxy(const Ice::Identity& ident,
                                const Ice::Current& current)
 {
-    Uvss::CallbackReceiverPrx proxy = Uvss::CallbackReceiverPrx::uncheckedCast(current.con->createProxy(ident));
+    Uvss::CallbackReceiverPrx proxy = Uvss::CallbackReceiverPrx::uncheckedCast(
+        current.con->createProxy(ident));
 
 //     std::cout << current.con->getEndpoint()->toString() << std::endl;
 //     tcp -p 20145 -t 60000
