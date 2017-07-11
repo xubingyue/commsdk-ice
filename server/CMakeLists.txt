@@ -1,5 +1,12 @@
 #cmake .. -G "Visual Studio 12 2013 Win64" -DCMAKE_CONFIGURATION_TYPES=Debug -DCXX11=false
-#cmake .. -G "Visual Studio 14 2015 Win64" -DCMAKE_CONFIGURATION_TYPES=Debug
+#cmake .. -G "Visual Studio 12 2013 Win64" -DCMAKE_CONFIGURATION_TYPES=Release -DCXX11=false
+#cmake .. -G "Visual Studio 12 2013" -DCMAKE_CONFIGURATION_TYPES=Debug -DCXX11=false
+#cmake .. -G "Visual Studio 12 2013" -DCMAKE_CONFIGURATION_TYPES=Release -DCXX11=false
+
+#cmake .. -G "Visual Studio 14 2015 Win64" -DCMAKE_CONFIGURATION_TYPES=Debug -DCXX11=true
+#cmake .. -G "Visual Studio 14 2015 Win64" -DCMAKE_CONFIGURATION_TYPES=Release -DCXX11=true
+#cmake .. -G "Visual Studio 14 2015" -DCMAKE_CONFIGURATION_TYPES=Debug -DCXX11=true
+#cmake .. -G "Visual Studio 14 2015" -DCMAKE_CONFIGURATION_TYPES=Release -DCXX11=true
 
 cmake_minimum_required(VERSION 2.6)
 
