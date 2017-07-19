@@ -1,8 +1,0 @@
-slice2cpp callback.ice -I/opt/Ice-3.7a4/slice
-g++ -c *.cpp -I. -I/opt/Ice-3.7a4/include -std=c++11 -DICE_CPP11_MAPING
-g++ -o client *.o -L/opt/Ice-3.7a4/lib/x86_64-linux-gnu -lIce -lIceUtil -lpthread -lboost_filesystem -lboost_system
-
-iconv -f GBK -t UTF-8 xx -o xx
-dos2unix
-
-slice2cpp callback.ice -I/usr/share/slice --impl-c++11
