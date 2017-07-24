@@ -55,6 +55,14 @@ int main(int argc, char* argv[])
                 }
 #endif
                 break;
+            case 4:
+                {
+                    std::string endpoint;
+                    std::cin >> endpoint;
+                    SendUVSSCheckInfoByEndpoint(endpoint.c_str(), "1.jpg", "2.jpg", "Channel 1", "ABC1234",
+                                    "In", "2016/1/1 13:01:02", "old");
+                }
+                break;
             case 9:
                 break;
             }
@@ -76,6 +84,7 @@ void menu()
                  "2: init\n"
                  "-2: uninit\n"
                  "3: send checkInfo\n"
+                 "4: send checkInfo by endpoint\n"
                  "9: exit\n";
 }
 

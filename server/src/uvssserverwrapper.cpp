@@ -37,6 +37,19 @@ void SendUVSSCheckInfo(const char* uvssImagePath, const char* plateImagePath,
                               std::string(dateTime), std::string(extension));
 }
 
+void SendUVSSCheckInfoByEndpoint(const char* endpoint,
+                                 const char* uvssImagePath, const char* plateImagePath,
+                                 const char* channel, const char* plateNumber,
+                                 const char* direction, const char* dateTime,
+                                 const char* extension)
+{
+    uvssServer->sendCheckInfo(std::string(endpoint),
+                              std::string(uvssImagePath),
+                              std::string(plateImagePath), std::string(channel),
+                              std::string(plateNumber), std::string(direction),
+                              std::string(dateTime), std::string(extension));
+}
+
 void SendUVSSCheckInfoEx(const char* concatedString,
                          const char* concatedFilePath)
 {
