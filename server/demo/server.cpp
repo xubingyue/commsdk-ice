@@ -86,7 +86,7 @@ void menu()
                  "-2: uninit\n"
                  "3: send checkInfo\n"
                  "4: send checkInfo by endpoint\n"
-                 "5: send checkInfo ex"
+                 "5: send checkInfo ex\n"
                  "9: exit\n";
 }
 
