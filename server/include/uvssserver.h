@@ -95,6 +95,17 @@ private:
     void filePathsToFileNamesAndFiles(const std::vector<std::string>&,
                                       std::vector<std::string>&,
                                       std::vector<std::vector<unsigned char> >&);
+    void transformCheckInfo(const std::string&, const std::string&,
+                            const std::string&, const std::string&,
+                            const std::string&, const std::string&,
+                            const std::string&,
+                            std::vector<std::string>&,
+                            std::vector<std::string>&,
+                            std::vector<std::vector<unsigned char> >&);
+    void transformCheckInfo(const std::string&, const std::string&,
+                            std::vector<std::string>&,
+                            std::vector<std::string>&,
+                            std::vector<std::vector<unsigned char> >&);
 };
 
 #endif

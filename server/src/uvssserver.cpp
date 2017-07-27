@@ -250,38 +250,10 @@ void UvssServer::sendCheckInfo(const std::string& uvssImagePath,
                                const std::string& extension)
 {
     std::vector<std::string> strings;
-    strings.push_back(channel);
-    strings.push_back(plateNumber);
-    strings.push_back(direction);
-    strings.push_back(dateTime);
-    strings.push_back(extension);
-
-    std::string time = boost::posix_time::to_iso_string(
-        boost::posix_time::microsec_clock::local_time());
-
-    std::string uvssImageName;
-    std::vector<unsigned char> uvssImage;
-    boost::filesystem::path filePath(uvssImagePath);
-    if (boost::filesystem::exists(filePath)) {
-        uvssImageName = "UVSS_" + time + filePath.extension().string();
-        filePathToFile(uvssImagePath, uvssImage);
-    }
-
-    std::string plateImageName;
-    std::vector<unsigned char> plateImage;
-    boost::filesystem::path filePath1(plateImagePath);
-    if (boost::filesystem::exists(filePath1)) {
-        plateImageName = "ANPR_" + time + filePath1.extension().string();
-        filePathToFile(plateImagePath, plateImage);
-    }
-
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char> > files;
-    fileNames.push_back(uvssImageName);
-    fileNames.push_back(plateImageName);
-    files.push_back(uvssImage);
-    files.push_back(plateImage);
 
+    transformCheckInfo(uvssImagePath, plateImagePath, channel, plateNumber, direction, dateTime, extension, strings, fileNames, files);
     proxies_->sendCheckInfo(strings, fileNames, files);
 }
 
@@ -295,38 +267,10 @@ void UvssServer::sendCheckInfo(const std::string& endpoint,
                                const std::string& extension)
 {
     std::vector<std::string> strings;
-    strings.push_back(channel);
-    strings.push_back(plateNumber);
-    strings.push_back(direction);
-    strings.push_back(dateTime);
-    strings.push_back(extension);
-
-    std::string time = boost::posix_time::to_iso_string(
-                           boost::posix_time::microsec_clock::local_time());
-
-    std::string uvssImageName;
-    std::vector<unsigned char> uvssImage;
-    boost::filesystem::path filePath(uvssImagePath);
-    if (boost::filesystem::exists(filePath)) {
-        uvssImageName = "UVSS_" + time + filePath.extension().string();
-        filePathToFile(uvssImagePath, uvssImage);
-    }
-
-    std::string plateImageName;
-    std::vector<unsigned char> plateImage;
-    boost::filesystem::path filePath1(plateImagePath);
-    if (boost::filesystem::exists(filePath1)) {
-        plateImageName = "ANPR_" + time + filePath1.extension().string();
-        filePathToFile(plateImagePath, plateImage);
-    }
-
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char> > files;
-    fileNames.push_back(uvssImageName);
-    fileNames.push_back(plateImageName);
-    files.push_back(uvssImage);
-    files.push_back(plateImage);
 
+    transformCheckInfo(uvssImagePath, plateImagePath, channel, plateNumber, direction, dateTime, extension, strings, fileNames, files);
     proxies_->sendCheckInfo(endpoint, strings, fileNames, files);
 }
 
@@ -334,17 +278,10 @@ void UvssServer::sendCheckInfo(const std::string& concatedString,
                                const std::string& concatedFilePath)
 {
     std::vector<std::string> strings;
-    strings.push_back(concatedString);
-
-    std::vector<std::string> filePaths;
-    const char* concatedFilePathC = concatedFilePath.c_str();
-    boost::split(filePaths, concatedFilePathC, boost::is_any_of("|"),
-                 boost::token_compress_on);
-
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char> > files;
-    filePathsToFileNamesAndFiles(filePaths, fileNames, files);
 
+    transformCheckInfo(concatedString, concatedFilePath, strings, fileNames, files);
     proxies_->sendCheckInfo(strings, fileNames, files);
 }
 
@@ -396,6 +333,60 @@ void UvssServer::filePathsToFileNamesAndFiles(
         fileNames.push_back(fileName);
         files.push_back(file);
     }
+}
+
+void UvssServer::transformCheckInfo(const std::string& uvssImagePath, const std::string& plateImagePath,
+                          const std::string& channel, const std::string& plateNumber,
+                          const std::string& direction, const std::string& dateTime,
+                          const std::string& extension,
+                          std::vector<std::string>& strings,
+                          std::vector<std::string>& fileNames,
+                          std::vector<std::vector<unsigned char> >& files)
+{
+    strings.push_back(channel);
+    strings.push_back(plateNumber);
+    strings.push_back(direction);
+    strings.push_back(dateTime);
+    strings.push_back(extension);
+
+    std::string time = boost::posix_time::to_iso_string(
+        boost::posix_time::microsec_clock::local_time());
+
+    std::string uvssImageName;
+    std::vector<unsigned char> uvssImage;
+    boost::filesystem::path filePath(uvssImagePath);
+    if (boost::filesystem::exists(filePath)) {
+        uvssImageName = "UVSS_" + time + filePath.extension().string();
+        filePathToFile(uvssImagePath, uvssImage);
+    }
+
+    std::string plateImageName;
+    std::vector<unsigned char> plateImage;
+    boost::filesystem::path filePath1(plateImagePath);
+    if (boost::filesystem::exists(filePath1)) {
+        plateImageName = "ANPR_" + time + filePath1.extension().string();
+        filePathToFile(plateImagePath, plateImage);
+    }
+
+    fileNames.push_back(uvssImageName);
+    fileNames.push_back(plateImageName);
+    files.push_back(uvssImage);
+    files.push_back(plateImage);
+}
+
+void UvssServer::transformCheckInfo(const std::string& concatedString, const std::string& concatedFilePath,
+                          std::vector<std::string>& strings,
+                          std::vector<std::string>& fileNames,
+                          std::vector<std::vector<unsigned char> >& files)
+{
+    strings.push_back(concatedString);
+
+    std::vector<std::string> filePaths;
+    const char* concatedFilePathC = concatedFilePath.c_str();
+    boost::split(filePaths, concatedFilePathC, boost::is_any_of("|"),
+                 boost::token_compress_on);
+
+    filePathsToFileNamesAndFiles(filePaths, fileNames, files);
 }
 
 #endif
