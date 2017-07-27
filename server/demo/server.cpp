@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
 #include <uvssserverwrapper.h>
 
@@ -42,25 +43,25 @@ int main(int argc, char* argv[])
                 UninitUVSSServer();
                 break;
             case 3:
-#if 1
                 SendUVSSCheckInfo("1.jpg", "2.jpg", "Channel 1", "ABC1234",
                                   "In", "2016/1/1 13:01:02", "old");
-#endif
-#if 1
-                {
-                    const char* concatedString =
-                        "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
-                    const char* concatedFilePath = "1.jpg|2.jpg";
-                    SendUVSSCheckInfoEx(concatedString, concatedFilePath);
-                }
-#endif
                 break;
             case 4:
                 {
                     std::string endpoint;
                     std::cin >> endpoint;
-                    SendUVSSCheckInfoByEndpoint(endpoint.c_str(), "1.jpg", "2.jpg", "Channel 1", "ABC1234",
-                                    "In", "2016/1/1 13:01:02", "old");
+                    SendUVSSCheckInfoByEndpoint(
+                        endpoint.c_str(),
+                        "1.jpg", "2.jpg",
+                        "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "old");
+                }
+                break;
+            case 5:
+                {
+                    const char* concatedString =
+                        "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
+                    const char* concatedFilePath = "1.jpg|2.jpg";
+                    SendUVSSCheckInfoEx(concatedString, concatedFilePath);
                 }
                 break;
             case 9:
@@ -85,6 +86,7 @@ void menu()
                  "-2: uninit\n"
                  "3: send checkInfo\n"
                  "4: send checkInfo by endpoint\n"
+                 "5: send checkInfo ex"
                  "9: exit\n";
 }
 
