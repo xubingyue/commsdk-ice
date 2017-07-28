@@ -79,6 +79,8 @@ public:
                        const std::string&, const std::string&,
                        const std::string&);
     void sendCheckInfo(const std::string&, const std::string&);
+    void sendCheckInfo(const std::string&,
+                       const std::string&, const std::string&);
 
     void shutdown();
     ~UvssServer();
