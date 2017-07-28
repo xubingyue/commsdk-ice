@@ -57,6 +57,14 @@ void SendUVSSCheckInfoEx(const char* concatedString,
                               std::string(concatedFilePath));
 }
 
+void SendUVSSCheckInfoByEndpointEx(const char* endpoint,
+                                   const char* concatedString,
+                                   const char* concatedFilePath)
+{
+    uvssServer->sendCheckInfo(std::string(endpoint), std::string(concatedString),
+                              std::string(concatedFilePath));
+}
+
 void UninitUVSSServer()
 {
     uvssServer->shutdown();

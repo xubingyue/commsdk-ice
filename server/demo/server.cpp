@@ -64,6 +64,16 @@ int main(int argc, char* argv[])
                     SendUVSSCheckInfoEx(concatedString, concatedFilePath);
                 }
                 break;
+            case 6:
+                {
+                    std::string endpoint;
+                    std::cin >> endpoint;
+                    const char* concatedString =
+                        "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
+                    const char* concatedFilePath = "1.jpg|2.jpg";
+                    SendUVSSCheckInfoByEndpointEx(endpoint.c_str(), concatedString, concatedFilePath);
+                }
+                break;
             case 9:
                 break;
             }
@@ -87,6 +97,7 @@ void menu()
                  "3: send checkInfo\n"
                  "4: send checkInfo by endpoint\n"
                  "5: send checkInfo ex\n"
+                 "6: send checkInfo by endpoint ex\n"
                  "9: exit\n";
 }
 

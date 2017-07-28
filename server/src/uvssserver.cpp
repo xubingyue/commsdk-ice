@@ -95,6 +95,18 @@ void UvssServer::sendCheckInfo(const std::string& concatedString,
     proxies_->sendCheckInfo(strings, fileNames, files);
 }
 
+void UvssServer::sendCheckInfo(const std::string& endpoint,
+                               const std::string& concatedString,
+                               const std::string& concatedFilePath)
+{
+    std::vector<std::string> strings;
+    std::vector<std::string> fileNames;
+    std::vector<std::vector<unsigned char>> files;
+
+    transformCheckInfo(concatedString, concatedFilePath, strings, fileNames, files);
+    proxies_->sendCheckInfo(endpoint, strings, fileNames, files);
+}
+
 // 使用时，没有warning?
 void UvssServer::shutdown()
 {
