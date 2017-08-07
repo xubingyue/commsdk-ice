@@ -72,4 +72,25 @@ bool CallbackSenderI::checkVersion(const std::string& version,
     return version == Uvss::version;
 }
 
+void CallbackSenderI::sendData_async(
+    const Uvss::AMD_CallbackSender_sendDataPtr& cb,
+    const std::vector<std::string>& strings,
+    const std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char> >& files,
+    const Ice::Current& current)
+{
+//     简化endpoint形式？使用正则表达式？
+//     std::cout << current.con->getEndpoint()->toString() << std::endl;
+//     tcp -h 127.0.0.1 -p 20145 -t 60000
+    Ice::ConnectionInfoPtr info = current.con->getInfo();
+    Ice::TCPConnectionInfoPtr tcpInfo =
+        Ice::TCPConnectionInfoPtr::dynamicCast(info);
+    std::string endpoint = tcpInfo->remoteAddress + ":" +
+        boost::lexical_cast<std::string>(tcpInfo->remotePort);
+//     std::cout << endpoint << std::endl;
+    int connectionId = /*proxies_->connectionId(endpoint)*/0;
+
+    queue_->add(cb, connectionId, strings, fileNames, files);
+}
+
 #endif

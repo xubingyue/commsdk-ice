@@ -70,3 +70,13 @@ void UninitUVSSServer()
     uvssServer->shutdown();
     delete uvssServer;
 }
+
+void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback uvssCheckInfoCallback)
+{
+    g_checkInfoCallback = uvssCheckInfoCallback;
+}
+
+void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx uvssCheckInfoCallbackEx)
+{
+    g_checkInfoCallbackEx = uvssCheckInfoCallbackEx;
+}

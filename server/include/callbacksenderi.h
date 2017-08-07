@@ -3,6 +3,7 @@
 
 #include <callback.h>
 #include <rpcproxies.h>
+#include <workqueue.h>
 
 #ifdef ICE_CPP11_MAPPING
 
@@ -26,8 +27,14 @@ public:
 
     virtual void addProxy(const Ice::Identity&, const Ice::Current&);
     virtual bool checkVersion(const std::string&, const Ice::Current&);
+    virtual void sendData_async(const Uvss::AMD_CallbackSender_sendDataPtr&,
+                                const std::vector<std::string>&,
+                                const std::vector<std::string>&,
+                                const std::vector<std::vector<unsigned char> >&,
+                                const Ice::Current&);
 
 private:
+    IceUtil::Handle<WorkQueue> queue_;
     IceUtil::Handle<RpcProxies> proxies_;
 };
 

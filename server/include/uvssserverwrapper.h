@@ -13,6 +13,19 @@
 
 typedef void(*UVSSServerCallback)(int, const char*);
 
+typedef void(*UVSSCheckInfoCallback)(int connectionId,
+                                     const char* uvssImagePath,
+                                     const char* plateImagePath,
+                                     const char* channel,
+                                     const char* plateNumber,
+                                     const char* direction,
+                                     const char* dateTime,
+                                     const char* extension);
+
+typedef void(*UVSSCheckInfoCallbackEx)(int connectionId,
+                                       const char* concatedString,
+                                       const char* concatedFilePath);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,6 +45,14 @@ UVSS_API void SendUVSSCheckInfoByEndpoint(const char*,
 UVSS_API void SendUVSSCheckInfoEx(const char*, const char*);
 UVSS_API void SendUVSSCheckInfoByEndpointEx(const char*, const char*, const char*);
 UVSS_API void UninitUVSSServer();
+
+// SetUVSSCheckInfoCallback: 设置车辆检查信息回调函数
+UVSS_API void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback
+                                       uvssCheckInfoCallback);
+
+// SetUVSSCheckInfoCallback: 设置车辆检查信息回调Ex函数
+UVSS_API void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx
+                                         uvssCheckInfoCallbackEx);
 
 #ifdef __cplusplus
 }
