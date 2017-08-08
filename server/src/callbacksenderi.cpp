@@ -39,8 +39,10 @@ bool CallbackSenderI::checkVersion(std::string version,
 
 #else
 
-CallbackSenderI::CallbackSenderI(const IceUtil::Handle<RpcProxies>& proxies) :
-    proxies_(proxies)
+CallbackSenderI::CallbackSenderI(
+    const IceUtil::Handle<WorkQueue>& queue,
+    const IceUtil::Handle<RpcProxies>& proxies) :
+    queue_(queue), proxies_(proxies)
 {
 }
 

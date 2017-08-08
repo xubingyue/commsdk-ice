@@ -43,6 +43,19 @@ public:
     void shutdown();
     ~UvssClient();
 
+    void sendCheckInfo(const std::string&, const std::string&,
+                       const std::string&, const std::string&,
+                       const std::string&, const std::string&,
+                       const std::string&);
+    void sendCheckInfo(const std::string&,
+                       const std::string&, const std::string&,
+                       const std::string&, const std::string&,
+                       const std::string&, const std::string&,
+                       const std::string&);
+    void sendCheckInfo(const std::string&, const std::string&);
+    void sendCheckInfo(const std::string&,
+                       const std::string&, const std::string&);
+
 private:
     Ice::CommunicatorPtr ic_;
     Ice::ObjectAdapterPtr adapter_;
@@ -51,6 +64,23 @@ private:
     IceUtil::Handle<WorkQueue> queue_;
     IceUtil::Handle<RpcProxies> proxies_;
     IceUtil::Handle<CallbackReceiverI> servant_;
+
+    void filePathToFile(const std::string&, std::vector<unsigned char>&);
+    void filePathsToFileNamesAndFiles(const std::vector<std::string>&,
+                                      std::vector<std::string>&,
+                                      std::vector<std::vector<unsigned char> >&,
+                                      bool);
+    void transformCheckInfo(const std::string&, const std::string&,
+                            const std::string&, const std::string&,
+                            const std::string&, const std::string&,
+                            const std::string&,
+                            std::vector<std::string>&,
+                            std::vector<std::string>&,
+                            std::vector<std::vector<unsigned char> >&);
+    void transformCheckInfo(const std::string&, const std::string&,
+                            std::vector<std::string>&,
+                            std::vector<std::string>&,
+                            std::vector<std::vector<unsigned char> >&);
 };
 
 #endif

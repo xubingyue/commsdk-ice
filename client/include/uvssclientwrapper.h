@@ -90,6 +90,16 @@ UVSS_API int UVSSDisconnect(int connectionId);
 // UVSSUninitialize: 销毁SDK, 释放占用的资源 (仅在程序退出时调用一次)
 UVSS_API void UVSSUninitialize();
 
+UVSS_API void SendUVSSCheckInfo(const char*, const char*, const char*,
+                                const char*, const char*, const char*,
+                                const char*);
+UVSS_API void SendUVSSCheckInfoByEndpoint(const char*,
+                                    const char*, const char*, const char*,
+                                    const char*, const char*, const char*,
+                                    const char*);
+UVSS_API void SendUVSSCheckInfoEx(const char*, const char*);
+UVSS_API void SendUVSSCheckInfoByEndpointEx(const char*, const char*, const char*);
+
 #ifdef __cplusplus
 }
 #endif

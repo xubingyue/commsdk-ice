@@ -23,7 +23,8 @@ private:
 class CallbackSenderI : public virtual Uvss::CallbackSender,
     public virtual IceUtil::Shared {
 public:
-    CallbackSenderI(const IceUtil::Handle<RpcProxies>&);
+    CallbackSenderI(const IceUtil::Handle<WorkQueue>&,
+                    const IceUtil::Handle<RpcProxies>&);
 
     virtual void addProxy(const Ice::Identity&, const Ice::Current&);
     virtual bool checkVersion(const std::string&, const Ice::Current&);

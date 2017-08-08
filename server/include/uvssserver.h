@@ -93,6 +93,7 @@ private:
     // 为兼容旧C接口（init函数中调用C++构造函数和start，init前可以setPort），此处port设为static（比设为全局变量好点）
     static int port_;
 
+    IceUtil::Handle<WorkQueue> queue_;
     IceUtil::Handle<RpcProxies> proxies_;
     IceUtil::Handle<CallbackSenderI> servant_;
 

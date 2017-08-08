@@ -306,4 +306,60 @@ void RpcProxies::joinHeartbeat()
     }
 }
 
+void RpcProxies::sendCheckInfo(
+    const std::vector<std::string>& strings,
+    const std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char> >& files)
+{
+    boost::unique_lock<boost::mutex> lock(mutex_);
+
+    for (std::map<Uvss::CallbackSenderPrx, std::string>::iterator
+        p = proxyEndpointMap_.begin(); p != proxyEndpointMap_.end(); ++p) {
+        try {
+            IceUtil::Handle<Callback> cb = new Callback;
+            p->first->begin_sendData(strings, fileNames, files,
+                Uvss::newCallback_CallbackSender_sendData(cb,
+                &Callback::response, &Callback::exception));
+        }
+        catch (const Ice::Exception& ex) {
+            std::cerr << "sendCheckInfo:\n" << ex << std::endl;
+//             不在此处删除失效proxy
+//             只让心跳线程检测对端连接和删除失效proxy
+//             若在此处删除失效proxy
+//             1.若在此处回调通知，心跳线程也可能再回调通知一次（在此处删除失效proxy后，若心跳线程还没有检测proxy副本）
+//             2.若不在此处回调通知，心跳线程可能会漏掉通知（在此处删除失效proxy后，若心跳线程已经检测了proxy副本，而检测时此proxy是正常的）
+        }
+    }
+}
+
+void RpcProxies::sendCheckInfo(
+    const std::string& endpoint,
+    const std::vector<std::string>& strings,
+    const std::vector<std::string>& fileNames,
+    const std::vector<std::vector<unsigned char> >& files)
+{
+    boost::unique_lock<boost::mutex> lock(mutex_);
+
+    for (std::map<Uvss::CallbackSenderPrx, std::string>::iterator
+            p = proxyEndpointMap_.begin(); p != proxyEndpointMap_.end(); ++p) {
+        if (p->second == endpoint) {
+            try {
+                IceUtil::Handle<Callback> cb = new Callback;
+                p->first->begin_sendData(strings, fileNames, files,
+                                         Uvss::newCallback_CallbackSender_sendData(cb,
+                                                 &Callback::response, &Callback::exception));
+                break;
+            }
+            catch (const Ice::Exception& ex) {
+                std::cerr << "sendCheckInfo:\n" << ex << std::endl;
+//             不在此处删除失效proxy
+//             只让心跳线程检测对端连接和删除失效proxy
+//             若在此处删除失效proxy
+//             1.若在此处回调通知，心跳线程也可能再回调通知一次（在此处删除失效proxy后，若心跳线程还没有检测proxy副本）
+//             2.若不在此处回调通知，心跳线程可能会漏掉通知（在此处删除失效proxy后，若心跳线程已经检测了proxy副本，而检测时此proxy是正常的）
+            }
+        }
+    }
+}
+
 #endif

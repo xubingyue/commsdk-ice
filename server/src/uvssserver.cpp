@@ -230,8 +230,9 @@ void UvssServer::setPort(int port)
 }
 
 UvssServer::UvssServer() :
+    queue_(new WorkQueue),
     proxies_(new RpcProxies),
-    servant_(new CallbackSenderI(proxies_))
+    servant_(new CallbackSenderI(queue_, proxies_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -252,6 +253,7 @@ int UvssServer::start()
     try {
         adapter_->add(servant_, ident_);
         adapter_->activate();
+        queue_->start();
         proxies_->startHeartbeat(); // 启动心跳线程
     }
     catch (const std::exception& e) {
@@ -322,12 +324,14 @@ void UvssServer::sendCheckInfo(const std::string& endpoint,
 void UvssServer::shutdown()
 {
     proxies_->destroyHeartbeat();
+    queue_->destroy();
     ic_->shutdown();
 }
 
 UvssServer::~UvssServer()
 {
     proxies_->joinHeartbeat();
+    queue_->join();
     ic_->destroy();
 }
 

@@ -31,7 +31,7 @@ if(UNIX)
         aux_source_directory(. SRCS)
 
         add_library(UVSSSDK SHARED ${SRCS})
-        target_link_libraries(UVSSSDK Ice boost_chrono boost_filesystem boost_thread pthread)
+        target_link_libraries(UVSSSDK Ice boost_chrono boost_date_time boost_filesystem boost_thread pthread)
     endif()
 elseif(WIN32)
     set(CMAKE_DEBUG_POSTFIX d)
