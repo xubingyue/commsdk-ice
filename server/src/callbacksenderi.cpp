@@ -90,7 +90,7 @@ void CallbackSenderI::sendData_async(
     std::string endpoint = tcpInfo->remoteAddress + ":" +
         boost::lexical_cast<std::string>(tcpInfo->remotePort);
 //     std::cout << endpoint << std::endl;
-    int connectionId = /*proxies_->connectionId(endpoint)*/0;
+    int connectionId = proxies_->connectionId(endpoint);
 
     queue_->add(cb, connectionId, strings, fileNames, files);
 }

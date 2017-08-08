@@ -53,6 +53,7 @@ public:
     void startHeartbeat();
 
     void add(const Uvss::CallbackReceiverPrx&, const std::string&);
+    int connectionId(const std::string&);
     void sendCheckInfo(const std::vector<std::string>&,
                        const std::vector<std::string>&,
                        const std::vector<std::vector<unsigned char> >&);
@@ -77,6 +78,8 @@ private:
     };
 
     std::map<Uvss::CallbackReceiverPrx, std::string> proxyEndpointMap_;
+    std::map<std::string, int> endpointConnectionIdMap_;
+    int connectionId_;
     bool destroy_;
 
     boost::mutex mutex_;
