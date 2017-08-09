@@ -15,7 +15,7 @@ if(UNIX)
         aux_source_directory(. SRCS)
 
         add_library(UVSSSDK SHARED ${SRCS})
-        target_link_libraries(UVSSSDK Ice++11 boost_filesystem pthread)
+        target_link_libraries(UVSSSDK Ice++11 boost_date_time boost_filesystem pthread)
     else()
         set(CMAKE_CXX_STANDARD 98)
 

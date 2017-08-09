@@ -21,6 +21,14 @@ public:
     bool has(const std::string&);
     int connectionId(const std::string&);
 
+    void sendCheckInfo(const std::vector<std::string>&,
+                       const std::vector<std::string>&,
+                       const std::vector<std::vector<unsigned char>>&);
+    void sendCheckInfo(const std::string&,
+                       const std::vector<std::string>&,
+                       const std::vector<std::string>&,
+                       const std::vector<std::vector<unsigned char>>&);
+
     void destroyHeartbeat();
     void joinHeartbeat();
 
