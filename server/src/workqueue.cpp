@@ -47,7 +47,7 @@ void WorkQueue::run()
             else if (strings.size() == 1){
                 std::string concatedFilePath =
                     boost::algorithm::join(filePaths, "|");
-                g_checkInfoCallbackEx(
+                g_checkInfoExCallback(
                     connectionId,
                     strings[0].c_str(),
                     concatedFilePath.c_str());

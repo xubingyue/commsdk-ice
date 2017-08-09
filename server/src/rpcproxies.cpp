@@ -85,11 +85,20 @@ void RpcProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& proxy,
                      const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(mutex_);
+
     proxyEndpointMap_[proxy] = endpoint;
+    ++connectionId_;
+    endpointConnectionIdMap_[endpoint] = connectionId_;
     std::string message("Client " + endpoint + ": Connected");
     lock.unlock();
 
     g_connectionCallback(0, message.c_str());
+}
+
+int RpcProxies::connectionId(const std::string& endpoint)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    return endpointConnectionIdMap_[endpoint];
 }
 
 void RpcProxies::sendCheckInfo(

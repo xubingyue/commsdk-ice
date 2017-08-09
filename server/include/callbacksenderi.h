@@ -9,12 +9,20 @@
 
 class CallbackSenderI : public virtual Uvss::CallbackSender {
 public:
-    CallbackSenderI(const std::shared_ptr<RpcProxies>&);
+    CallbackSenderI(const std::shared_ptr<WorkQueue>&,
+                    const std::shared_ptr<RpcProxies>&);
 
     virtual void addProxy(Ice::Identity, const Ice::Current&) override;
     virtual bool checkVersion(std::string, const Ice::Current&) override;
+    virtual void sendDataAsync(std::vector<std::string>,
+                               std::vector<std::string>,
+                               std::vector<std::vector<unsigned char>>,
+                               std::function<void()>,
+                               std::function<void(std::exception_ptr)>,
+                               const Ice::Current&) override;
 
 private:
+    std::shared_ptr<WorkQueue> queue_;
     std::shared_ptr<RpcProxies> proxies_;
 };
 
