@@ -255,6 +255,7 @@ void RpcProxies::add(const Uvss::CallbackReceiverPrx& proxy,
                      const std::string& endpoint)
 {
     boost::unique_lock<boost::mutex> lock(mutex_);
+
     proxyEndpointMap_[proxy] = endpoint;
     ++connectionId_;
     endpointConnectionIdMap_[endpoint] = connectionId_;
@@ -310,8 +311,8 @@ void RpcProxies::sendCheckInfo(
             try {
                 IceUtil::Handle<Callback> cb = new Callback;
                 p->first->begin_sendData(strings, fileNames, files,
-                                         Uvss::newCallback_CallbackReceiver_sendData(cb,
-                                                 &Callback::response, &Callback::exception));
+                    Uvss::newCallback_CallbackReceiver_sendData(cb,
+                    &Callback::response, &Callback::exception));
                 break;
             }
             catch (const Ice::Exception& ex) {

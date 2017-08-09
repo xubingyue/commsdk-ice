@@ -54,6 +54,7 @@ public:
 
     void add(const Uvss::CallbackReceiverPrx&, const std::string&);
     int connectionId(const std::string&);
+
     void sendCheckInfo(const std::vector<std::string>&,
                        const std::vector<std::string>&,
                        const std::vector<std::vector<unsigned char> >&);
@@ -61,6 +62,7 @@ public:
                        const std::vector<std::string>&,
                        const std::vector<std::string>&,
                        const std::vector<std::vector<unsigned char> >&);
+
     void destroyHeartbeat();
     void joinHeartbeat();
 

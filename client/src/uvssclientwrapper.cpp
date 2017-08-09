@@ -21,9 +21,9 @@ void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback uvssCheckInfoCallback)
     g_checkInfoCallback = uvssCheckInfoCallback;
 }
 
-void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx uvssCheckInfoCallbackEx)
+void SetUVSSCheckInfoExCallback(UVSSCheckInfoExCallback uvssCheckInfoExCallback)
 {
-    g_checkInfoCallbackEx = uvssCheckInfoCallbackEx;
+    g_checkInfoExCallback = uvssCheckInfoExCallback;
 }
 
 int UVSSInitialize()
@@ -42,34 +42,40 @@ int UVSSDisconnect(int connectionId)
     return uvssClient->disconnect(connectionId);
 }
 
-void UVSSUninitialize()
-{
-    uvssClient->shutdown();
-    delete uvssClient;
-}
-
-void SendUVSSCheckInfo(const char* uvssImagePath, const char* plateImagePath,
-                       const char* channel, const char* plateNumber,
-                       const char* direction, const char* dateTime,
+void SendUVSSCheckInfo(const char* uvssImagePath,
+                       const char* plateImagePath,
+                       const char* channel,
+                       const char* plateNumber,
+                       const char* direction,
+                       const char* dateTime,
                        const char* extension)
 {
     uvssClient->sendCheckInfo(std::string(uvssImagePath),
-                              std::string(plateImagePath), std::string(channel),
-                              std::string(plateNumber), std::string(direction),
-                              std::string(dateTime), std::string(extension));
+                              std::string(plateImagePath),
+                              std::string(channel),
+                              std::string(plateNumber),
+                              std::string(direction),
+                              std::string(dateTime),
+                              std::string(extension));
 }
 
 void SendUVSSCheckInfoByEndpoint(const char* endpoint,
-                                 const char* uvssImagePath, const char* plateImagePath,
-                                 const char* channel, const char* plateNumber,
-                                 const char* direction, const char* dateTime,
+                                 const char* uvssImagePath,
+                                 const char* plateImagePath,
+                                 const char* channel,
+                                 const char* plateNumber,
+                                 const char* direction,
+                                 const char* dateTime,
                                  const char* extension)
 {
     uvssClient->sendCheckInfo(std::string(endpoint),
                               std::string(uvssImagePath),
-                              std::string(plateImagePath), std::string(channel),
-                              std::string(plateNumber), std::string(direction),
-                              std::string(dateTime), std::string(extension));
+                              std::string(plateImagePath),
+                              std::string(channel),
+                              std::string(plateNumber),
+                              std::string(direction),
+                              std::string(dateTime),
+                              std::string(extension));
 }
 
 void SendUVSSCheckInfoEx(const char* concatedString,
@@ -79,10 +85,17 @@ void SendUVSSCheckInfoEx(const char* concatedString,
                               std::string(concatedFilePath));
 }
 
-void SendUVSSCheckInfoByEndpointEx(const char* endpoint,
+void SendUVSSCheckInfoExByEndpoint(const char* endpoint,
                                    const char* concatedString,
                                    const char* concatedFilePath)
 {
-    uvssClient->sendCheckInfo(std::string(endpoint), std::string(concatedString),
+    uvssClient->sendCheckInfo(std::string(endpoint),
+                              std::string(concatedString),
                               std::string(concatedFilePath));
+}
+
+void UVSSUninitialize()
+{
+    uvssClient->shutdown();
+    delete uvssClient;
 }

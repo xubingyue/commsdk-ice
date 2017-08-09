@@ -254,7 +254,7 @@ int UvssServer::start()
         adapter_->add(servant_, ident_);
         adapter_->activate();
         queue_->start();
-        proxies_->startHeartbeat(); // 启动心跳线程
+        proxies_->startHeartbeat();
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;

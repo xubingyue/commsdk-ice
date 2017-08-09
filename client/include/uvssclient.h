@@ -40,9 +40,6 @@ public:
     int connect(const std::string&, int);
     int disconnect(int);
 
-    void shutdown();
-    ~UvssClient();
-
     void sendCheckInfo(const std::string&, const std::string&,
                        const std::string&, const std::string&,
                        const std::string&, const std::string&,
@@ -55,6 +52,9 @@ public:
     void sendCheckInfo(const std::string&, const std::string&);
     void sendCheckInfo(const std::string&,
                        const std::string&, const std::string&);
+
+    void shutdown();
+    ~UvssClient();
 
 private:
     Ice::CommunicatorPtr ic_;

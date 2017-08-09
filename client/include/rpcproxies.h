@@ -54,9 +54,6 @@ public:
     bool has(const std::string&);
     int connectionId(const std::string&);
 
-    void destroyHeartbeat();
-    void joinHeartbeat();
-
     void sendCheckInfo(const std::vector<std::string>&,
                        const std::vector<std::string>&,
                        const std::vector<std::vector<unsigned char> >&);
@@ -64,6 +61,9 @@ public:
                        const std::vector<std::string>&,
                        const std::vector<std::string>&,
                        const std::vector<std::vector<unsigned char> >&);
+
+    void destroyHeartbeat();
+    void joinHeartbeat();
 
 private:
     class Callback : public virtual IceUtil::Shared {

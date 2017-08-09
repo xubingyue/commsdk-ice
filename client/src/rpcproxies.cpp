@@ -232,6 +232,7 @@ void RpcProxies::startHeartbeat()
     boost::thread t(f);
     heartbeatThread_ = boost::move(t);
 }
+
 // connect后 add
 int RpcProxies::add(const Uvss::CallbackSenderPrx& proxy,
                     const std::string& endpoint)
@@ -292,20 +293,6 @@ int RpcProxies::connectionId(const std::string& endpoint)
     return endpointConnectionIdMap_[endpoint];
 }
 
-void RpcProxies::destroyHeartbeat()
-{
-    boost::unique_lock<boost::mutex> lock(mutex_);
-    destroy_ = true;
-    condition_.notify_one();
-}
-
-void RpcProxies::joinHeartbeat()
-{
-    if (heartbeatThread_.joinable()) {
-        heartbeatThread_.join();
-    }
-}
-
 void RpcProxies::sendCheckInfo(
     const std::vector<std::string>& strings,
     const std::vector<std::string>& fileNames,
@@ -346,8 +333,8 @@ void RpcProxies::sendCheckInfo(
             try {
                 IceUtil::Handle<Callback> cb = new Callback;
                 p->first->begin_sendData(strings, fileNames, files,
-                                         Uvss::newCallback_CallbackSender_sendData(cb,
-                                                 &Callback::response, &Callback::exception));
+                    Uvss::newCallback_CallbackSender_sendData(cb,
+                    &Callback::response, &Callback::exception));
                 break;
             }
             catch (const Ice::Exception& ex) {
@@ -359,6 +346,20 @@ void RpcProxies::sendCheckInfo(
 //             2.若不在此处回调通知，心跳线程可能会漏掉通知（在此处删除失效proxy后，若心跳线程已经检测了proxy副本，而检测时此proxy是正常的）
             }
         }
+    }
+}
+
+void RpcProxies::destroyHeartbeat()
+{
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    destroy_ = true;
+    condition_.notify_one();
+}
+
+void RpcProxies::joinHeartbeat()
+{
+    if (heartbeatThread_.joinable()) {
+        heartbeatThread_.join();
     }
 }
 

@@ -243,20 +243,6 @@ int UvssClient::disconnect(int connectionId)
     }
 }
 
-void UvssClient::shutdown()
-{
-    proxies_->destroyHeartbeat();
-    queue_->destroy();
-    ic_->shutdown();
-}
-
-UvssClient::~UvssClient()
-{
-    proxies_->joinHeartbeat();
-    queue_->join();
-    ic_->destroy();
-}
-
 void UvssClient::sendCheckInfo(const std::string& uvssImagePath,
                                const std::string& plateImagePath,
                                const std::string& channel,
@@ -311,6 +297,20 @@ void UvssClient::sendCheckInfo(const std::string& endpoint,
 
     transformCheckInfo(concatedString, concatedFilePath, strings, fileNames, files);
     proxies_->sendCheckInfo(endpoint, strings, fileNames, files);
+}
+
+void UvssClient::shutdown()
+{
+    proxies_->destroyHeartbeat();
+    queue_->destroy();
+    ic_->shutdown();
+}
+
+UvssClient::~UvssClient()
+{
+    proxies_->joinHeartbeat();
+    queue_->join();
+    ic_->destroy();
 }
 
 void UvssClient::filePathToFile(const std::string& filePath,

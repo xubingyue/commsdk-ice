@@ -9,7 +9,7 @@ void onUvssServerCallback(int, const char*);
 void onUvssCheckInfoCallback(int, const char*, const char*, const char*,
                              const char*, const char*, const char*,
                              const char*);
-void onUvssCheckInfoCallbackEx(int, const char*, const char*);
+void onUvssCheckInfoExCallback(int, const char*, const char*);
 
 int main(int argc, char* argv[])
 {
@@ -19,14 +19,11 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    menu();
     SetUVSSServerCallback(onUvssServerCallback);
-#if 1
     SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
-#endif
-#if 1
-    SetUVSSCheckInfoCallbackEx(onUvssCheckInfoCallbackEx);
-#endif
+    SetUVSSCheckInfoExCallback(onUvssCheckInfoExCallback);
+
+    menu();
 
     int key;
     do {
@@ -81,7 +78,7 @@ int main(int argc, char* argv[])
                     const char* concatedString =
                         "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
                     const char* concatedFilePath = "1.jpg|2.jpg";
-                    SendUVSSCheckInfoByEndpointEx(endpoint.c_str(), concatedString, concatedFilePath);
+                    SendUVSSCheckInfoExByEndpoint(endpoint.c_str(), concatedString, concatedFilePath);
                 }
                 break;
             case 9:
@@ -100,14 +97,14 @@ void menu()
 {
     std::cout << "server version: " << GetUVSSServerVersion() << "\n"
                  "usage:\n"
-                 "0:help\n"
+                 "0: help\n"
                  "1: set port\n"
                  "2: init\n"
                  "-2: uninit\n"
                  "3: send checkInfo\n"
                  "4: send checkInfo by endpoint\n"
-                 "5: send checkInfo ex\n"
-                 "6: send checkInfo by endpoint ex\n"
+                 "5: send checkInfoEx\n"
+                 "6: send checkInfoEx by endpoint\n"
                  "9: exit\n";
 }
 
@@ -134,7 +131,7 @@ void onUvssCheckInfoCallback(int connectionId, const char* uvssImagePath,
                  "extension: " << extension << "\n";
 }
 
-void onUvssCheckInfoCallbackEx(int connectionId, const char* concatedString,
+void onUvssCheckInfoExCallback(int connectionId, const char* concatedString,
                                const char* concatedFilePath)
 {
     std::cout << "\ncallback:\n"

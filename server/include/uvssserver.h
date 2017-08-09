@@ -4,6 +4,7 @@
 #include <Ice/Ice.h>
 
 #include <rpcproxies.h>
+#include <workqueue.h>
 #include <callbacksenderi.h>
 
 #ifdef ICE_CPP11_MAPPING

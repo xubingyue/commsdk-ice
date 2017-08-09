@@ -57,7 +57,7 @@ void SendUVSSCheckInfoEx(const char* concatedString,
                               std::string(concatedFilePath));
 }
 
-void SendUVSSCheckInfoByEndpointEx(const char* endpoint,
+void SendUVSSCheckInfoExByEndpoint(const char* endpoint,
                                    const char* concatedString,
                                    const char* concatedFilePath)
 {
@@ -76,7 +76,7 @@ void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback uvssCheckInfoCallback)
     g_checkInfoCallback = uvssCheckInfoCallback;
 }
 
-void SetUVSSCheckInfoCallbackEx(UVSSCheckInfoCallbackEx uvssCheckInfoCallbackEx)
+void SetUVSSCheckInfoExCallback(UVSSCheckInfoExCallback uvssCheckInfoExCallback)
 {
-    g_checkInfoCallbackEx = uvssCheckInfoCallbackEx;
+    g_checkInfoExCallback = uvssCheckInfoExCallback;
 }
