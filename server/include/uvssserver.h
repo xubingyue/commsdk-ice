@@ -4,6 +4,7 @@
 #include <Ice/Ice.h>
 
 #include <rpcproxies.h>
+#include <workqueue.h>
 #include <callbacksenderi.h>
 
 #ifdef ICE_CPP11_MAPPING
@@ -39,6 +40,7 @@ private:
     // 为兼容旧C接口（init函数中调用C++构造函数和start，init前可以setPort），此处port设为static（比设为全局变量好点）
     static int port_;
 
+    std::shared_ptr<WorkQueue> queue_;
     std::shared_ptr<RpcProxies> proxies_;
     std::shared_ptr<CallbackSenderI> servant_;
 
@@ -93,6 +95,7 @@ private:
     // 为兼容旧C接口（init函数中调用C++构造函数和start，init前可以setPort），此处port设为static（比设为全局变量好点）
     static int port_;
 
+    IceUtil::Handle<WorkQueue> queue_;
     IceUtil::Handle<RpcProxies> proxies_;
     IceUtil::Handle<CallbackSenderI> servant_;
 

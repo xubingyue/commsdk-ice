@@ -22,5 +22,9 @@ interface CallbackReceiver {
 interface CallbackSender {
     bool checkVersion(string version);
     void addProxy(Ice::Identity ident);
+    ["amd"] idempotent void sendData(
+        StringSeq strings,
+        StringSeq fileNames, ByteSeqSeq files)
+        throws RequestCanceledException;
 }
 }

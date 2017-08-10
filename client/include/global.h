@@ -11,14 +11,12 @@
 
 typedef UVSSMessageCallback InitializationCallback;
 typedef UVSSMessageCallback ConnectionCallback;
-
 typedef UVSSCheckInfoCallback CheckInfoCallback;
-typedef UVSSCheckInfoCallbackEx CheckInfoCallbackEx;
+typedef UVSSCheckInfoExCallback CheckInfoExCallback;
 
 extern InitializationCallback g_initializationCallback;
 extern ConnectionCallback g_connectionCallback;
-
 extern CheckInfoCallback g_checkInfoCallback;
-extern CheckInfoCallbackEx g_checkInfoCallbackEx;
+extern CheckInfoExCallback g_checkInfoExCallback;
 
 #endif

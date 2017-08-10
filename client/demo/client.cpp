@@ -9,7 +9,7 @@ void onUvssMessageCallback(int, int, const char*);
 void onUvssCheckInfoCallback(int, const char*, const char*, const char*,
                              const char*, const char*, const char*,
                              const char*);
-void onUvssCheckInfoCallbackEx(int, const char*, const char*);
+void onUvssCheckInfoExCallback(int, const char*, const char*);
 
 int main(int argc, char* argv[])
 {
@@ -19,14 +19,11 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    menu();
     SetUVSSMessageCallback(onUvssMessageCallback);
-#if 1
     SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
-#endif
-#if 1
-    SetUVSSCheckInfoCallbackEx(onUvssCheckInfoCallbackEx);
-#endif
+    SetUVSSCheckInfoExCallback(onUvssCheckInfoExCallback);
+
+    menu();
 
     int key;
     do {
@@ -65,6 +62,38 @@ int main(int argc, char* argv[])
                     UVSSDisconnect(connectionId);
                 }
                 break;
+            case 3:
+                SendUVSSCheckInfo("1.jpg", "2.jpg", "Channel 1", "ABC1234",
+                                  "In", "2016/1/1 13:01:02", "old");
+                break;
+            case 4:
+                {
+                    std::string endpoint;
+                    std::cin >> endpoint;
+                    SendUVSSCheckInfoByEndpoint(
+                        endpoint.c_str(),
+                        "1.jpg", "2.jpg",
+                        "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "old");
+                }
+                break;
+            case 5:
+                {
+                    const char* concatedString =
+                        "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
+                    const char* concatedFilePath = "1.jpg|2.jpg";
+                    SendUVSSCheckInfoEx(concatedString, concatedFilePath);
+                }
+                break;
+            case 6:
+                {
+                    std::string endpoint;
+                    std::cin >> endpoint;
+                    const char* concatedString =
+                        "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
+                    const char* concatedFilePath = "1.jpg|2.jpg";
+                    SendUVSSCheckInfoExByEndpoint(endpoint.c_str(), concatedString, concatedFilePath);
+                }
+                break;
             case 9:
                 break;
             }
@@ -86,6 +115,10 @@ void menu()
                  "-1: uninit\n"
                  "2: connect\n"
                  "-2: disconnect\n"
+                 "3: send checkInfo\n"
+                 "4: send checkInfo by endpoint\n"
+                 "5: send checkInfoEx\n"
+                 "6: send checkInfoEx by endpoint\n"
                  "9: exit\n";
 }
 
@@ -113,7 +146,7 @@ void onUvssCheckInfoCallback(int connectionId, const char* uvssImagePath,
                  "extension: " << extension << "\n";
 }
 
-void onUvssCheckInfoCallbackEx(int connectionId, const char* concatedString,
+void onUvssCheckInfoExCallback(int connectionId, const char* concatedString,
                                const char* concatedFilePath)
 {
     std::cout << "\ncallback:\n"

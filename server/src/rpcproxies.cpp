@@ -85,11 +85,20 @@ void RpcProxies::add(const std::shared_ptr<Uvss::CallbackReceiverPrx>& proxy,
                      const std::string& endpoint)
 {
     std::unique_lock<std::mutex> lock(mutex_);
+
     proxyEndpointMap_[proxy] = endpoint;
+    ++connectionId_;
+    endpointConnectionIdMap_[endpoint] = connectionId_;
     std::string message("Client " + endpoint + ": Connected");
     lock.unlock();
 
     g_connectionCallback(0, message.c_str());
+}
+
+int RpcProxies::connectionId(const std::string& endpoint)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    return endpointConnectionIdMap_[endpoint];
 }
 
 void RpcProxies::sendCheckInfo(
@@ -178,7 +187,7 @@ void RpcProxies::joinHeartbeat()
 
 #else
 
-RpcProxies::RpcProxies() : destroy_(false)
+RpcProxies::RpcProxies() : connectionId_(0), destroy_(false)
 {
 }
 
@@ -234,6 +243,7 @@ void RpcProxies::runHeartbeat()
 
                     boost::unique_lock<boost::mutex> lock(mutex_); // 保证删除和回调通知一致
                     proxyEndpointMap_.erase(proxy);
+                    endpointConnectionIdMap_.erase(endpoint);
                     lock.unlock();
 
                     g_connectionCallback(-1, message.c_str());
@@ -254,11 +264,20 @@ void RpcProxies::add(const Uvss::CallbackReceiverPrx& proxy,
                      const std::string& endpoint)
 {
     boost::unique_lock<boost::mutex> lock(mutex_);
+
     proxyEndpointMap_[proxy] = endpoint;
+    ++connectionId_;
+    endpointConnectionIdMap_[endpoint] = connectionId_;
     std::string message("Client " + endpoint + ": Connected");
     lock.unlock();
 
     g_connectionCallback(0, message.c_str());
+}
+
+int RpcProxies::connectionId(const std::string& endpoint)
+{
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    return endpointConnectionIdMap_[endpoint];
 }
 
 void RpcProxies::sendCheckInfo(
@@ -301,8 +320,8 @@ void RpcProxies::sendCheckInfo(
             try {
                 IceUtil::Handle<Callback> cb = new Callback;
                 p->first->begin_sendData(strings, fileNames, files,
-                                         Uvss::newCallback_CallbackReceiver_sendData(cb,
-                                                 &Callback::response, &Callback::exception));
+                    Uvss::newCallback_CallbackReceiver_sendData(cb,
+                    &Callback::response, &Callback::exception));
                 break;
             }
             catch (const Ice::Exception& ex) {

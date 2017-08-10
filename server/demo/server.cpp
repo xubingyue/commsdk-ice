@@ -6,6 +6,10 @@
 
 void menu();
 void onUvssServerCallback(int, const char*);
+void onUvssCheckInfoCallback(int, const char*, const char*, const char*,
+                             const char*, const char*, const char*,
+                             const char*);
+void onUvssCheckInfoExCallback(int, const char*, const char*);
 
 int main(int argc, char* argv[])
 {
@@ -15,8 +19,11 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    menu();
     SetUVSSServerCallback(onUvssServerCallback);
+    SetUVSSCheckInfoCallback(onUvssCheckInfoCallback);
+    SetUVSSCheckInfoExCallback(onUvssCheckInfoExCallback);
+
+    menu();
 
     int key;
     do {
@@ -71,7 +78,7 @@ int main(int argc, char* argv[])
                     const char* concatedString =
                         "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
                     const char* concatedFilePath = "1.jpg|2.jpg";
-                    SendUVSSCheckInfoByEndpointEx(endpoint.c_str(), concatedString, concatedFilePath);
+                    SendUVSSCheckInfoExByEndpoint(endpoint.c_str(), concatedString, concatedFilePath);
                 }
                 break;
             case 9:
@@ -90,14 +97,14 @@ void menu()
 {
     std::cout << "server version: " << GetUVSSServerVersion() << "\n"
                  "usage:\n"
-                 "0:help\n"
+                 "0: help\n"
                  "1: set port\n"
                  "2: init\n"
                  "-2: uninit\n"
                  "3: send checkInfo\n"
                  "4: send checkInfo by endpoint\n"
-                 "5: send checkInfo ex\n"
-                 "6: send checkInfo by endpoint ex\n"
+                 "5: send checkInfoEx\n"
+                 "6: send checkInfoEx by endpoint\n"
                  "9: exit\n";
 }
 
@@ -106,4 +113,29 @@ void onUvssServerCallback(int code, const char* message)
     std::cout << "\ncallback:\n"
                  "code: " << code << "\n"
                  "message: " << message << "\n";
+}
+
+void onUvssCheckInfoCallback(int connectionId, const char* uvssImagePath,
+                             const char* plateImagePath, const char* channel,
+                             const char* plateNumber, const char* direction,
+                             const char* dateTime, const char* extension)
+{
+    std::cout << "\ncallback:\n"
+                 "connectionId: " << connectionId << "\n"
+                 "uvssImagePath: " << uvssImagePath << "\n"
+                 "plateImagePath: " << plateImagePath << "\n"
+                 "channel: " << channel << "\n"
+                 "plateNumber: " << plateNumber << "\n"
+                 "direction: " << direction << "\n"
+                 "dateTime: " << dateTime << "\n"
+                 "extension: " << extension << "\n";
+}
+
+void onUvssCheckInfoExCallback(int connectionId, const char* concatedString,
+                               const char* concatedFilePath)
+{
+    std::cout << "\ncallback:\n"
+                 "connectionId: " << connectionId << "\n"
+                 "concatedString: " << concatedString << "\n"
+                 "concatedFilePath: " << concatedFilePath << "\n";
 }

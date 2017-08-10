@@ -222,7 +222,7 @@ void WorkQueue::start()
 }
 
 void WorkQueue::add(
-    const Uvss::AMD_CallbackReceiver_sendDataPtr& cb,
+    const Uvss::AMD_CallbackSender_sendDataPtr& cb,
     int index,
     const std::vector<std::string>& strings,
     const std::vector<std::string>& fileNames,

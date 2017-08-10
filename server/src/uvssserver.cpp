@@ -19,8 +19,9 @@ void UvssServer::setPort(int port)
 }
 
 UvssServer::UvssServer() :
+    queue_(std::make_shared<WorkQueue>()),
     proxies_(std::make_shared<RpcProxies>()),
-    servant_(std::make_shared<CallbackSenderI>(proxies_))
+    servant_(std::make_shared<CallbackSenderI>(queue_, proxies_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -41,7 +42,8 @@ int UvssServer::start()
     try {
         adapter_->add(servant_, ident_);
         adapter_->activate();
-        proxies_->startHeartbeat(); // 启动心跳线程
+        queue_->start();
+        proxies_->startHeartbeat();
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -111,12 +113,14 @@ void UvssServer::sendCheckInfo(const std::string& endpoint,
 void UvssServer::shutdown()
 {
     proxies_->destroyHeartbeat();
+    queue_->destroy();
     ic_->shutdown();
 }
 
 UvssServer::~UvssServer()
 {
     proxies_->joinHeartbeat();
+    queue_->join();
     ic_->destroy();
 }
 
@@ -230,8 +234,9 @@ void UvssServer::setPort(int port)
 }
 
 UvssServer::UvssServer() :
+    queue_(new WorkQueue),
     proxies_(new RpcProxies),
-    servant_(new CallbackSenderI(proxies_))
+    servant_(new CallbackSenderI(queue_, proxies_))
 {
 //     try...catch?
     Ice::PropertiesPtr props = Ice::createProperties();
@@ -252,7 +257,8 @@ int UvssServer::start()
     try {
         adapter_->add(servant_, ident_);
         adapter_->activate();
-        proxies_->startHeartbeat(); // 启动心跳线程
+        queue_->start();
+        proxies_->startHeartbeat();
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -322,12 +328,14 @@ void UvssServer::sendCheckInfo(const std::string& endpoint,
 void UvssServer::shutdown()
 {
     proxies_->destroyHeartbeat();
+    queue_->destroy();
     ic_->shutdown();
 }
 
 UvssServer::~UvssServer()
 {
     proxies_->joinHeartbeat();
+    queue_->join();
     ic_->destroy();
 }
 
