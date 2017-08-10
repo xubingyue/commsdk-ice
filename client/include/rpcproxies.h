@@ -16,7 +16,8 @@ public:
     void runHeartbeat();
     void startHeartbeat();
 
-    int add(const std::shared_ptr<Uvss::CallbackSenderPrx>&, const std::string&);
+    int add(const std::shared_ptr<Uvss::CallbackSenderPrx>&,
+            const std::string&);
     bool remove(int, std::string&, std::shared_ptr<Uvss::CallbackSenderPrx>&);
     bool has(const std::string&);
     int connectionId(const std::string&);

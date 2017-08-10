@@ -29,7 +29,7 @@ private:
 #else
 
 class CallbackSenderI : public virtual Uvss::CallbackSender,
-    public virtual IceUtil::Shared {
+                        public virtual IceUtil::Shared {
 public:
     CallbackSenderI(const IceUtil::Handle<WorkQueue>&,
                     const IceUtil::Handle<RpcProxies>&);

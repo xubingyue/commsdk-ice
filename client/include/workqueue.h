@@ -30,11 +30,11 @@ public:
 
 private:
     using CallbackEntry = std::tuple<int,
-                          std::vector<std::string>,
-                          std::vector<std::string>,
-                          std::vector<std::vector<unsigned char>>,
-                          std::function<void ()>,
-                          std::function<void (std::exception_ptr)>>;
+                                     std::vector<std::string>,
+                                     std::vector<std::string>,
+                                     std::vector<std::vector<unsigned char>>,
+                                     std::function<void ()>,
+                                     std::function<void (std::exception_ptr)>>;
 
     std::list<CallbackEntry> callbacks_;
     bool destroy_;

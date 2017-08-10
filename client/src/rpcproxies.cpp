@@ -36,27 +36,6 @@ void RpcProxies::runHeartbeat()
                 catch (const Ice::Exception& ex) {
                     std::cerr << ex << std::endl;
 
-//                     与C# GUI妥协的做法
-//                     当destroy时，没有删除此刻失效的proxy、使用回调
-//                     std::unique_lock<std::mutex> lock(mutex_);
-//                     if (destroy_) {
-//                         return;
-//                     }
-//                     else {
-//                         auto proxy = p.first;
-//                         std::string endpoint = p.second;
-//                         int connectionId = endpointConnectionIdMap_[endpoint];
-//                         std::string message("Server " + endpoint + ": " +
-//                             "Disconnected | Connection Id: " +
-//                             boost::lexical_cast<std::string>(connectionId));
-//                         serverEndpointMap_.erase(proxy);
-//                         endpointConnectionIdMap_.erase(endpoint);
-//                         lock.unlock();
-//
-//                         g_connectionCallback(connectionId, -3, message.c_str());
-//                     }
-
-//                     正确做法
                     auto proxy = p.first;
                     std::string endpoint = p.second;
                     int connectionId = endpointConnectionIdMap_[endpoint];
@@ -256,27 +235,6 @@ void RpcProxies::runHeartbeat()
                 catch (const Ice::Exception& ex) {
                     std::cerr << ex << std::endl;
 
-//                     与C# GUI妥协的做法
-//                     当destroy时，没有删除此刻失效的proxy、使用回调
-//                     boost::unique_lock<boost::mutex> lock(mutex_);
-//                     if (destroy_) {
-//                         return;
-//                     }
-//                     else {
-//                         Uvss::CallbackSenderPrx proxy = p->first;
-//                         std::string endpoint = p->second;
-//                         int connectionId = endpointConnectionIdMap_[endpoint];
-//                         std::string message("Server " + endpoint + ": " +
-//                             "Disconnected | Connection Id: " +
-//                             boost::lexical_cast<std::string>(connectionId));
-//                         proxyEndpointMap_.erase(proxy);
-//                         endpointConnectionIdMap_.erase(endpoint);
-//                         lock.unlock();
-// 
-//                         g_connectionCallback(connectionId, -3, message.c_str());
-//                     }
-
-//                     正确做法
                     Uvss::CallbackSenderPrx proxy = p->first;
                     std::string endpoint = p->second;
                     int connectionId = endpointConnectionIdMap_[endpoint];

@@ -27,7 +27,7 @@ private:
 #else
 
 class CallbackReceiverI : public virtual Uvss::CallbackReceiver,
-    public virtual IceUtil::Shared {
+                          public virtual IceUtil::Shared {
 public:
     CallbackReceiverI(const IceUtil::Handle<WorkQueue>&,
                       const IceUtil::Handle<RpcProxies>&);

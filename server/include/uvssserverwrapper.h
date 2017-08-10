@@ -12,7 +12,6 @@
 #endif
 
 typedef void(*UVSSServerCallback)(int code, const char* message);
-
 typedef void(*UVSSCheckInfoCallback)(int connectionId,
                                      const char* uvssImagePath,
                                      const char* plateImagePath,
@@ -21,7 +20,6 @@ typedef void(*UVSSCheckInfoCallback)(int connectionId,
                                      const char* direction,
                                      const char* dateTime,
                                      const char* extension);
-
 typedef void(*UVSSCheckInfoExCallback)(int connectionId,
                                        const char* concatedString,
                                        const char* concatedFilePath);

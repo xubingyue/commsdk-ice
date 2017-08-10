@@ -95,7 +95,8 @@ void WorkQueue::add(
         if (callbacks_.size() == 0) {
             condition_.notify_one();
         }
-        callbacks_.push_back(make_tuple(index,std::move(strings),
+        callbacks_.push_back(make_tuple(index,
+                                        std::move(strings),
                                         std::move(fileNames),
                                         std::move(files),
                                         std::move(response),

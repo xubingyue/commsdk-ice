@@ -1,13 +1,12 @@
 #include <rpcproxies.h>
 
 #include <boost/lexical_cast.hpp>
-#include <Ice/Ice.h>
 
 #include <global.h>
 
 #ifdef ICE_CPP11_MAPPING
 
-RpcProxies::RpcProxies() : destroy_(false)
+RpcProxies::RpcProxies() : connectionId_(0), destroy_(false)
 {
 }
 
@@ -39,23 +38,6 @@ void RpcProxies::runHeartbeat()
 //                     wrong! proxy已经失效
 //                     std::cout << p.first->ice_getConnection()->getEndpoint()->toString() << std::endl;
 
-//                     与C# GUI妥协的做法
-//                     当destroy时，没有删除此刻失效的proxy、使用回调
-//                     std::unique_lock<std::mutex> lock(mutex_);
-//                     if (destroy_) {
-//                         return;
-//                     }
-//                     else {
-//                         auto proxy = p.first;
-//                         std::string endpoint = p.second;
-//                         std::string message("Client " + endpoint + ": Disconnected");
-//                         proxyEndpointMap_.erase(proxy);
-//                         lock.unlock();
-// 
-//                         g_connectionCallback(-1, message.c_str());
-//                     }
-
-//                     正确做法
                     auto proxy = p.first;
                     std::string endpoint = p.second;
                     std::string message("Client " + endpoint +
@@ -63,6 +45,7 @@ void RpcProxies::runHeartbeat()
 
                     std::unique_lock<std::mutex> lock(mutex_); // 保证删除和回调通知一致
                     proxyEndpointMap_.erase(proxy);
+                    endpointConnectionIdMap_.erase(endpoint);
                     lock.unlock();
 
                     g_connectionCallback(-1, message.c_str());
@@ -219,23 +202,6 @@ void RpcProxies::runHeartbeat()
 //                     wrong! proxy已经失效
 //                     std::cout << p->first->ice_getConnection()->getEndpoint()->toString() << std::endl;
 
-//                     与C# GUI妥协的做法
-//                     当destroy时，没有删除此刻失效的proxy、使用回调
-//                     boost::unique_lock<boost::mutex> lock(mutex_);
-//                     if (destroy_) {
-//                         return;
-//                     }
-//                     else {
-//                         Uvss::CallbackReceiverPrx proxy = p->first;
-//                         std::string endpoint = p->second;
-//                         std::string message("客户端 " + endpoint + ": 已断开");
-//                         proxyEndpointMap_.erase(proxy);
-//                         lock.unlock();
-// 
-//                         g_connectionCallback(-1, message.c_str());
-//                     }
-
-//                     正确做法
                     Uvss::CallbackReceiverPrx proxy = p->first;
                     std::string endpoint = p->second;
                     std::string message("Client " + endpoint +

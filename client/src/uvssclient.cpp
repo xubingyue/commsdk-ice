@@ -132,7 +132,9 @@ void UvssClient::sendCheckInfo(const std::string& uvssImagePath,
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char>> files;
 
-    transformCheckInfo(uvssImagePath, plateImagePath, channel, plateNumber, direction, dateTime, extension, strings, fileNames, files);
+    transformCheckInfo(uvssImagePath, plateImagePath,
+                       channel, plateNumber, direction, dateTime, extension,
+                       strings, fileNames, files);
     proxies_->sendCheckInfo(strings, fileNames, files);
 }
 
@@ -149,7 +151,9 @@ void UvssClient::sendCheckInfo(const std::string& endpoint,
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char>> files;
 
-    transformCheckInfo(uvssImagePath, plateImagePath, channel, plateNumber, direction, dateTime, extension, strings, fileNames, files);
+    transformCheckInfo(uvssImagePath, plateImagePath,
+                       channel, plateNumber, direction, dateTime, extension,
+                       strings, fileNames, files);
     proxies_->sendCheckInfo(endpoint, strings, fileNames, files);
 }
 
@@ -160,7 +164,8 @@ void UvssClient::sendCheckInfo(const std::string& concatedString,
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char>> files;
 
-    transformCheckInfo(concatedString, concatedFilePath, strings, fileNames, files);
+    transformCheckInfo(concatedString, concatedFilePath,
+                       strings, fileNames, files);
     proxies_->sendCheckInfo(strings, fileNames, files);
 }
 
@@ -172,7 +177,8 @@ void UvssClient::sendCheckInfo(const std::string& endpoint,
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char>> files;
 
-    transformCheckInfo(concatedString, concatedFilePath, strings, fileNames, files);
+    transformCheckInfo(concatedString, concatedFilePath,
+                       strings, fileNames, files);
     proxies_->sendCheckInfo(endpoint, strings, fileNames, files);
 }
 
@@ -219,8 +225,8 @@ void UvssClient::filePathsToFileNamesAndFiles(
             boost::filesystem::path filePath(filePaths[i]);
             if (boost::filesystem::exists(filePath)) {
                 fileName = "[" + boost::lexical_cast<std::string>(i + 1) + "]" +
-                           filePath.stem().string() + "_" + time +
-                           filePath.extension().string();
+                    filePath.stem().string() + "_" + time +
+                    filePath.extension().string();
                 filePathToFile(filePaths[i], file);
             }
 
@@ -254,13 +260,16 @@ void UvssClient::filePathsToFileNamesAndFiles(
     }
 }
 
-void UvssClient::transformCheckInfo(const std::string& uvssImagePath, const std::string& plateImagePath,
-                          const std::string& channel, const std::string& plateNumber,
-                          const std::string& direction, const std::string& dateTime,
-                          const std::string& extension,
-                          std::vector<std::string>& strings,
-                          std::vector<std::string>& fileNames,
-                          std::vector<std::vector<unsigned char>>& files)
+void UvssClient::transformCheckInfo(const std::string& uvssImagePath,
+                                    const std::string& plateImagePath,
+                                    const std::string& channel,
+                                    const std::string& plateNumber,
+                                    const std::string& direction,
+                                    const std::string& dateTime,
+                                    const std::string& extension,
+                                    std::vector<std::string>& strings,
+                                    std::vector<std::string>& fileNames,
+                                    std::vector<std::vector<unsigned char>>& files)
 {
     strings.push_back(channel);
     strings.push_back(plateNumber);
@@ -275,10 +284,11 @@ void UvssClient::transformCheckInfo(const std::string& uvssImagePath, const std:
     filePathsToFileNamesAndFiles(filePaths, fileNames, files, false);
 }
 
-void UvssClient::transformCheckInfo(const std::string& concatedString, const std::string& concatedFilePath,
-                          std::vector<std::string>& strings,
-                          std::vector<std::string>& fileNames,
-                          std::vector<std::vector<unsigned char>>& files)
+void UvssClient::transformCheckInfo(const std::string& concatedString,
+                                    const std::string& concatedFilePath,
+                                    std::vector<std::string>& strings,
+                                    std::vector<std::string>& fileNames,
+                                    std::vector<std::vector<unsigned char>>& files)
 {
     strings.push_back(concatedString);
 
@@ -411,7 +421,9 @@ void UvssClient::sendCheckInfo(const std::string& uvssImagePath,
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char> > files;
 
-    transformCheckInfo(uvssImagePath, plateImagePath, channel, plateNumber, direction, dateTime, extension, strings, fileNames, files);
+    transformCheckInfo(uvssImagePath, plateImagePath,
+                       channel, plateNumber, direction, dateTime, extension,
+                       strings, fileNames, files);
     proxies_->sendCheckInfo(strings, fileNames, files);
 }
 
@@ -428,7 +440,9 @@ void UvssClient::sendCheckInfo(const std::string& endpoint,
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char> > files;
 
-    transformCheckInfo(uvssImagePath, plateImagePath, channel, plateNumber, direction, dateTime, extension, strings, fileNames, files);
+    transformCheckInfo(uvssImagePath, plateImagePath,
+                       channel, plateNumber, direction, dateTime, extension,
+                       strings, fileNames, files);
     proxies_->sendCheckInfo(endpoint, strings, fileNames, files);
 }
 
@@ -439,7 +453,8 @@ void UvssClient::sendCheckInfo(const std::string& concatedString,
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char> > files;
 
-    transformCheckInfo(concatedString, concatedFilePath, strings, fileNames, files);
+    transformCheckInfo(concatedString, concatedFilePath,
+                       strings, fileNames, files);
     proxies_->sendCheckInfo(strings, fileNames, files);
 }
 
@@ -451,7 +466,8 @@ void UvssClient::sendCheckInfo(const std::string& endpoint,
     std::vector<std::string> fileNames;
     std::vector<std::vector<unsigned char> > files;
 
-    transformCheckInfo(concatedString, concatedFilePath, strings, fileNames, files);
+    transformCheckInfo(concatedString, concatedFilePath,
+                       strings, fileNames, files);
     proxies_->sendCheckInfo(endpoint, strings, fileNames, files);
 }
 
@@ -498,8 +514,8 @@ void UvssClient::filePathsToFileNamesAndFiles(
             boost::filesystem::path filePath(filePaths[i]);
             if (boost::filesystem::exists(filePath)) {
                 fileName = "[" + boost::lexical_cast<std::string>(i + 1) + "]" +
-                           filePath.stem().string() + "_" + time +
-                           filePath.extension().string();
+                    filePath.stem().string() + "_" + time +
+                    filePath.extension().string();
                 filePathToFile(filePaths[i], file);
             }
 
@@ -533,13 +549,16 @@ void UvssClient::filePathsToFileNamesAndFiles(
     }
 }
 
-void UvssClient::transformCheckInfo(const std::string& uvssImagePath, const std::string& plateImagePath,
-                          const std::string& channel, const std::string& plateNumber,
-                          const std::string& direction, const std::string& dateTime,
-                          const std::string& extension,
-                          std::vector<std::string>& strings,
-                          std::vector<std::string>& fileNames,
-                          std::vector<std::vector<unsigned char> >& files)
+void UvssClient::transformCheckInfo(const std::string& uvssImagePath,
+                                    const std::string& plateImagePath,
+                                    const std::string& channel,
+                                    const std::string& plateNumber,
+                                    const std::string& direction,
+                                    const std::string& dateTime,
+                                    const std::string& extension,
+                                    std::vector<std::string>& strings,
+                                    std::vector<std::string>& fileNames,
+                                    std::vector<std::vector<unsigned char> >& files)
 {
     strings.push_back(channel);
     strings.push_back(plateNumber);
@@ -554,10 +573,11 @@ void UvssClient::transformCheckInfo(const std::string& uvssImagePath, const std:
     filePathsToFileNamesAndFiles(filePaths, fileNames, files, false);
 }
 
-void UvssClient::transformCheckInfo(const std::string& concatedString, const std::string& concatedFilePath,
-                          std::vector<std::string>& strings,
-                          std::vector<std::string>& fileNames,
-                          std::vector<std::vector<unsigned char> >& files)
+void UvssClient::transformCheckInfo(const std::string& concatedString,
+                                    const std::string& concatedFilePath,
+                                    std::vector<std::string>& strings,
+                                    std::vector<std::string>& fileNames,
+                                    std::vector<std::vector<unsigned char> >& files)
 {
     strings.push_back(concatedString);
 

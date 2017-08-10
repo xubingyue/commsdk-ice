@@ -5,9 +5,8 @@
 
 #ifdef ICE_CPP11_MAPPING
 
-CallbackSenderI::CallbackSenderI(
-    const std::shared_ptr<WorkQueue>& queue,
-    const std::shared_ptr<RpcProxies>& proxies) :
+CallbackSenderI::CallbackSenderI(const std::shared_ptr<WorkQueue>& queue,
+                                 const std::shared_ptr<RpcProxies>& proxies) :
     queue_(queue), proxies_(proxies)
 {
 }
@@ -64,9 +63,8 @@ void CallbackSenderI::sendDataAsync(
 
 #else
 
-CallbackSenderI::CallbackSenderI(
-    const IceUtil::Handle<WorkQueue>& queue,
-    const IceUtil::Handle<RpcProxies>& proxies) :
+CallbackSenderI::CallbackSenderI(const IceUtil::Handle<WorkQueue>& queue,
+                                 const IceUtil::Handle<RpcProxies>& proxies) :
     queue_(queue), proxies_(proxies)
 {
 }
