@@ -1,19 +1,19 @@
-Ice 3.7.0 Ö§³ÖµÄÆ½Ì¨
+Ice 3.7.0 æ”¯æŒçš„å¹³å°
     https://doc.zeroc.com/display/Rel/Supported+Platforms+for+Ice+3.7.0
-slice2cppÓĞÁ½ÖÖÓ³Éä·½Ê½
-    ±¾³ÌĞòÔÚWindows7ÏÂ±àÒëÊ±£¬½ö²ÉÓÃVS2010ÏÂµÄC++98Ó³Éä£¬ºÍVS2015ÏÂµÄC++11Ó³Éä
-    LinuxÑ¡ÔñµÄ·¢ĞĞ°æÊÇDebian9£¬²ÉÓÃÄ¬ÈÏgcc°æ±¾6.3.0£¬Ê¹ÓÃC++98/C++11Á½ÖÖÓ³Éä·½Ê½
+slice2cppæœ‰ä¸¤ç§æ˜ å°„æ–¹å¼
+    æœ¬ç¨‹åºåœ¨Windows7ä¸‹ç¼–è¯‘æ—¶ï¼Œä»…é‡‡ç”¨VS2010ä¸‹çš„C++98æ˜ å°„ï¼Œå’ŒVS2015ä¸‹çš„C++11æ˜ å°„
+    Linuxä¸‹é€‰æ‹©çš„å‘è¡Œç‰ˆæ˜¯Debian9ï¼Œé‡‡ç”¨é»˜è®¤gccç‰ˆæœ¬6.3.0ï¼Œä½¿ç”¨C++98/C++11ä¸¤ç§æ˜ å°„æ–¹å¼
 
 
-¿ª·¢¹¤¾ß°²×°£º
+å¼€å‘å·¥å…·å®‰è£…ï¼š
 
 Windows7
-1.±àÒëÆ÷
-    VS2010¡¢VS2015
+1.ç¼–è¯‘å™¨
+    VS2010ã€VS2015
 2.Ice3.7.0
     https://doc.zeroc.com/display/Ice37/Using+the+Windows+Binary+Distributions
-    ²Î¿´NuGet Package Installation²¿·Ö
-    ½«ÏîÄ¿ÎÄ¼ş¼ĞÏÂµÄpackages/zeroc.ice.v100.3.7.0ºÍpackages/zeroc.ice.v140.3.7.0ÌáÈ¡³öÀ´£¬´ËÎªIce SDK
+    å‚çœ‹NuGet Package Installationéƒ¨åˆ†
+    å°†å·¥ç¨‹ç›®å½•ä¸‹çš„packages/zeroc.ice.v100.3.7.0å’Œpackages/zeroc.ice.v140.3.7.0æå–å‡ºæ¥ï¼Œæ­¤ä¸ºIce SDK
 3.boost
     boost_1_62_0-msvc-10.0-32.exe
     boost_1_62_0-msvc-10.0-64.exe
@@ -23,7 +23,7 @@ Windows7
     cmake-3.7.2-win64-x64.msi
 
 Debian9
-1.±àÒëÆ÷
+1.ç¼–è¯‘å™¨
     sudo apt-get install build-essential
 2.Ice3.7.0
     sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
@@ -38,56 +38,61 @@ Debian9
     sudo apt-get install cmake
 
 
-Ä¿Â¼½á¹¹£º
-uvsscomm/
-©À©¤©¤ callback.ice
-©À©¤©¤ client
-©¦0„20„2 ©À©¤©¤ CMakeLists.txt
-©¦0„20„2 ©À©¤©¤ demo
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ client.cpp
-©¦0„20„2 ©¦0„20„2 ©¸©¤©¤ CMakeLists.txt
-©¦0„20„2 ©À©¤©¤ include
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ callbackreceiveri.h
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ global.h
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ rpcproxies.h
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ uvssclient.h
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ uvssclientwrapper.h
-©¦0„20„2 ©¦0„20„2 ©¸©¤©¤ workqueue.h
-©¦0„20„2 ©¸©¤©¤ src
-©¦0„20„2     ©À©¤©¤ callbackreceiveri.cpp
-©¦0„20„2     ©À©¤©¤ CMakeLists.txt
-©¦0„20„2     ©À©¤©¤ global.cpp
-©¦0„20„2     ©À©¤©¤ rpcproxies.cpp
-©¦0„20„2     ©À©¤©¤ uvssclient.cpp
-©¦0„20„2     ©À©¤©¤ uvssclientwrapper.cpp
-©¦0„20„2     ©¸©¤©¤ workqueue.cpp
-©À©¤©¤ README.txt
-©À©¤©¤ server
-©¦0„20„2 ©À©¤©¤ CMakeLists.txt
-©¦0„20„2 ©À©¤©¤ demo
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ 1.jpg
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ 2.jpg
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ CMakeLists.txt
-©¦0„20„2 ©¦0„20„2 ©¸©¤©¤ server.cpp
-©¦0„20„2 ©À©¤©¤ include
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ callbacksenderi.h
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ global.h
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ rpcproxies.h
-©¦0„20„2 ©¦0„20„2 ©À©¤©¤ uvssserver.h
-©¦0„20„2 ©¦0„20„2 ©¸©¤©¤ uvssserverwrapper.h
-©¦0„20„2 ©¸©¤©¤ src
-©¦0„20„2     ©À©¤©¤ callbacksenderi.cpp
-©¦0„20„2     ©À©¤©¤ CMakeLists.txt
-©¦0„20„2     ©À©¤©¤ global.cpp
-©¦0„20„2     ©À©¤©¤ rpcproxies.cpp
-©¦0„20„2     ©À©¤©¤ uvssserver.cpp
-©¦0„20„2     ©¸©¤©¤ uvssserverwrapper.cpp
-©¸©¤©¤ UVSS¶ş´Î¿ª·¢ÎÄµµ.doc
+ç›®å½•ç»“æ„ï¼š
+hf@debian:~/dev$ tree tinycomm/
+tinycomm/
+â”œâ”€â”€ callback.ice
+â”œâ”€â”€ client
+â”‚Â Â  â”œâ”€â”€ CMakeLists.txt
+â”‚Â Â  â”œâ”€â”€ demo
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ 1.jpg
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ 2.jpg
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ client.cpp
+â”‚Â Â  â”‚Â Â  â””â”€â”€ CMakeLists.txt
+â”‚Â Â  â”œâ”€â”€ include
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ callbackreceiveri.h
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ global.h
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ rpcproxies.h
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ uvssclient.h
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ uvssclientwrapper.h
+â”‚Â Â  â”‚Â Â  â””â”€â”€ workqueue.h
+â”‚Â Â  â””â”€â”€ src
+â”‚Â Â      â”œâ”€â”€ callbackreceiveri.cpp
+â”‚Â Â      â”œâ”€â”€ CMakeLists.txt
+â”‚Â Â      â”œâ”€â”€ global.cpp
+â”‚Â Â      â”œâ”€â”€ rpcproxies.cpp
+â”‚Â Â      â”œâ”€â”€ uvssclient.cpp
+â”‚Â Â      â”œâ”€â”€ uvssclientwrapper.cpp
+â”‚Â Â      â””â”€â”€ workqueue.cpp
+â”œâ”€â”€ README.txt
+â”œâ”€â”€ server
+â”‚Â Â  â”œâ”€â”€ CMakeLists.txt
+â”‚Â Â  â”œâ”€â”€ demo
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ 1.jpg
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ 2.jpg
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ CMakeLists.txt
+â”‚Â Â  â”‚Â Â  â””â”€â”€ server.cpp
+â”‚Â Â  â”œâ”€â”€ include
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ callbacksenderi.h
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ global.h
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ rpcproxies.h
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ uvssserver.h
+â”‚Â Â  â”‚Â Â  â”œâ”€â”€ uvssserverwrapper.h
+â”‚Â Â  â”‚Â Â  â””â”€â”€ workqueue.h
+â”‚Â Â  â””â”€â”€ src
+â”‚Â Â      â”œâ”€â”€ callbacksenderi.cpp
+â”‚Â Â      â”œâ”€â”€ CMakeLists.txt
+â”‚Â Â      â”œâ”€â”€ global.cpp
+â”‚Â Â      â”œâ”€â”€ rpcproxies.cpp
+â”‚Â Â      â”œâ”€â”€ uvssserver.cpp
+â”‚Â Â      â”œâ”€â”€ uvssserverwrapper.cpp
+â”‚Â Â      â””â”€â”€ workqueue.cpp
+â””â”€â”€ UVSSäºŒæ¬¡å¼€å‘æ–‡æ¡£.doc
 
 
-¹¹½¨SDK£º
-ÔÚclient»òserverÄ¿Â¼ÏÂĞÂ½¨buildÄ¿Â¼
-½øÈëbuildÄ¿Â¼£¬ÃüÁîĞĞÔËĞĞÒÔÏÂÄ³ÌõÃüÁî
+æ„å»ºSDKï¼š
+åœ¨clientæˆ–serverç›®å½•ä¸‹æ–°å»ºbuildç›®å½•
+è¿›å…¥buildç›®å½•ï¼Œå‘½ä»¤è¡Œè¿è¡Œä»¥ä¸‹æŸæ¡å‘½ä»¤
 
 Windows7
 
@@ -105,51 +110,74 @@ Debian9
     cmake ..
     cmake .. -DCXX11=1
 
-SDK°æ±¾ºÅÓÉcallback.iceÖĞµÄconst string versionÈ·¶¨
-lib/ÄÚÎªÉú³ÉµÄ¶¯Ì¬¿âÎÄ¼ş
-bin/ÄÚÎªÉú³ÉµÄdemo¿ÉÖ´ĞĞ³ÌĞò
-include/uvssserverwrapper.hºÍinclude/uvssclientwrapper.hÎªÒıÓÃĞèÒªµÄÍ·ÎÄ¼ş
+SDKç‰ˆæœ¬å·ç”±callback.iceä¸­çš„const string versionç¡®å®š
+lib/å†…ä¸ºç”Ÿæˆçš„åŠ¨æ€åº“æ–‡ä»¶
+bin/å†…ä¸ºç”Ÿæˆçš„demoå¯æ‰§è¡Œç¨‹åº
+include/uvssserverwrapper.hå’Œinclude/uvssclientwrapper.hä¸ºå¼•ç”¨éœ€è¦çš„å¤´æ–‡ä»¶
 
 
-demo³ÌĞòµÄÊ¹ÓÃ·½·¨
-Ê¹ÓÃ²âÊÔ³ÌĞò£º
-·Ö±ğÆô¶¯serverconsole.exeºÍclientconsole.exe£¬¿ÉÒÔ·Ö±ğÆô¶¯¶à¸ö¡£
+ä½¿ç”¨demoç¨‹åºï¼š
+åˆ†åˆ«å¯åŠ¨serverå’Œclientï¼Œå¯ä»¥å¯åŠ¨å¤šä¸ª
 
-server:
-0:help
+./server
+server version: 1.0
+usage:
+0: help
 1: set port
 2: init
 -2: uninit
 3: send checkInfo
+4: send checkInfo by endpoint
+5: send checkInfoEx
+6: send checkInfoEx by endpoint
 9: exit
 
-client:
+./client
+client version: 1.0
+usage:
 0: help
 1: init
 -1: uninit
 2: connect
 -2: disconnect
+3: send checkInfo
+4: send checkInfo by endpoint
+5: send checkInfoEx
+6: send checkInfoEx by endpoint
 9: exit
 
-
-²âÊÔ£º
-server£º1//ÉèÖÃ¶Ë¿Ú£¬Ä¬ÈÏ20145
+æµ‹è¯•ï¼š
+serverï¼š1 // è®¾ç½®ç«¯å£ï¼Œé»˜è®¤20145
         20146
-        2//³õÊ¼»¯
+        2 // åˆå§‹åŒ–
 
-client: 1//³õÊ¼»¯
-        2//Á¬½Ó
+client: 1 // åˆå§‹åŒ–
+        2 // è¿æ¥
+        127.0.0.1
         20146
 
-server: 3//·¢ËÍĞÅÏ¢
+server: 3 // å‘é€æ£€æŸ¥ä¿¡æ¯
+        4 // æŒ‰ç«¯ç‚¹å‘é€æ£€æŸ¥ä¿¡æ¯
+        127.0.0.1:38618
+        5 // å‘é€æ£€æŸ¥ä¿¡æ¯Ex
+        6 // æŒ‰ç«¯ç‚¹å‘é€æ£€æŸ¥ä¿¡æ¯Ex
+        127.0.0.1:38618
 
-client: -2//¶Ï¿ª
-        1//µÚÒ»´ÎÁ¬½ÓÊ±server±êºÅÎª1#£¬Ã¿´ÎÁ¬½Ó±êºÅµİÔö
-        2//ÔÙÒ»´ÎÁ¬½Ó
+client: 3 // å‘é€æ£€æŸ¥ä¿¡æ¯
+        4 // æŒ‰ç«¯ç‚¹å‘é€æ£€æŸ¥ä¿¡æ¯
+        127.0.0.1:20145
+        5 // å‘é€æ£€æŸ¥ä¿¡æ¯Ex
+        6 // æŒ‰ç«¯ç‚¹å‘é€æ£€æŸ¥ä¿¡æ¯Ex
+        127.0.0.1:20145
+
+client: -2 // æ–­å¼€
+        1 // connectionId
+        2 // å†ä¸€æ¬¡è¿æ¥
+        127.0.0.1
         20146
 
 server: -2
-        9//-2+9ÊÇÕı³£¹Ø±Õserver
+        9 // -2+9æ˜¯æ­£å¸¸å…³é—­server
 
-client£º-1
-        9//-1+9ÊÇÕı³£¹Ø±Õclient
+clientï¼š-1
+        9 // -1+9æ˜¯æ­£å¸¸å…³é—­client

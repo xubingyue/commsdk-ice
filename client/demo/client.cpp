@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
                     std::cout << "server connectionId:" << std::endl;
                     int connectionId;
                     std::cin >> connectionId;
+
                     UVSSDisconnect(connectionId);
                 }
                 break;
@@ -68,12 +69,13 @@ int main(int argc, char* argv[])
                 break;
             case 4:
                 {
+                    std::cout << "server endpoint:" << std::endl;
                     std::string endpoint;
                     std::cin >> endpoint;
-                    SendUVSSCheckInfoByEndpoint(
-                        endpoint.c_str(),
-                        "1.jpg", "2.jpg",
-                        "Channel 1", "ABC1234", "In", "2016/1/1 13:01:02", "old");
+
+                    SendUVSSCheckInfoByEndpoint(endpoint.c_str(),
+                        "1.jpg", "2.jpg", "Channel 1", "ABC1234", "In",
+                        "2016/1/1 13:01:02", "old");
                 }
                 break;
             case 5:
@@ -86,12 +88,15 @@ int main(int argc, char* argv[])
                 break;
             case 6:
                 {
+                    std::cout << "server endpoint:" << std::endl;
                     std::string endpoint;
                     std::cin >> endpoint;
+
                     const char* concatedString =
                         "Channel 1|ABC1234|In|2016/1/1 13:01:02|ex";
                     const char* concatedFilePath = "1.jpg|2.jpg";
-                    SendUVSSCheckInfoExByEndpoint(endpoint.c_str(), concatedString, concatedFilePath);
+                    SendUVSSCheckInfoExByEndpoint(endpoint.c_str(),
+                        concatedString, concatedFilePath);
                 }
                 break;
             case 9:
