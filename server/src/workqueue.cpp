@@ -19,10 +19,10 @@ void WorkQueue::run()
 
     while (!destroy_) {
         if (callbacks_.empty()) {
-//             å¯èƒ½è¢«addæˆ–destroyå¤„å”¤é†’
-//             è¢«å”¤é†’åï¼Œè¿›å…¥ä¸‹ä¸€è½®whileå¾ªç¯
-//             å¦‚æœæ˜¯è¢«destroyå”¤é†’çš„ï¼Œdestroy_ == trueï¼Œwhileæ¡ä»¶ä¸æˆç«‹ï¼Œè·³å‡ºå¾ªç¯
-//             å¦‚æœæ˜¯è¢«addå”¤é†’çš„ï¼Œcallbacks_.empty() == falseï¼Œifæ¡ä»¶ä¸æˆç«‹ï¼Œè¿›å…¥elseåˆ†æ”¯
+//             ¿ÉÄÜ±»add»òdestroy´¦»½ĞÑ
+//             ±»»½ĞÑºó£¬½øÈëÏÂÒ»ÂÖwhileÑ­»·
+//             Èç¹ûÊÇ±»destroy»½ĞÑµÄ£¬destroy_ == true£¬whileÌõ¼ş²»³ÉÁ¢£¬Ìø³öÑ­»·
+//             Èç¹ûÊÇ±»add»½ĞÑµÄ£¬callbacks_.empty() == false£¬ifÌõ¼ş²»³ÉÁ¢£¬½øÈëelse·ÖÖ§
             condition_.wait(lock);
         }
         else {
@@ -91,7 +91,7 @@ void WorkQueue::add(
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
-    if (!destroy_) { // destroyåä»ç„¶æœ‰å¯èƒ½æ‰§è¡Œadd æ‰€ä»¥è¦åˆ¤æ–­if destroy_
+    if (!destroy_) { // destroyºóÈÔÈ»ÓĞ¿ÉÄÜÖ´ĞĞadd ËùÒÔÒªÅĞ¶Ïif destroy_
         if (callbacks_.size() == 0) {
             condition_.notify_one();
         }
@@ -168,10 +168,10 @@ void WorkQueue::run()
 
     while (!destroy_) {
         if (callbacks_.empty()) {
-//             å¯èƒ½è¢«addæˆ–destroyå¤„å”¤é†’
-//             è¢«å”¤é†’åï¼Œè¿›å…¥ä¸‹ä¸€è½®whileå¾ªç¯
-//             å¦‚æœæ˜¯è¢«destroyå”¤é†’çš„ï¼Œdestroy_ == trueï¼Œwhileæ¡ä»¶ä¸æˆç«‹ï¼Œè·³å‡ºå¾ªç¯
-//             å¦‚æœæ˜¯è¢«addå”¤é†’çš„ï¼Œcallbacks_.empty() == falseï¼Œifæ¡ä»¶ä¸æˆç«‹ï¼Œè¿›å…¥elseåˆ†æ”¯
+//             ¿ÉÄÜ±»add»òdestroy´¦»½ĞÑ
+//             ±»»½ĞÑºó£¬½øÈëÏÂÒ»ÂÖwhileÑ­»·
+//             Èç¹ûÊÇ±»destroy»½ĞÑµÄ£¬destroy_ == true£¬whileÌõ¼ş²»³ÉÁ¢£¬Ìø³öÑ­»·
+//             Èç¹ûÊÇ±»add»½ĞÑµÄ£¬callbacks_.empty() == false£¬ifÌõ¼ş²»³ÉÁ¢£¬½øÈëelse·ÖÖ§
             condition_.wait(lock);
         }
         else {
@@ -231,7 +231,7 @@ void WorkQueue::add(
 {
     boost::unique_lock<boost::mutex> lock(mutex_);
 
-    if (!destroy_) { // destroyåä»ç„¶æœ‰å¯èƒ½æ‰§è¡Œadd æ‰€ä»¥è¦åˆ¤æ–­if destroy_
+    if (!destroy_) { // destroyºóÈÔÈ»ÓĞ¿ÉÄÜÖ´ĞĞadd ËùÒÔÒªÅĞ¶Ïif destroy_
         if (callbacks_.size() == 0) {
             condition_.notify_one();
         }

@@ -1,8 +1,8 @@
 if(UNIX)
     include_directories(${PROJECT_SOURCE_DIR}/include)
 
-    add_executable(client client.cpp)
-    target_link_libraries(client UVSSSDK)
+    add_executable(client-demo client-demo.cpp)
+    target_link_libraries(client-demo uvsssdk)
 elseif(WIN32)
     include_directories(${PROJECT_SOURCE_DIR}/include)
 
@@ -12,6 +12,6 @@ elseif(WIN32)
         link_directories(${LIBRARY_OUTPUT_PATH}/Release)
     endif()
 
-    add_executable(client client.cpp)
-    target_link_libraries(client debug UVSSSDKd.lib optimized UVSSSDK.lib)
+    add_executable(client-demo client-demo.cpp)
+    target_link_libraries(client-demo debug uvsssdkd.lib optimized uvsssdk.lib)
 endif()

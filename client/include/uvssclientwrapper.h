@@ -11,27 +11,27 @@
 #   define UVSS_API
 #endif
 
-// UVSSMessageCallback: è°ƒè¯•ä¿¡æ¯å›è°ƒå‡½æ•°å®šä¹‰
-// connectionId: è¿æ¥æ ‡è¯† (ç”±UVSSConnectè¿”å›, ç”¨æ¥æ ‡è¯†ä¸UVSSæœåŠ¡å™¨å»ºç«‹çš„è¿æ¥)
-// æ³¨: æ­£å¸¸æƒ…å†µä¸‹å€¼ä¸ºæ­£æ•´æ•°; åœ¨æ²¡æœ‰å¯¹åº”è¿æ¥æ—¶ (SDKåˆå§‹åŒ–å¤±è´¥æˆ–è¿æ¥UVSSæœåŠ¡å™¨å¤±è´¥), å€¼ä¸º-1
-// code: ä¿¡æ¯ç¼–å·
-// 1: è¿æ¥æˆåŠŸ (UVSSConnect)
-// -1: åˆå§‹åŒ–é”™è¯¯ (UVSSInitialize)
-// -2: è¿æ¥å¤±è´¥ (UVSSConnect)
-// -3: è¿æ¥æ–­å¼€
-// message: ä¿¡æ¯æè¿°
+// UVSSMessageCallback: µ÷ÊÔĞÅÏ¢»Øµ÷º¯Êı¶¨Òå
+// connectionId: Á¬½Ó±êÊ¶ (ÓÉUVSSConnect·µ»Ø, ÓÃÀ´±êÊ¶ÓëUVSS·şÎñÆ÷½¨Á¢µÄÁ¬½Ó)
+// ×¢: Õı³£Çé¿öÏÂÖµÎªÕıÕûÊı; ÔÚÃ»ÓĞ¶ÔÓ¦Á¬½ÓÊ± (SDK³õÊ¼»¯Ê§°Ü»òÁ¬½ÓUVSS·şÎñÆ÷Ê§°Ü), ÖµÎª-1
+// code: ĞÅÏ¢±àºÅ
+// 1: Á¬½Ó³É¹¦ (UVSSConnect)
+// -1: ³õÊ¼»¯´íÎó (UVSSInitialize)
+// -2: Á¬½ÓÊ§°Ü (UVSSConnect)
+// -3: Á¬½Ó¶Ï¿ª
+// message: ĞÅÏ¢ÃèÊö
 typedef void(*UVSSMessageCallback)(int connectionId, int code,
                                    const char* message);
 
-// UVSSCheckInfoCallback: è½¦è¾†æ£€æŸ¥ä¿¡æ¯å›è°ƒå‡½æ•°å®šä¹‰
-// connectionId: è¿æ¥æ ‡è¯† (ç”±UVSSConnectè¿”å›, ç”¨æ¥æ ‡è¯†ä¸UVSSæœåŠ¡å™¨å»ºç«‹çš„è¿æ¥)
-// uvssImagePath: è½¦åº•å›¾åƒè·¯å¾„
-// plateImagePath: è½¦ç‰Œå›¾åƒè·¯å¾„
-// channel: è½¦æ£€é€šé“ä¿¡æ¯
-// plateNumber: è½¦ç‰Œå·ç 
-// direction: è½¦è¾†æ–¹å‘
-// dateTime: æ£€æŸ¥æ—¥æœŸæ—¶é—´ (æ ¼å¼: yyyy/m/d h:mm:ss, å¦‚2016/1/1 13:01:02)
-// extension: æ‰©å±•ä¿¡æ¯, ä¸€èˆ¬ä¸ºç©º ("")
+// UVSSCheckInfoCallback: ³µÁ¾¼ì²éĞÅÏ¢»Øµ÷º¯Êı¶¨Òå
+// connectionId: Á¬½Ó±êÊ¶ (ÓÉUVSSConnect·µ»Ø, ÓÃÀ´±êÊ¶ÓëUVSS·şÎñÆ÷½¨Á¢µÄÁ¬½Ó)
+// uvssImagePath: ³µµ×Í¼ÏñÂ·¾¶
+// plateImagePath: ³µÅÆÍ¼ÏñÂ·¾¶
+// channel: ³µ¼ìÍ¨µÀĞÅÏ¢
+// plateNumber: ³µÅÆºÅÂë
+// direction: ³µÁ¾·½Ïò
+// dateTime: ¼ì²éÈÕÆÚÊ±¼ä (¸ñÊ½: yyyy/m/d h:mm:ss, Èç2016/1/1 13:01:02)
+// extension: À©Õ¹ĞÅÏ¢, Ò»°ãÎª¿Õ ("")
 typedef void(*UVSSCheckInfoCallback)(int connectionId,
                                      const char* uvssImagePath,
                                      const char* plateImagePath,
@@ -41,10 +41,10 @@ typedef void(*UVSSCheckInfoCallback)(int connectionId,
                                      const char* dateTime,
                                      const char* extension);
 
-// UVSSCheckInfoExCallback: è½¦è¾†æ£€æŸ¥ä¿¡æ¯Exå›è°ƒå‡½æ•°å®šä¹‰
-// connectionId: è¿æ¥æ ‡è¯† (ç”±UVSSConnectè¿”å›, ç”¨æ¥æ ‡è¯†ä¸UVSSæœåŠ¡å™¨å»ºç«‹çš„è¿æ¥)
-// concatedString: ä»»æ„å­—ç¬¦ä¸²
-// concatedFilePath: ä»»æ„æ•°é‡çš„æ–‡ä»¶è·¯å¾„è¿æ¥æˆçš„å­—ç¬¦ä¸², å„è·¯å¾„é—´ç”¨ "|" åˆ†éš”
+// UVSSCheckInfoExCallback: ³µÁ¾¼ì²éĞÅÏ¢Ex»Øµ÷º¯Êı¶¨Òå
+// connectionId: Á¬½Ó±êÊ¶ (ÓÉUVSSConnect·µ»Ø, ÓÃÀ´±êÊ¶ÓëUVSS·şÎñÆ÷½¨Á¢µÄÁ¬½Ó)
+// concatedString: ÈÎÒâ×Ö·û´®
+// concatedFilePath: ÈÎÒâÊıÁ¿µÄÎÄ¼şÂ·¾¶Á¬½Ó³ÉµÄ×Ö·û´®, ¸÷Â·¾¶¼äÓÃ "|" ·Ö¸ô
 typedef void(*UVSSCheckInfoExCallback)(int connectionId,
                                        const char* concatedString,
                                        const char* concatedFilePath);
@@ -53,48 +53,48 @@ typedef void(*UVSSCheckInfoExCallback)(int connectionId,
 extern "C" {
 #endif
 
-// GetUVSSVersion: è·å–å®¢æˆ·ç«¯ç‰ˆæœ¬å·
-// è¿”å›å€¼ï¼šå®¢æˆ·ç«¯ç‰ˆæœ¬å·
+// GetUVSSVersion: »ñÈ¡¿Í»§¶Ë°æ±¾ºÅ
+// ·µ»ØÖµ£º¿Í»§¶Ë°æ±¾ºÅ
 UVSS_API const char* GetUVSSVersion();
 
-// SetUVSSMessageCallback: è®¾ç½®è°ƒè¯•ä¿¡æ¯å›è°ƒå‡½æ•°
+// SetUVSSMessageCallback: ÉèÖÃµ÷ÊÔĞÅÏ¢»Øµ÷º¯Êı
 UVSS_API void SetUVSSMessageCallback(UVSSMessageCallback uvssMessageCallback);
 
-// SetUVSSCheckInfoCallback: è®¾ç½®è½¦è¾†æ£€æŸ¥ä¿¡æ¯å›è°ƒå‡½æ•°
+// SetUVSSCheckInfoCallback: ÉèÖÃ³µÁ¾¼ì²éĞÅÏ¢»Øµ÷º¯Êı
 UVSS_API void SetUVSSCheckInfoCallback(UVSSCheckInfoCallback
                                        uvssCheckInfoCallback);
 
-// SetUVSSCheckInfoExCallback: è®¾ç½®è½¦è¾†æ£€æŸ¥ä¿¡æ¯Exå›è°ƒå‡½æ•°
+// SetUVSSCheckInfoExCallback: ÉèÖÃ³µÁ¾¼ì²éĞÅÏ¢Ex»Øµ÷º¯Êı
 UVSS_API void SetUVSSCheckInfoExCallback(UVSSCheckInfoExCallback
                                          uvssCheckInfoExCallback);
 
-// UVSSInitialize: åˆå§‹åŒ–SDK (ä»…éœ€è°ƒç”¨ä¸€æ¬¡)
-// è¿”å›å€¼: 1: åˆå§‹åŒ–æˆåŠŸ, -1: å‡ºé”™
+// UVSSInitialize: ³õÊ¼»¯SDK (½öĞèµ÷ÓÃÒ»´Î)
+// ·µ»ØÖµ: 1: ³õÊ¼»¯³É¹¦, -1: ³ö´í
 UVSS_API int UVSSInitialize();
 
-// UVSSConnect: è¿æ¥UVSSæœåŠ¡å™¨
-// ipAddress: UVSSæœåŠ¡å™¨IPåœ°å€, é»˜è®¤å€¼: 127.0.0.1
-// port: UVSSæœåŠ¡å™¨ç«¯å£, é»˜è®¤å€¼: 20145
-// è¿”å›å€¼:
-// å¤§äº0çš„è¿æ¥æ ‡è¯† (connectionId): è¿æ¥æˆåŠŸ
-// -1: å‡ºé”™
-// -2: å·²è¿æ¥(ä¸è¿›è¡Œè¿æ¥, å¯¹å·²å»ºç«‹è¿æ¥æ— å½±å“)
-// -3: ä¸UVSSæœåŠ¡å™¨ç‰ˆæœ¬å·ä¸ä¸€è‡´(ä¸è¿›è¡Œè¿æ¥)
+// UVSSConnect: Á¬½ÓUVSS·şÎñÆ÷
+// ipAddress: UVSS·şÎñÆ÷IPµØÖ·, Ä¬ÈÏÖµ: 127.0.0.1
+// port: UVSS·şÎñÆ÷¶Ë¿Ú, Ä¬ÈÏÖµ: 20145
+// ·µ»ØÖµ:
+// ´óÓÚ0µÄÁ¬½Ó±êÊ¶ (connectionId): Á¬½Ó³É¹¦
+// -1: ³ö´í
+// -2: ÒÑÁ¬½Ó(²»½øĞĞÁ¬½Ó, ¶ÔÒÑ½¨Á¢Á¬½ÓÎŞÓ°Ïì)
+// -3: ÓëUVSS·şÎñÆ÷°æ±¾ºÅ²»Ò»ÖÂ(²»½øĞĞÁ¬½Ó)
 UVSS_API int UVSSConnect(const char* ipAddress, int port);
 
-// UVSSDisconnect: ä¸UVSSæœåŠ¡å™¨æ–­å¼€è¿æ¥
-// connectionId: è¿æ¥æ ‡è¯† (ç”±UVSSConnectè¿”å›, ç”¨æ¥æ ‡è¯†ä¸UVSSæœåŠ¡å™¨å»ºç«‹çš„è¿æ¥)
-// è¿”å›å€¼: 1: æˆåŠŸ, -1: æ— connectionIdå¯¹åº”çš„è¿æ¥
+// UVSSDisconnect: ÓëUVSS·şÎñÆ÷¶Ï¿ªÁ¬½Ó
+// connectionId: Á¬½Ó±êÊ¶ (ÓÉUVSSConnect·µ»Ø, ÓÃÀ´±êÊ¶ÓëUVSS·şÎñÆ÷½¨Á¢µÄÁ¬½Ó)
+// ·µ»ØÖµ: 1: ³É¹¦, -1: ÎŞconnectionId¶ÔÓ¦µÄÁ¬½Ó
 UVSS_API int UVSSDisconnect(int connectionId);
 
-// SendUVSSCheckInfo: å‘é€è½¦è¾†æ£€æŸ¥ä¿¡æ¯
-// uvssImagePath: è½¦åº•å›¾åƒè·¯å¾„
-// plateImagePath: è½¦ç‰Œå›¾åƒè·¯å¾„
-// channel: è½¦æ£€é€šé“ä¿¡æ¯
-// plateNumber: è½¦ç‰Œå·ç 
-// direction: è½¦è¾†æ–¹å‘
-// dateTime: æ£€æŸ¥æ—¥æœŸæ—¶é—´ (æ ¼å¼: yyyy/m/d h:mm:ss, å¦‚2016/1/1 13:01:02)
-// extension: æ‰©å±•ä¿¡æ¯, ä¸€èˆ¬ä¸ºç©º ("")
+// SendUVSSCheckInfo: ·¢ËÍ³µÁ¾¼ì²éĞÅÏ¢
+// uvssImagePath: ³µµ×Í¼ÏñÂ·¾¶
+// plateImagePath: ³µÅÆÍ¼ÏñÂ·¾¶
+// channel: ³µ¼ìÍ¨µÀĞÅÏ¢
+// plateNumber: ³µÅÆºÅÂë
+// direction: ³µÁ¾·½Ïò
+// dateTime: ¼ì²éÈÕÆÚÊ±¼ä (¸ñÊ½: yyyy/m/d h:mm:ss, Èç2016/1/1 13:01:02)
+// extension: À©Õ¹ĞÅÏ¢, Ò»°ãÎª¿Õ ("")
 UVSS_API void SendUVSSCheckInfo(const char* uvssImagePath,
                                 const char* plateImagePath,
                                 const char* channel,
@@ -103,15 +103,15 @@ UVSS_API void SendUVSSCheckInfo(const char* uvssImagePath,
                                 const char* dateTime,
                                 const char* extension);
 
-// SendUVSSCheckInfoByEndpoint: æŒ‰UVSSæœåŠ¡å™¨ç«¯ç‚¹å‘é€è½¦è¾†æ£€æŸ¥ä¿¡æ¯
-// endpoint: UVSSæœåŠ¡å™¨ç«¯ç‚¹ (æ ¼å¼: ipAddress:port, å¦‚127.0.0.1:20145)
-// uvssImagePath: è½¦åº•å›¾åƒè·¯å¾„
-// plateImagePath: è½¦ç‰Œå›¾åƒè·¯å¾„
-// channel: è½¦æ£€é€šé“ä¿¡æ¯
-// plateNumber: è½¦ç‰Œå·ç 
-// direction: è½¦è¾†æ–¹å‘
-// dateTime: æ£€æŸ¥æ—¥æœŸæ—¶é—´ (æ ¼å¼: yyyy/m/d h:mm:ss, å¦‚2016/1/1 13:01:02)
-// extension: æ‰©å±•ä¿¡æ¯, ä¸€èˆ¬ä¸ºç©º ("")
+// SendUVSSCheckInfoByEndpoint: °´UVSS·şÎñÆ÷¶Ëµã·¢ËÍ³µÁ¾¼ì²éĞÅÏ¢
+// endpoint: UVSS·şÎñÆ÷¶Ëµã (¸ñÊ½: ipAddress:port, Èç127.0.0.1:20145)
+// uvssImagePath: ³µµ×Í¼ÏñÂ·¾¶
+// plateImagePath: ³µÅÆÍ¼ÏñÂ·¾¶
+// channel: ³µ¼ìÍ¨µÀĞÅÏ¢
+// plateNumber: ³µÅÆºÅÂë
+// direction: ³µÁ¾·½Ïò
+// dateTime: ¼ì²éÈÕÆÚÊ±¼ä (¸ñÊ½: yyyy/m/d h:mm:ss, Èç2016/1/1 13:01:02)
+// extension: À©Õ¹ĞÅÏ¢, Ò»°ãÎª¿Õ ("")
 UVSS_API void SendUVSSCheckInfoByEndpoint(const char* endpoint,
                                           const char* uvssImagePath,
                                           const char* plateImagePath,
@@ -121,21 +121,21 @@ UVSS_API void SendUVSSCheckInfoByEndpoint(const char* endpoint,
                                           const char* dateTime,
                                           const char* extension);
 
-// SendUVSSCheckInfoEx: å‘é€è½¦è¾†æ£€æŸ¥ä¿¡æ¯Ex
-// concatedString: ä»»æ„å­—ç¬¦ä¸²
-// concatedFilePath: ä»»æ„æ•°é‡çš„æ–‡ä»¶è·¯å¾„è¿æ¥æˆçš„å­—ç¬¦ä¸², å„è·¯å¾„é—´ç”¨ "|" åˆ†éš”
+// SendUVSSCheckInfoEx: ·¢ËÍ³µÁ¾¼ì²éĞÅÏ¢Ex
+// concatedString: ÈÎÒâ×Ö·û´®
+// concatedFilePath: ÈÎÒâÊıÁ¿µÄÎÄ¼şÂ·¾¶Á¬½Ó³ÉµÄ×Ö·û´®, ¸÷Â·¾¶¼äÓÃ "|" ·Ö¸ô
 UVSS_API void SendUVSSCheckInfoEx(const char* concatedString,
                                   const char* concatedFilePath);
 
-// SendUVSSCheckInfoExByEndpoint: æŒ‰UVSSæœåŠ¡å™¨ç«¯ç‚¹å‘é€è½¦è¾†æ£€æŸ¥ä¿¡æ¯Ex
-// endpoint: UVSSæœåŠ¡å™¨ç«¯ç‚¹ (æ ¼å¼: ipAddress:port, å¦‚127.0.0.1:20145)
-// concatedString: ä»»æ„å­—ç¬¦ä¸²
-// concatedFilePath: ä»»æ„æ•°é‡çš„æ–‡ä»¶è·¯å¾„è¿æ¥æˆçš„å­—ç¬¦ä¸², å„è·¯å¾„é—´ç”¨ "|" åˆ†éš”
+// SendUVSSCheckInfoExByEndpoint: °´UVSS·şÎñÆ÷¶Ëµã·¢ËÍ³µÁ¾¼ì²éĞÅÏ¢Ex
+// endpoint: UVSS·şÎñÆ÷¶Ëµã (¸ñÊ½: ipAddress:port, Èç127.0.0.1:20145)
+// concatedString: ÈÎÒâ×Ö·û´®
+// concatedFilePath: ÈÎÒâÊıÁ¿µÄÎÄ¼şÂ·¾¶Á¬½Ó³ÉµÄ×Ö·û´®, ¸÷Â·¾¶¼äÓÃ "|" ·Ö¸ô
 UVSS_API void SendUVSSCheckInfoExByEndpoint(const char* endpoint,
                                             const char* concatedString,
                                             const char* concatedFilePath);
 
-// UVSSUninitialize: é”€æ¯SDK, é‡Šæ”¾å ç”¨çš„èµ„æº (ä»…åœ¨ç¨‹åºé€€å‡ºæ—¶è°ƒç”¨ä¸€æ¬¡)
+// UVSSUninitialize: Ïú»ÙSDK, ÊÍ·ÅÕ¼ÓÃµÄ×ÊÔ´ (½öÔÚ³ÌĞòÍË³öÊ±µ÷ÓÃÒ»´Î)
 UVSS_API void UVSSUninitialize();
 
 #ifdef __cplusplus

@@ -23,7 +23,7 @@ void RpcProxies::runHeartbeat()
                 return;
             }
             else {
-//                 æ¯æ¬¡å¾ªç¯éƒ½åº”ä¿æŒä¸€è‡´ï¼Œæ— è®ºproxyEndpointMap_æ˜¯å¦ä¸ºç©ºï¼
+//                 Ã¿´ÎÑ­»·¶¼Ó¦±£³ÖÒ»ÖÂ£¬ÎŞÂÛproxyEndpointMap_ÊÇ·ñÎª¿Õ£¡
                 proxyEndpointMap = proxyEndpointMap_;
             }
         }
@@ -64,7 +64,7 @@ void RpcProxies::startHeartbeat()
     heartbeatThread_ = std::move(t);
 }
 
-// connectå add
+// connectºó add
 int RpcProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& proxy,
                     const std::string& endpoint)
 {
@@ -76,7 +76,7 @@ int RpcProxies::add(const std::shared_ptr<Uvss::CallbackSenderPrx>& proxy,
     return connectionId_;
 }
 
-// disconnectå remove
+// disconnectºó remove
 bool RpcProxies::remove(int connectionId, std::string& endpoint,
                         std::shared_ptr<Uvss::CallbackSenderPrx>& proxy)
 {
@@ -143,11 +143,11 @@ void RpcProxies::sendCheckInfo(
         }
         catch (const Ice::Exception& ex) {
             std::cerr << "sendCheckInfo:\n" << ex << std::endl;
-//             ä¸åœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxy
-//             åªè®©å¿ƒè·³çº¿ç¨‹æ£€æµ‹å¯¹ç«¯è¿æ¥å’Œåˆ é™¤å¤±æ•ˆproxy
-//             è‹¥åœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxy
-//             1.è‹¥åœ¨æ­¤å¤„å›è°ƒé€šçŸ¥ï¼Œå¿ƒè·³çº¿ç¨‹ä¹Ÿå¯èƒ½å†å›è°ƒé€šçŸ¥ä¸€æ¬¡ï¼ˆåœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxyåï¼Œè‹¥å¿ƒè·³çº¿ç¨‹è¿˜æ²¡æœ‰æ£€æµ‹proxyå‰¯æœ¬ï¼‰
-//             2.è‹¥ä¸åœ¨æ­¤å¤„å›è°ƒé€šçŸ¥ï¼Œå¿ƒè·³çº¿ç¨‹å¯èƒ½ä¼šæ¼æ‰é€šçŸ¥ï¼ˆåœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxyåï¼Œè‹¥å¿ƒè·³çº¿ç¨‹å·²ç»æ£€æµ‹äº†proxyå‰¯æœ¬ï¼Œè€Œæ£€æµ‹æ—¶æ­¤proxyæ˜¯æ­£å¸¸çš„ï¼‰
+//             ²»ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxy
+//             Ö»ÈÃĞÄÌøÏß³Ì¼ì²â¶Ô¶ËÁ¬½ÓºÍÉ¾³ıÊ§Ğ§proxy
+//             ÈôÔÚ´Ë´¦É¾³ıÊ§Ğ§proxy
+//             1.ÈôÔÚ´Ë´¦»Øµ÷Í¨Öª£¬ĞÄÌøÏß³ÌÒ²¿ÉÄÜÔÙ»Øµ÷Í¨ÖªÒ»´Î£¨ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxyºó£¬ÈôĞÄÌøÏß³Ì»¹Ã»ÓĞ¼ì²âproxy¸±±¾£©
+//             2.Èô²»ÔÚ´Ë´¦»Øµ÷Í¨Öª£¬ĞÄÌøÏß³Ì¿ÉÄÜ»áÂ©µôÍ¨Öª£¨ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxyºó£¬ÈôĞÄÌøÏß³ÌÒÑ¾­¼ì²âÁËproxy¸±±¾£¬¶ø¼ì²âÊ±´ËproxyÊÇÕı³£µÄ£©
         }
     }
 }
@@ -179,11 +179,11 @@ void RpcProxies::sendCheckInfo(
             }
             catch (const Ice::Exception& ex) {
                 std::cerr << "sendCheckInfo:\n" << ex << std::endl;
-//             ä¸åœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxy
-//             åªè®©å¿ƒè·³çº¿ç¨‹æ£€æµ‹å¯¹ç«¯è¿æ¥å’Œåˆ é™¤å¤±æ•ˆproxy
-//             è‹¥åœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxy
-//             1.è‹¥åœ¨æ­¤å¤„å›è°ƒé€šçŸ¥ï¼Œå¿ƒè·³çº¿ç¨‹ä¹Ÿå¯èƒ½å†å›è°ƒé€šçŸ¥ä¸€æ¬¡ï¼ˆåœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxyåï¼Œè‹¥å¿ƒè·³çº¿ç¨‹è¿˜æ²¡æœ‰æ£€æµ‹proxyå‰¯æœ¬ï¼‰
-//             2.è‹¥ä¸åœ¨æ­¤å¤„å›è°ƒé€šçŸ¥ï¼Œå¿ƒè·³çº¿ç¨‹å¯èƒ½ä¼šæ¼æ‰é€šçŸ¥ï¼ˆåœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxyåï¼Œè‹¥å¿ƒè·³çº¿ç¨‹å·²ç»æ£€æµ‹äº†proxyå‰¯æœ¬ï¼Œè€Œæ£€æµ‹æ—¶æ­¤proxyæ˜¯æ­£å¸¸çš„ï¼‰
+//             ²»ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxy
+//             Ö»ÈÃĞÄÌøÏß³Ì¼ì²â¶Ô¶ËÁ¬½ÓºÍÉ¾³ıÊ§Ğ§proxy
+//             ÈôÔÚ´Ë´¦É¾³ıÊ§Ğ§proxy
+//             1.ÈôÔÚ´Ë´¦»Øµ÷Í¨Öª£¬ĞÄÌøÏß³ÌÒ²¿ÉÄÜÔÙ»Øµ÷Í¨ÖªÒ»´Î£¨ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxyºó£¬ÈôĞÄÌøÏß³Ì»¹Ã»ÓĞ¼ì²âproxy¸±±¾£©
+//             2.Èô²»ÔÚ´Ë´¦»Øµ÷Í¨Öª£¬ĞÄÌøÏß³Ì¿ÉÄÜ»áÂ©µôÍ¨Öª£¨ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxyºó£¬ÈôĞÄÌøÏß³ÌÒÑ¾­¼ì²âÁËproxy¸±±¾£¬¶ø¼ì²âÊ±´ËproxyÊÇÕı³£µÄ£©
             }
         }
     }
@@ -221,7 +221,7 @@ void RpcProxies::runHeartbeat()
                 return;
             }
             else {
-//                 æ¯æ¬¡å¾ªç¯éƒ½åº”ä¿æŒä¸€è‡´ï¼Œæ— è®ºproxyEndpointMap_æ˜¯å¦ä¸ºç©ºï¼
+//                 Ã¿´ÎÑ­»·¶¼Ó¦±£³ÖÒ»ÖÂ£¬ÎŞÂÛproxyEndpointMap_ÊÇ·ñÎª¿Õ£¡
                 proxyEndpointMap = proxyEndpointMap_;
             }
         }
@@ -261,7 +261,7 @@ void RpcProxies::startHeartbeat()
     heartbeatThread_ = boost::move(t);
 }
 
-// connectå add
+// connectºó add
 int RpcProxies::add(const Uvss::CallbackSenderPrx& proxy,
                     const std::string& endpoint)
 {
@@ -273,7 +273,7 @@ int RpcProxies::add(const Uvss::CallbackSenderPrx& proxy,
     return connectionId_;
 }
 
-// disconnectå remove
+// disconnectºó remove
 bool RpcProxies::remove(int connectionId, std::string& endpoint,
                         Uvss::CallbackSenderPrx& proxy)
 {
@@ -338,11 +338,11 @@ void RpcProxies::sendCheckInfo(
         }
         catch (const Ice::Exception& ex) {
             std::cerr << "sendCheckInfo:\n" << ex << std::endl;
-//             ä¸åœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxy
-//             åªè®©å¿ƒè·³çº¿ç¨‹æ£€æµ‹å¯¹ç«¯è¿æ¥å’Œåˆ é™¤å¤±æ•ˆproxy
-//             è‹¥åœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxy
-//             1.è‹¥åœ¨æ­¤å¤„å›è°ƒé€šçŸ¥ï¼Œå¿ƒè·³çº¿ç¨‹ä¹Ÿå¯èƒ½å†å›è°ƒé€šçŸ¥ä¸€æ¬¡ï¼ˆåœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxyåï¼Œè‹¥å¿ƒè·³çº¿ç¨‹è¿˜æ²¡æœ‰æ£€æµ‹proxyå‰¯æœ¬ï¼‰
-//             2.è‹¥ä¸åœ¨æ­¤å¤„å›è°ƒé€šçŸ¥ï¼Œå¿ƒè·³çº¿ç¨‹å¯èƒ½ä¼šæ¼æ‰é€šçŸ¥ï¼ˆåœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxyåï¼Œè‹¥å¿ƒè·³çº¿ç¨‹å·²ç»æ£€æµ‹äº†proxyå‰¯æœ¬ï¼Œè€Œæ£€æµ‹æ—¶æ­¤proxyæ˜¯æ­£å¸¸çš„ï¼‰
+//             ²»ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxy
+//             Ö»ÈÃĞÄÌøÏß³Ì¼ì²â¶Ô¶ËÁ¬½ÓºÍÉ¾³ıÊ§Ğ§proxy
+//             ÈôÔÚ´Ë´¦É¾³ıÊ§Ğ§proxy
+//             1.ÈôÔÚ´Ë´¦»Øµ÷Í¨Öª£¬ĞÄÌøÏß³ÌÒ²¿ÉÄÜÔÙ»Øµ÷Í¨ÖªÒ»´Î£¨ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxyºó£¬ÈôĞÄÌøÏß³Ì»¹Ã»ÓĞ¼ì²âproxy¸±±¾£©
+//             2.Èô²»ÔÚ´Ë´¦»Øµ÷Í¨Öª£¬ĞÄÌøÏß³Ì¿ÉÄÜ»áÂ©µôÍ¨Öª£¨ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxyºó£¬ÈôĞÄÌøÏß³ÌÒÑ¾­¼ì²âÁËproxy¸±±¾£¬¶ø¼ì²âÊ±´ËproxyÊÇÕı³£µÄ£©
         }
     }
 }
@@ -367,11 +367,11 @@ void RpcProxies::sendCheckInfo(
             }
             catch (const Ice::Exception& ex) {
                 std::cerr << "sendCheckInfo:\n" << ex << std::endl;
-//             ä¸åœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxy
-//             åªè®©å¿ƒè·³çº¿ç¨‹æ£€æµ‹å¯¹ç«¯è¿æ¥å’Œåˆ é™¤å¤±æ•ˆproxy
-//             è‹¥åœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxy
-//             1.è‹¥åœ¨æ­¤å¤„å›è°ƒé€šçŸ¥ï¼Œå¿ƒè·³çº¿ç¨‹ä¹Ÿå¯èƒ½å†å›è°ƒé€šçŸ¥ä¸€æ¬¡ï¼ˆåœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxyåï¼Œè‹¥å¿ƒè·³çº¿ç¨‹è¿˜æ²¡æœ‰æ£€æµ‹proxyå‰¯æœ¬ï¼‰
-//             2.è‹¥ä¸åœ¨æ­¤å¤„å›è°ƒé€šçŸ¥ï¼Œå¿ƒè·³çº¿ç¨‹å¯èƒ½ä¼šæ¼æ‰é€šçŸ¥ï¼ˆåœ¨æ­¤å¤„åˆ é™¤å¤±æ•ˆproxyåï¼Œè‹¥å¿ƒè·³çº¿ç¨‹å·²ç»æ£€æµ‹äº†proxyå‰¯æœ¬ï¼Œè€Œæ£€æµ‹æ—¶æ­¤proxyæ˜¯æ­£å¸¸çš„ï¼‰
+//             ²»ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxy
+//             Ö»ÈÃĞÄÌøÏß³Ì¼ì²â¶Ô¶ËÁ¬½ÓºÍÉ¾³ıÊ§Ğ§proxy
+//             ÈôÔÚ´Ë´¦É¾³ıÊ§Ğ§proxy
+//             1.ÈôÔÚ´Ë´¦»Øµ÷Í¨Öª£¬ĞÄÌøÏß³ÌÒ²¿ÉÄÜÔÙ»Øµ÷Í¨ÖªÒ»´Î£¨ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxyºó£¬ÈôĞÄÌøÏß³Ì»¹Ã»ÓĞ¼ì²âproxy¸±±¾£©
+//             2.Èô²»ÔÚ´Ë´¦»Øµ÷Í¨Öª£¬ĞÄÌøÏß³Ì¿ÉÄÜ»áÂ©µôÍ¨Öª£¨ÔÚ´Ë´¦É¾³ıÊ§Ğ§proxyºó£¬ÈôĞÄÌøÏß³ÌÒÑ¾­¼ì²âÁËproxy¸±±¾£¬¶ø¼ì²âÊ±´ËproxyÊÇÕı³£µÄ£©
             }
         }
     }

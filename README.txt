@@ -9,7 +9,7 @@ slice2cpp有两种映射方式
 
 Windows7
 1.编译器
-    VS2010、VS2015
+    VS2010(SP1)、VS2015(Update3)
 2.Ice3.7.0
     https://doc.zeroc.com/display/Ice37/Using+the+Windows+Binary+Distributions
     参看NuGet Package Installation部分
@@ -38,6 +38,15 @@ Debian9
     sudo apt-get install cmake
 
 
+Windows7下第三方库安装位置：
+C:\local\zeroc.ice.v100.3.7.0
+C:\local\zeroc.ice.v140.3.7.0
+C:\local\boost_1_62_0-msvc-10.0-32
+C:\local\boost_1_62_0-msvc-10.0-64
+C:\local\boost_1_62_0-msvc-14.0-32
+C:\local\boost_1_62_0-msvc-14.0-64
+
+
 目录结构：
 hf@debian:~/dev$ tree tinycomm/
 tinycomm/
@@ -47,7 +56,7 @@ tinycomm/
 │   ├── demo
 │   │   ├── 1.jpg
 │   │   ├── 2.jpg
-│   │   ├── client.cpp
+│   │   ├── client-demo.cpp
 │   │   └── CMakeLists.txt
 │   ├── include
 │   │   ├── callbackreceiveri.h
@@ -71,7 +80,7 @@ tinycomm/
 │   │   ├── 1.jpg
 │   │   ├── 2.jpg
 │   │   ├── CMakeLists.txt
-│   │   └── server.cpp
+│   │   └── server-demo.cpp
 │   ├── include
 │   │   ├── callbacksenderi.h
 │   │   ├── global.h
@@ -106,9 +115,14 @@ Windows7
     cmake .. -G "Visual Studio 14 2015" -DCMAKE_CONFIGURATION_TYPES=Debug -DCXX11=1
     cmake .. -G "Visual Studio 14 2015" -DCMAKE_CONFIGURATION_TYPES=Release -DCXX11=1
 
+    构建时，需要更改部分源码编码格式为"Chinese Simplified(GB2312)-Codepage 936"
+    (Visual Studio --> File --> Advanced Save Options)
+
 Debian9
     cmake ..
     cmake .. -DCXX11=1
+
+    make
 
 SDK版本号由callback.ice中的const string version确定
 lib/内为生成的动态库文件
@@ -117,9 +131,9 @@ include/uvssserverwrapper.h和include/uvssclientwrapper.h为引用需要的头�
 
 
 使用demo程序：
-分别启动server和client，可以启动多个
+分别启动server-demo和client-demo，可以启动多个
 
-./server
+./server-demo
 server version: 1.0
 usage:
 0: help
@@ -132,7 +146,7 @@ usage:
 6: send checkInfoEx by endpoint
 9: exit
 
-./client
+./client-demo
 client version: 1.0
 usage:
 0: help

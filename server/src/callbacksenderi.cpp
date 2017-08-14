@@ -27,7 +27,7 @@ void CallbackSenderI::addProxy(Ice::Identity ident, const Ice::Current& current)
     Ice::TCPConnectionInfoPtr tcpInfo =
         std::dynamic_pointer_cast<Ice::TCPConnectionInfo>(info);
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
-        boost::lexical_cast<std::string>(tcpInfo->remotePort); // å»æ‰å¼€å¤´çš„::ffff:
+        boost::lexical_cast<std::string>(tcpInfo->remotePort); // È¥µô¿ªÍ·µÄ::ffff:
 
     proxies_->add(proxy, endpoint);
 }
@@ -46,7 +46,7 @@ void CallbackSenderI::sendDataAsync(
     std::function<void(std::exception_ptr)> error,
     const Ice::Current& current)
 {
-//     ç®€åŒ–endpointå½¢å¼ï¼Ÿä½¿ç”¨æ­£åˆ™è¡¨è¾¾å¼ï¼Ÿ
+//     ¼ò»¯endpointĞÎÊ½£¿Ê¹ÓÃÕıÔò±í´ïÊ½£¿
 //     std::cout << current.con->getEndpoint()->toString() << std::endl;
 //     tcp -h 127.0.0.1 -p 20145 -t 60000
     Ice::ConnectionInfoPtr info = current.con->getInfo();
@@ -86,7 +86,7 @@ void CallbackSenderI::addProxy(const Ice::Identity& ident,
     Ice::TCPConnectionInfoPtr tcpInfo =
         Ice::TCPConnectionInfoPtr::dynamicCast(info);
     std::string endpoint = tcpInfo->remoteAddress.replace(0, 7, "") + ":" +
-        boost::lexical_cast<std::string>(tcpInfo->remotePort); // å»æ‰å¼€å¤´çš„::ffff:
+        boost::lexical_cast<std::string>(tcpInfo->remotePort); // È¥µô¿ªÍ·µÄ::ffff:
 
     proxies_->add(proxy, endpoint);
 }
@@ -104,7 +104,7 @@ void CallbackSenderI::sendData_async(
     const std::vector<std::vector<unsigned char> >& files,
     const Ice::Current& current)
 {
-//     ç®€åŒ–endpointå½¢å¼ï¼Ÿä½¿ç”¨æ­£åˆ™è¡¨è¾¾å¼ï¼Ÿ
+//     ¼ò»¯endpointĞÎÊ½£¿Ê¹ÓÃÕıÔò±í´ïÊ½£¿
 //     std::cout << current.con->getEndpoint()->toString() << std::endl;
 //     tcp -h 127.0.0.1 -p 20145 -t 60000
     Ice::ConnectionInfoPtr info = current.con->getInfo();

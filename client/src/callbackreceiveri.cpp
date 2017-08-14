@@ -20,7 +20,7 @@ void CallbackReceiverI::sendDataAsync(
     std::function<void(std::exception_ptr)> error,
     const Ice::Current& current)
 {
-//     ç®€åŒ–endpointå½¢å¼ï¼Ÿä½¿ç”¨æ­£åˆ™è¡¨è¾¾å¼ï¼Ÿ
+//     ¼ò»¯endpointĞÎÊ½£¿Ê¹ÓÃÕıÔò±í´ïÊ½£¿
 //     std::cout << current.con->getEndpoint()->toString() << std::endl;
 //     tcp -h 127.0.0.1 -p 20145 -t 60000
     Ice::ConnectionInfoPtr info = current.con->getInfo();
@@ -51,7 +51,7 @@ void CallbackReceiverI::sendData_async(
     const std::vector<std::vector<unsigned char> >& files,
     const Ice::Current& current)
 {
-//     ç®€åŒ–endpointå½¢å¼ï¼Ÿä½¿ç”¨æ­£åˆ™è¡¨è¾¾å¼ï¼Ÿ
+//     ¼ò»¯endpointĞÎÊ½£¿Ê¹ÓÃÕıÔò±í´ïÊ½£¿
 //     std::cout << current.con->getEndpoint()->toString() << std::endl;
 //     tcp -h 127.0.0.1 -p 20145 -t 60000
     Ice::ConnectionInfoPtr info = current.con->getInfo();

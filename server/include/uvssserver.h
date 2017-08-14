@@ -37,7 +37,7 @@ private:
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
-    // ä¸ºå…¼å®¹æ—§Cæ¥å£ï¼ˆinitå‡½æ•°ä¸­è°ƒç”¨C++æ„é€ å‡½æ•°å’Œstartï¼Œinitå‰å¯ä»¥setPortï¼‰ï¼Œæ­¤å¤„portè®¾ä¸ºstaticï¼ˆæ¯”è®¾ä¸ºå…¨å±€å˜é‡å¥½ç‚¹ï¼‰
+    // Îª¼æÈİ¾ÉC½Ó¿Ú£¨initº¯ÊıÖĞµ÷ÓÃC++¹¹Ôìº¯ÊıºÍstart£¬initÇ°¿ÉÒÔsetPort£©£¬´Ë´¦portÉèÎªstatic£¨±ÈÉèÎªÈ«¾Ö±äÁ¿ºÃµã£©
     static int port_;
 
     std::shared_ptr<WorkQueue> queue_;
@@ -92,7 +92,7 @@ private:
     Ice::ObjectAdapterPtr adapter_;
     Ice::Identity ident_;
 
-    // ä¸ºå…¼å®¹æ—§Cæ¥å£ï¼ˆinitå‡½æ•°ä¸­è°ƒç”¨C++æ„é€ å‡½æ•°å’Œstartï¼Œinitå‰å¯ä»¥setPortï¼‰ï¼Œæ­¤å¤„portè®¾ä¸ºstaticï¼ˆæ¯”è®¾ä¸ºå…¨å±€å˜é‡å¥½ç‚¹ï¼‰
+    // Îª¼æÈİ¾ÉC½Ó¿Ú£¨initº¯ÊıÖĞµ÷ÓÃC++¹¹Ôìº¯ÊıºÍstart£¬initÇ°¿ÉÒÔsetPort£©£¬´Ë´¦portÉèÎªstatic£¨±ÈÉèÎªÈ«¾Ö±äÁ¿ºÃµã£©
     static int port_;
 
     IceUtil::Handle<WorkQueue> queue_;
