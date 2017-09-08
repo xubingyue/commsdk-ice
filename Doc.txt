@@ -1,0 +1,117 @@
+学习Ice 3.7.0:
+
+可以首先参考1.3.0版本的中文手册(Ice-1.3.0-C.pdf)这些章节:
+    *第3章 Hello World 应用
+    *第4章 Slice 语言
+    第6章 客户端的 Slice-to-C++ 映射
+    第10章 服务端的 Slice-to-C++ 映射
+    第15章 C++线程与并发 // 使用Ice自身的线程库, 使用不方便, 仅供参考
+    *第17章 异步程序设计
+
+在3.7.0版本中重点参考下列主题和demo(cpp11和cpp98):
+    Hello World Application
+https://doc.zeroc.com/display/Ice37/Hello+World+Application
+参考demo: printer
+    Bidirectional Connections
+https://doc.zeroc.com/display/Ice37/Bidirectional+Connections
+参考demo: bidir
+    Asynchronous Method Invocation (AMI)
+https://doc.zeroc.com/pages/viewpage.action?pageId=18255302
+https://doc.zeroc.com/pages/viewpage.action?pageId=18255363
+    Asynchronous Method Dispatch (AMD)
+https://doc.zeroc.com/pages/viewpage.action?pageId=18255311
+https://doc.zeroc.com/pages/viewpage.action?pageId=18255372
+参考demo: async
+
+
+除了client主动连接server, 具有connect/disconnect方法外, client和server的功能和源码非常类似
+简要介绍各个源文件/类的功能:
+
+callback.ice:
+在此定义版本号
+CallbackReceiver是client的slice接口
+CallbackSender是server的slice接口
+
+callback.h/cpp:
+由slice2cpp callback.ice自动生成
+CallbackReceiver是client的cpp抽象类
+CallbackSender是server的cpp抽象类
+
+callbacksenderi.h/cpp和callbackreceiveri.h/cpp:
+CallbackReceiverI是CallbackReceiver的实现类
+CallbackSenderI是CallbackSender的实现类
+它们在Ice中称为servant类
+sendData使用异步的实现, 将接收到的数据交给后台工作队列queue_来处理
+
+rpcproxies.h/cpp:
+RpcProxies用来存储对端代理对象(proxy)
+server管理CallbackReceiverPrx, client管理CallbackSenderPrx
+用proxyEndpointMap_存储对端代理对象和端点(ip:port)的映射关系
+用endpointConnectionIdMap_存储对端端点(ip:port)和连接ID的映射关系
+通过对端代理对象(proxy), 调用对端servant类中实现的方法, 进行rpc
+例如在此类中调用异步sendData(slice中自定义)实现发送数据功能, 调用ice_ping(Ice自动生成)实现后台心跳检测
+startHeartbeat启动心跳线程
+
+workqueue.h/cpp:
+WorkQueue用来后台处理异步sendData接收到的数据, 回调通知
+start启动后台处理线程
+callbacks_存储接收到的字符串, 二进制文件, 之后由后台处理线程处理
+
+uvssserver.h/cpp和uvssclient.h/cpp:
+UvssServer和UvssClient是server和client的cpp类
+有三个数据成员
+queue_ 后台处理接收到的数据
+proxies_ 后台心跳线程, rpc
+servant_ servant对象, 本地服务的实现
+
+global.h/cpp:
+全局变量的定义
+
+uvssserverwrapper.h/cpp和uvssclientwrapper.h/cpp:
+把UvssServer和UvssClient中一些成员函数导出成C接口
+
+
+编程思路:
+
+init:
+    初始化UvssServer和UvssClient, 启动心跳线程和后台处理线程
+
+connect:
+    client已知server的标识名, IP, 端口, 建立server的代理proxy, 并保存
+    client通过proxy调用server方法addProxy, 向其传递Ice::Identity(相当于注册回调对象)
+    server addProxy被调用时, 建立, 保存这个client代理
+
+send:
+    server通过已保存的client代理, 来调用client端的方法, 实现向client主动发送数据(字符串, 二进制文件)
+    client通过已保存的server代理, 来调用server端的方法, 实现向server主动发送数据(字符串, 二进制文件)
+
+disconnect:
+    1. client移除server代理, 回调通知client (这里不能依赖client的心跳线程进行检测)
+    2. client通过server代理proxy关闭连接, server的心跳线程会检测到, 回调通知server
+
+uninit:
+    终止心跳线程和后台处理进程
+
+
+cpp11和cpp98两套代码的区别:
+cpp98代码使用Ice自身的智能指针类IceUtil::Shared, 时间/线程库使用cpp11相对应的boost库
+Ice cpp98映射和cpp11映射使用的AMI/AMD方法区别较大
+
+
+SendUVSSCheckInfo函数的实现, 以server向client发送为例:
+
+uvssserverwrapper/SendUVSSCheckInfo
+--> UvssServer/sendCheckInfo
+    transformCheckInfo 进行参数的转换
+--> RpcProxies/sendCheckInfo
+    遍历已保存的对端代理, 使用异步方法调用sendData
+
+在对端中:
+--> CallbackReceiverI/sendData_async (sendDataAsync)
+    将接收到的数据交给后台工作队列queue_来处理
+--> WorkQueue/add
+    将字符串, 二进制文件加入工作队列中
+在对端后台处理线程中:
+--> WorkQueue/start
+--> WorkQueue/run
+    把接收到的二进制文件写到硬盘, 以及做一系列处理, 回调通知接收到的字符串, 二进制文件路径
